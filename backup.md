@@ -381,8 +381,7 @@ Now when the abstract **CreateFormRequest** is extended in a Module, the class t
 
 namespace App\Modules\Example\Requests;
 
-use App\Modules\Core\Requests\CreateFormRequest;
-use Illuminate\Validation\Rule;
+use App\Modules\Core\Http\Requests\CreateFormRequest;use Illuminate\Validation\Rule;
 
 class CreateExampleRequest extends CreateFormRequest
 {

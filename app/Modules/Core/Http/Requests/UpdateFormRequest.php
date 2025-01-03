@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Core\Requests;
+namespace App\Modules\Core\Http\Requests;
 
 abstract class UpdateFormRequest extends FormRequest
 {

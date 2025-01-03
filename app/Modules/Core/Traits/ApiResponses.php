@@ -3,7 +3,7 @@
 namespace App\Modules\Core\Traits;
 
 use App\Exceptions\Handler;
-use App\Modules\Core\Controllers\ApiController;
+use App\Modules\Core\Http\Controllers\ApiController;
 use Exception;
 use Illuminate\Http\JsonResponse;
 

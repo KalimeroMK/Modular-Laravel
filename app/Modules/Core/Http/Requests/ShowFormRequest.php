@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\Core\Requests;
+namespace App\Modules\Core\Http\Requests;
 
 use App\Modules\Core\Exceptions\FormRequestTableNotFoundException;
 use Illuminate\Validation\Rule;
 
-abstract class DeleteFormRequest extends FormRequest
+abstract class ShowFormRequest extends FormRequest
 {
     protected string $table = '';
 
@@ -43,7 +43,6 @@ abstract class DeleteFormRequest extends FormRequest
 
         return [
             'id' => [
-                'required',
                 Rule::exists($this->table, 'id')
             ]
         ];

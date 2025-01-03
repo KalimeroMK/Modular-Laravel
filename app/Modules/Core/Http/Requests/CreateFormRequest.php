@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\User\Http\Requests;
+namespace App\Modules\Core\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class SearchUserRequest extends FormRequest
+abstract class CreateFormRequest extends FormRequest
 {
+    protected string $table = '';
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -21,10 +21,5 @@ class SearchUserRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(): array
-    {
-        return [
-            'query' => ['nullable', 'string', 'max:255'],
-        ];
-    }
+    abstract public function rules(): array;
 }

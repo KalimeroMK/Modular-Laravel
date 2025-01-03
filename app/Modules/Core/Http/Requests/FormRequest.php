@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Core\Requests;
+namespace App\Modules\Core\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest as LaravelFormRequest;
