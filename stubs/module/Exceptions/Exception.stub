@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Modules\{{module}}\Exceptions;
+
+use Exception;
+
+class {{exception}} extends Exception
+{
+    /**
+     * {{exception}} constructor.
+     *
+     * @param string $message
+     * @param int $code
+     * @param Exception|null $previous
+     */
+    public function __construct(
+        string $message = '{{exception}} occurred.',
+        int $code = 0,
+        ?Exception $previous = null
+    ) {
+        parent::__construct($message, $code, $previous);
+    }
+}

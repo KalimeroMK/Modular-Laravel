@@ -1,0 +1,6 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Modules\{{module}}\Http\Controllers\{{module}}Controller;
+
+Route::resource('{{table}}', {{module}}Controller::class);

@@ -1,0 +1,8 @@
+<?php
+
+namespace App\Modules\{{module}}\Interfaces;
+
+interface {{module}}Interface
+{
+    // Define your interface methods here
+}

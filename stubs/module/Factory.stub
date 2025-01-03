@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Modules\{{module}}\database\factories;
+
+use App\Modules\{{module}}\Models\{{module}};
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class {{module}}Factory extends Factory
+{
+    protected $model = {{module}}::class;
+
+    public function definition()
+    {
+        return [
+            // Define fake data here
+        ];
+    }
+}

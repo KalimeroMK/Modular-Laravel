@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Modules\{{module}}\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Modules\{{module}}\database\factories\{{module}}Factory;
+
+class {{module}} extends Model
+{
+    use HasFactory;
+
+    protected $table = '{{table}}';
+
+    protected $fillable = [
+        // Define fillable fields here
+    ];
+
+    public static function factory(): {{module}}Factory
+    {
+        return {{module}}Factory::new();
+    }
+}

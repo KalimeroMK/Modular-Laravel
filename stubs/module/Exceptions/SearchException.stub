@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Modules\{{module}}\Exceptions;
+
+use Exception;
+
+class {{module}}SearchException extends Exception
+{
+    public function __construct(string $message = 'Failed to search {{module}}.', int $code = 0, ?Exception $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
+}

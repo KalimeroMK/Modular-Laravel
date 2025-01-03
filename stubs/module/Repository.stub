@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Modules\{{module}}\Repositories;
+
+use App\Modules\Core\Interfaces\SearchInterface;
+use App\Modules\Core\Repositories\Repository;
+use App\Modules\{{module}}\Exceptions\{{module}}SearchException;
+use App\Modules\{{module}}\Interfaces\{{module}}Interface;
+use App\Modules\{{module}}\Models\{{module}};
+use Exception;
+use Illuminate\Support\Arr;
+
+class {{module}}Repository extends Repository implements {{module}}Interface, SearchInterface
+{
+    /**
+     * @var string
+     */
+    public $model = {{module}}::class;
+
+    /**
+     * Perform a search on the resource.
+     *
+     * @param array $request
+     * @return mixed
+     * @throws {{module}}SearchException
+     */
+    public function search(array $request): mixed
+    {
+        try {
+            $query = $this->model::filterBy($request);
+
+            $query->orderBy(
+                Arr::get($request, 'order_by', 'id'),
+                Arr::get($request, 'sort', 'desc')
+            );
+
+            if (Arr::has($request, 'list') && (bool)Arr::get($request, 'list') === true) {
+                return $query->get();
+            }
+
+            return $query->paginate(Arr::get($request, 'per_page', (new $this->model)->getPerPage()));
+        } catch (Exception $exception) {
+            throw new {{module}}SearchException($exception);
+        }
+    }
+}
