@@ -205,40 +205,27 @@ class MakeModuleCommand extends Command
         $interface = "App\\Modules\\{$moduleName}\\Interfaces\\{$moduleName}Interface";
         $repository = "App\\Modules\\{$moduleName}\\Repositories\\{$moduleName}Repository";
 
-        // Check if the file exists
         if (!$this->files->exists($providerPath)) {
             $this->error("RepositoryServiceProvider.php not found at {$providerPath}");
             return;
         }
 
-        // Read the provider's content
         $content = $this->files->get($providerPath);
-
-        // Locate the repositories array
         $pattern = '/protected\s+array\s+\$repositories\s*=\s*\[(.*?)\];/s';
 
         if (preg_match($pattern, $content, $matches)) {
             $existingEntries = trim($matches[1]);
-
-            // Prepare the new binding entry
             $newEntry = "        \\{$interface}::class => \\{$repository}::class,";
-            // Check if the entry already exists
+
             if (str_contains($existingEntries, $newEntry)) {
                 $this->info("Entry for {$interface} already exists in RepositoryServiceProvider.php");
                 return;
             }
 
-            // Add the new entry to the array
-            $updatedEntries = $existingEntries
-                ? "{$existingEntries}\n{$newEntry}"
-                : $newEntry;
-
+            $updatedEntries = $existingEntries ? "{$existingEntries}\n{$newEntry}" : $newEntry;
             $replacement = "protected array \$repositories = [\n{$updatedEntries}\n];";
-
-            // Replace the repositories array content
             $content = preg_replace($pattern, $replacement, $content);
 
-            // Save the updated content back to the file
             $this->files->put($providerPath, $content);
             $this->info("Successfully updated RepositoryServiceProvider with {$interface} binding.");
         } else {
