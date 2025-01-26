@@ -8,6 +8,8 @@ use App\Modules\{{module}}\database\factories\{{module}}Factory;
 
 class {{module}} extends Model
 {
+
+/** @use HasFactory<{{module}}Factory> */
     use HasFactory;
 
     protected $table = '{{table}}';
@@ -21,3 +23,4 @@ class {{module}} extends Model
         return {{module}}Factory::new();
     }
 }
+§

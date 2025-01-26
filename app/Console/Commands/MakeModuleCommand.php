@@ -21,6 +21,9 @@ class MakeModuleCommand extends Command
         $this->files = $files;
     }
 
+    /**
+     * @return int
+     */
     public function handle(): int
     {
         $moduleName = Str::studly($this->argument('name'));
@@ -33,7 +36,8 @@ class MakeModuleCommand extends Command
         }
 
         try {
-            $this->createModuleStructure($modulePath, $moduleName, $isApi);
+            $this->createModuleStructure($modulePath);
+            $this->generateFiles($modulePath, $moduleName, $isApi);
             $this->updateRepositoryServiceProvider($moduleName);
             $this->info("Module '{$moduleName}' created successfully!");
         } catch (\Exception $e) {
@@ -46,9 +50,10 @@ class MakeModuleCommand extends Command
     }
 
     /**
-     * @throws FileNotFoundException
+     * @param  string  $modulePath
+     * @return void
      */
-    protected function createModuleStructure(string $modulePath, string $moduleName, bool $isApi): void
+    protected function createModuleStructure(string $modulePath): void
     {
         $structure = [
             'Config',
@@ -67,28 +72,79 @@ class MakeModuleCommand extends Command
             'routes',
             'Services',
             'Traits',
-            'Http/Transformers',
+            'Http/Resources',
             'database/migrations',
             'database/factories',
         ];
 
         foreach ($structure as $directory) {
-            $path = "{$modulePath}/{$directory}";
+            $path = "$modulePath/$directory";
             if (!$this->files->exists($path)) {
                 $this->files->makeDirectory($path, 0755, true);
             }
         }
-
-        $this->generateFiles($modulePath, $moduleName, $isApi);
     }
 
     /**
+     * @param  string  $modulePath
+     * @param  string  $moduleName
+     * @param  bool    $isApi
+     * @return void
      * @throws FileNotFoundException
      */
     protected function generateFiles(string $modulePath, string $moduleName, bool $isApi): void
     {
-        $tableName = Str::plural(Str::snake($moduleName)); // Convert module name to table name
+        $tableName = Str::plural(Str::snake($moduleName));
+        $stubs = $this->getStubFiles($moduleName, $isApi);
 
+        foreach ($stubs as $file => $stubPath) {
+            if (!$this->files->exists($stubPath)) {
+                $this->error("Stub file not found: {$stubPath}");
+                continue;
+            }
+
+            $stubContent = $this->files->get($stubPath);
+            $content = str_replace([
+                '{{module}}', '{{module_lower}}', '{{table}}', '{{timestamp}}'
+            ], [
+                $moduleName, Str::lower($moduleName), $tableName, now()->format('Y_m_d_His')
+            ], $stubContent);
+
+            $filePath = "$modulePath/" . str_replace([
+                    '{{module}}', '{{table}}', '{{timestamp}}'
+                ], [
+                    $moduleName, $tableName, now()->format('Y_m_d_His')
+                ], $file);
+
+            if ($this->files->exists($filePath)) {
+                $this->info("File already exists, skipping: {$filePath}");
+                continue;
+            }
+
+            $this->files->put($filePath, $content);
+            $this->info("Created file: {$filePath}");
+        }
+    }
+
+    /**
+     * @param  string  $modulePath
+     * @return void
+     */
+    protected function cleanupModule(string $modulePath): void
+    {
+        if ($this->files->exists($modulePath)) {
+            $this->files->deleteDirectory($modulePath);
+            $this->info("Cleaned up incomplete module at {$modulePath}.");
+        }
+    }
+
+    /**
+     * @param  string  $moduleName
+     * @param  bool    $isApi
+     * @return array
+     */
+    protected function getStubFiles(string $moduleName, bool $isApi): array
+    {
         $stubs = [
             "Http/Controllers/" . ($isApi ? "Api/" : "") . "{{module}}Controller.php" =>
                 base_path('stubs/module/Controllers/' . ($isApi ? 'ApiController.stub' : 'Controller.stub')),
@@ -104,7 +160,7 @@ class MakeModuleCommand extends Command
                 base_path('stubs/module/Migration.stub'),
             'database/factories/{{module}}Factory.php' =>
                 base_path('stubs/module/Factory.stub'),
-            'Http/Transformers/{{module}}Resource.php' =>
+            'Http/Resources/{{module}}Resource.php' =>
                 base_path('stubs/module/Resource.stub'),
             'Services/{{module}}Service.php' =>
                 base_path('stubs/module/Service.stub'),
@@ -118,51 +174,17 @@ class MakeModuleCommand extends Command
                 base_path('stubs/module/Resources/master.blade.stub'),
         ];
 
-        // Merge additional stubs for exceptions, requests, and filters
-        $stubs = array_merge($stubs, $this->getExceptionStubs($moduleName), $this->getRequestStubs($moduleName),
-            $this->getFilterStubs($moduleName));
-
-        foreach ($stubs as $file => $stubPath) {
-            if ($this->files->exists($stubPath)) {
-                $stubContent = $this->files->get($stubPath);
-
-                // Replace placeholders
-                $content = str_replace(
-                    ['{{module}}', '{{module_lower}}', '{{table}}', '{{timestamp}}'],
-                    [$moduleName, Str::lower($moduleName), $tableName, now()->format('Y_m_d_His')],
-                    $stubContent
-                );
-
-                $filePath = "{$modulePath}/" . str_replace(
-                        ['{{module}}', '{{table}}', '{{timestamp}}'],
-                        [$moduleName, $tableName, now()->format('Y_m_d_His')],
-                        $file
-                    );
-
-                // Skip creation if the file already exists
-                if ($this->files->exists($filePath)) {
-                    $this->info("File already exists, skipping: {$filePath}");
-                    continue;
-                }
-
-                // Write new file
-                $this->files->put($filePath, $content);
-                $this->info("Created file: {$filePath}");
-            } else {
-                $this->error("Stub file not found: {$stubPath}");
-            }
-        }
+        return array_merge(
+            $stubs,
+            $this->getExceptionStubs($moduleName),
+            $this->getRequestStubs($moduleName),
+        );
     }
 
-
-    protected function cleanupModule(string $modulePath): void
-    {
-        if ($this->files->exists($modulePath)) {
-            $this->files->deleteDirectory($modulePath);
-            $this->info("Cleaned up incomplete module at {$modulePath}.");
-        }
-    }
-
+    /**
+     * @param  string  $moduleName
+     * @return array
+     */
     protected function getExceptionStubs(string $moduleName): array
     {
         return [
@@ -175,6 +197,10 @@ class MakeModuleCommand extends Command
         ];
     }
 
+    /**
+     * @param  string  $moduleName
+     * @return array
+     */
     protected function getRequestStubs(string $moduleName): array
     {
         return [
@@ -186,17 +212,9 @@ class MakeModuleCommand extends Command
         ];
     }
 
-    protected function getFilterStubs(string $moduleName): array
-    {
-        return [
-            "Filters/IsActive{$moduleName}.php" => base_path('stubs/module/Filters/IsActive.stub'),
-            "Filters/Name{$moduleName}.php" => base_path('stubs/module/Filters/Name.stub'),
-            "Filters/Type{$moduleName}.php" => base_path('stubs/module/Filters/Type.stub'),
-            "Filters/TypeId{$moduleName}.php" => base_path('stubs/module/Filters/TypeId.stub'),
-        ];
-    }
-
     /**
+     * @param  string  $moduleName
+     * @return void
      * @throws FileNotFoundException
      */
     protected function updateRepositoryServiceProvider(string $moduleName): void
@@ -232,7 +250,4 @@ class MakeModuleCommand extends Command
             $this->error("Could not locate \$repositories array in RepositoryServiceProvider.php");
         }
     }
-
-
-
 }

@@ -111,32 +111,26 @@ class ModularServiceProvider extends ServiceProvider
      */
     protected function registerRoute(string $module, string $path, string $namespace, string $type): void
     {
-        if ($type === 'simple') {
-            $file = 'routes.php';
-        } else {
+        $allowed = ['web', 'api'];
+        if (in_array($type, $allowed)) {
             $file = "{$type}.php";
-        }
 
-        $file = str_replace(
-            '//',
-            '/',
-            app_path(
-                Config::get('modules.default.directory')
-                . DIRECTORY_SEPARATOR
-                . ($module)
-                . DIRECTORY_SEPARATOR
-                . ($path)
-                . DIRECTORY_SEPARATOR
-                . ($file)
-            )
-        );
+            $filePath = str_replace(
+                '//',
+                '/',
+                app_path(
+                    Config::get('modules.default.directory')
+                    . DIRECTORY_SEPARATOR
+                    . ($module)
+                    . DIRECTORY_SEPARATOR
+                    . ($path)
+                    . DIRECTORY_SEPARATOR
+                    . ($file)
+                )
+            );
 
-        $allowed = ['web', 'api', 'simple', 'admin'];
-        if (in_array($type, $allowed) && $this->files->exists($file)) {
-            if ($type === 'simple') {
-                Route::namespace($namespace)->group($file);
-            } else {
-                Route::middleware($type)->namespace($namespace)->group($file);
+            if ($this->files->exists($filePath)) {
+                Route::middleware($type)->namespace($namespace)->group($filePath);
             }
         }
     }
@@ -238,7 +232,7 @@ class ModularServiceProvider extends ServiceProvider
      */
     protected function loadFiltersFrom(string $path, string $namespace): void
     {
-        $this->callAfterResolving('filters', function ($filter) use ($path, $namespace) {
+        $this->callAfterResolving('filters', function ($filter) use ($path, $namespace): void {
             $filter->addNamespace($namespace, $path);
         });
     }
