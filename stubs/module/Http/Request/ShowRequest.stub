@@ -2,9 +2,9 @@
 
 namespace App\Modules\{{module}}\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Modules\Core\Http\Requests\ShowFormRequest;
 
-class Create{{module}}Request extends FormRequest
+class Show{{module}}Request extends ShowFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class Create{{module}}Request extends FormRequest
     public function rules(): array
     {
         return [
-            // Add validation rules here
+            'id' => ['required', 'exists:{{table}},id'],
         ];
     }
 }

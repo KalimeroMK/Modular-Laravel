@@ -58,7 +58,7 @@ class {{module}}Service
      * @return mixed
      * @throws {{module}}StoreException
      */
-    public function create(array $data)
+    public function create(array $data): mixed
     {
         try {
             return $this->{{module_lower}}Repository->create($data);
@@ -72,10 +72,10 @@ class {{module}}Service
      * @return mixed
      * @throws {{module}}UpdateException
      */
-    public function update(array $data)
+    public function update(int $id, array $data): mixed
     {
         try {
-            return $this->{{module_lower}}Repository->update($data['id'], $data);
+            return $this->{{module_lower}}Repository->update($id, $data);
         } catch (Exception $exception) {
             throw new {{module}}UpdateException($exception);
         }

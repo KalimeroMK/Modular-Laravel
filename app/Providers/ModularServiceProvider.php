@@ -50,7 +50,7 @@ class ModularServiceProvider extends ServiceProvider
             $this->registerViews($name);
             $this->registerTranslations($name);
             $this->registerFilters($name);
-//            $this->registerMigrations($name);
+            $this->registerMigrations($name);
             $this->registerFactories($name);
         }
     }
@@ -265,5 +265,10 @@ class ModularServiceProvider extends ServiceProvider
         Factory::guessFactoryNamesUsing(function (string $module) {
             return 'Database\\Factories\\' . class_basename($module) . 'Factory';
         });
+    }
+
+    private function registerMigrations(string $name): void
+    {
+        $this->loadMigrationsFrom(app_path(Config::get('modules.default.directory') . "/{$name}/database/migrations"));
     }
 }

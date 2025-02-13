@@ -36,7 +36,7 @@ class MakeModuleCommand extends Command
         }
 
         try {
-            $this->createModuleStructure($modulePath);
+            $this->createModuleStructure($modulePath, $isApi);
             $this->generateFiles($modulePath, $moduleName, $isApi);
             $this->updateRepositoryServiceProvider($moduleName);
             $this->info("Module '{$moduleName}' created successfully!");
@@ -51,17 +51,16 @@ class MakeModuleCommand extends Command
 
     /**
      * @param  string  $modulePath
+     * @param  bool    $isApi
      * @return void
      */
-    protected function createModuleStructure(string $modulePath): void
+    protected function createModuleStructure(string $modulePath, bool $isApi): void
     {
         $structure = [
             'Config',
             'Http/Controllers',
-            'Http/Controllers/Api',
             'Http/Requests',
             'Exceptions',
-            'Filters',
             'Helpers',
             'Interfaces',
             'Models',
@@ -72,10 +71,16 @@ class MakeModuleCommand extends Command
             'routes',
             'Services',
             'Traits',
-            'Http/Resources',
             'database/migrations',
             'database/factories',
         ];
+
+        if ($isApi) {
+            $structure = array_merge($structure, [
+                'Http/Resources',
+                'Http/Controllers/Api',
+            ]);
+        }
 
         foreach ($structure as $directory) {
             $path = "$modulePath/$directory";
@@ -84,6 +89,7 @@ class MakeModuleCommand extends Command
             }
         }
     }
+
 
     /**
      * @param  string  $modulePath
@@ -146,22 +152,20 @@ class MakeModuleCommand extends Command
     protected function getStubFiles(string $moduleName, bool $isApi): array
     {
         $stubs = [
-            "Http/Controllers/" . ($isApi ? "Api/" : "") . "{{module}}Controller.php" =>
-                base_path('stubs/module/Controllers/' . ($isApi ? 'ApiController.stub' : 'Controller.stub')),
+            'Http/Controllers/{{module}}Controller.php' =>
+                base_path('stubs/module/Http/Controllers/Controller.stub'),
             'Interfaces/{{module}}Interface.php' =>
                 base_path('stubs/module/Interface.stub'),
             'Repositories/{{module}}Repository.php' =>
                 base_path('stubs/module/Repository.stub'),
             'Models/{{module}}.php' =>
                 base_path('stubs/module/Model.stub'),
-            'routes/' . ($isApi ? 'api.php' : 'web.php') =>
-                base_path('stubs/module/routes/' . ($isApi ? 'api.stub' : 'web.stub')),
+            'routes/web.php' =>
+                base_path('stubs/module/routes/web.stub'),
             'database/migrations/{{timestamp}}_create_{{table}}_table.php' =>
                 base_path('stubs/module/Migration.stub'),
             'database/factories/{{module}}Factory.php' =>
                 base_path('stubs/module/Factory.stub'),
-            'Http/Resources/{{module}}Resource.php' =>
-                base_path('stubs/module/Resource.stub'),
             'Services/{{module}}Service.php' =>
                 base_path('stubs/module/Service.stub'),
             'Resources/views/index.blade.php' =>
@@ -174,12 +178,24 @@ class MakeModuleCommand extends Command
                 base_path('stubs/module/Resources/master.blade.stub'),
         ];
 
+        if ($isApi) {
+            $stubs = array_merge($stubs, [
+                'Http/Controllers/Api/{{module}}Controller.php' =>
+                    base_path('stubs/module/Http/Controllers/ApiController.stub'),
+                'routes/api.php' =>
+                    base_path('stubs/module/routes/api.stub'),
+                'Http/Resources/{{module}}Resource.php' =>
+                    base_path('stubs/module/Http/Resource/Resource.stub'),
+            ]);
+        }
+
         return array_merge(
             $stubs,
             $this->getExceptionStubs($moduleName),
-            $this->getRequestStubs($moduleName),
+            $this->getRequestStubs($moduleName)
         );
     }
+
 
     /**
      * @param  string  $moduleName
@@ -188,12 +204,18 @@ class MakeModuleCommand extends Command
     protected function getExceptionStubs(string $moduleName): array
     {
         return [
-            "Exceptions/{$moduleName}DestroyException.php" => base_path('stubs/module/Exceptions/DestroyException.stub'),
-            "Exceptions/{$moduleName}IndexException.php" => base_path('stubs/module/Exceptions/IndexException.stub'),
-            "Exceptions/{$moduleName}NotFoundException.php" => base_path('stubs/module/Exceptions/NotFoundException.stub'),
-            "Exceptions/{$moduleName}SearchException.php" => base_path('stubs/module/Exceptions/SearchException.stub'),
-            "Exceptions/{$moduleName}StoreException.php" => base_path('stubs/module/Exceptions/StoreException.stub'),
-            "Exceptions/{$moduleName}UpdateException.php" => base_path('stubs/module/Exceptions/UpdateException.stub'),
+            "Exceptions/{$moduleName}DestroyException.php" =>
+                base_path('stubs/module/Http/Exceptions/DestroyException.stub'),
+            "Exceptions/{$moduleName}IndexException.php" =>
+                base_path('stubs/module/Http/Exceptions/IndexException.stub'),
+            "Exceptions/{$moduleName}NotFoundException.php" =>
+                base_path('stubs/module/Http/Exceptions/NotFoundException.stub'),
+            "Exceptions/{$moduleName}SearchException.php" =>
+                base_path('stubs/module/Http/Exceptions/SearchException.stub'),
+            "Exceptions/{$moduleName}StoreException.php" =>
+                base_path('stubs/module/Http/Exceptions/StoreException.stub'),
+            "Exceptions/{$moduleName}UpdateException.php" =>
+                base_path('stubs/module/Http/Exceptions/UpdateException.stub'),
         ];
     }
 
@@ -204,11 +226,16 @@ class MakeModuleCommand extends Command
     protected function getRequestStubs(string $moduleName): array
     {
         return [
-            "Http/Requests/Create{$moduleName}Request.php" => base_path('stubs/module/Request/CreateRequest.stub'),
-            "Http/Requests/Delete{$moduleName}Request.php" => base_path('stubs/module/Request/DeleteRequest.stub'),
-            "Http/Requests/Search{$moduleName}Request.php" => base_path('stubs/module/Request/SearchRequest.stub'),
-            "Http/Requests/Show{$moduleName}Request.php" => base_path('stubs/module/Request/ShowRequest.stub'),
-            "Http/Requests/Update{$moduleName}Request.php" => base_path('stubs/module/Request/UpdateRequest.stub'),
+            "Http/Requests/Create{$moduleName}Request.php" =>
+                base_path('stubs/module/Http/Request/CreateRequest.stub'),
+            "Http/Requests/Delete{$moduleName}Request.php" =>
+                base_path('stubs/module/Http/Request/DeleteRequest.stub'),
+            "Http/Requests/Search{$moduleName}Request.php" =>
+                base_path('stubs/module/Http/Request/SearchRequest.stub'),
+            "Http/Requests/Show{$moduleName}Request.php" =>
+                base_path('stubs/module/Http/Request/ShowRequest.stub'),
+            "Http/Requests/Update{$moduleName}Request.php" =>
+                base_path('stubs/module/Http/Request/UpdateRequest.stub'),
         ];
     }
 

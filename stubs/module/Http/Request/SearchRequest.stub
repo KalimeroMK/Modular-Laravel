@@ -2,9 +2,9 @@
 
 namespace App\Modules\{{module}}\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Modules\Core\Http\Requests\SearchFormRequest;
 
-class Delete{{module}}Request extends FormRequest
+class Search{{module}}Request extends SearchFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class Delete{{module}}Request extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'exists:{{table}},id'],
+            'query' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

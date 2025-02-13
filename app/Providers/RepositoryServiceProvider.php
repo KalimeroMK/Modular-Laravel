@@ -14,7 +14,8 @@ class RepositoryServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected array $repositories = [
-
+\App\Modules\Test\Interfaces\TestInterface::class => \App\Modules\Test\Repositories\TestRepository::class,
+        \App\Modules\Test\Interfaces\TestInterface::class => \App\Modules\Test\Repositories\TestRepository::class,
 ];
 
     /**

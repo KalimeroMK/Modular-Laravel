@@ -2,9 +2,9 @@
 
 namespace App\Modules\{{module}}\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Modules\Core\Http\Resources\CoreResource;
 
-class {{module}}Resource extends JsonResource
+class {{module}}Resource extends CoreResource
 {
     /**
      * Transform the resource into an array.

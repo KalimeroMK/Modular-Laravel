@@ -3,10 +3,10 @@
 namespace App\Modules\{{module}}\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Modules\Core\Models\Core;
 use App\Modules\{{module}}\database\factories\{{module}}Factory;
 
-class {{module}} extends Model
+class {{module}} extends Core
 {
 
 /** @use HasFactory<{{module}}Factory> */
@@ -23,4 +23,3 @@ class {{module}} extends Model
         return {{module}}Factory::new();
     }
 }
-§

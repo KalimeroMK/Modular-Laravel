@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Modules\{{module}}\Http\Controllers\Api;
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Modules\{{module}}\Exceptions\{{module}}DestroyException;
+use App\Modules\{{module}}\Exceptions\{{module}}NotFoundException;
+use App\Modules\{{module}}\Exceptions\{{module}}StoreException;
+use App\Modules\{{module}}\Exceptions\{{module}}UpdateException;
+use App\Modules\{{module}}\Http\Requests\Create{{module}}Request;
+use App\Modules\{{module}}\Http\Requests\Update{{module}}Request;
+use App\Modules\{{module}}\Http\Resources\{{module}}Resource;
+use App\Modules\{{module}}\Services\{{module}}Service;
+use App\Modules\Core\Helpers\Helper;
+use App\Modules\Core\Http\Controllers\ApiController as Controller;
+
+class {{module}}Controller extends Controller
+{
+    private {{module}}Service ${{module_lower}}_service;
+
+    public function __construct({{module}}Service ${{module_lower}}_service)
+    {
+        $this->{{module_lower}}_service = ${{module_lower}}_service;
+    }
+
+    public function index(): ResourceCollection
+    {
+        return {{module}}Resource::collection($this->{{module_lower}}_service->getAll());
+    }
+
+    /**
+      * @param  Create{{module}}Request  $request
+      * @return JsonResponse
+      * @throws {{module}}StoreException
+    */
+    public function store(Create{{module}}Request $request): JsonResponse
+    {
+        return $this
+            ->setMessage(
+                __('apiResponse.storeSuccess', [
+                    'resource' => Helper::getResourceName(
+                        $this->{{module_lower}}_service->{{module_lower}}Repository->model
+                    ),
+                ])
+            )
+            ->respond(new {{module}}Resource($this->{{module_lower}}_service->create($request->validated())));
+    }
+
+    /**
+      * @param  int $id
+      * @return JsonResponse
+      * @throws {{module}}NotFoundException
+    */
+    public function show(int $id): JsonResponse
+    {
+        return $this
+            ->setMessage(
+                __('apiResponse.ok', [
+                    'resource' => Helper::getResourceName(
+                        $this->{{module_lower}}_service->{{module_lower}}Repository->model
+                    ),
+                ])
+            )
+            ->respond(new {{module}}Resource($this->{{module_lower}}_service->getById($id)));
+    }
+
+    /**
+       * @param  Update{{module}}Request  $request
+       * @param  int $id
+       * @return JsonResponse
+       * @throws {{module}}UpdateException
+    */
+    public function update(Update{{module}}Request $request, int $id): JsonResponse
+    {
+        return $this
+            ->setMessage(
+                __('apiResponse.updateSuccess', [
+                    'resource' => Helper::getResourceName(
+                        $this->{{module_lower}}_service->{{module_lower}}Repository->model
+                    ),
+                ])
+            )
+            ->respond(new {{module}}Resource($this->{{module_lower}}_service->update($id, $request->validated())));
+    }
+
+    /**
+       * @param  int $id
+       * @return JsonResponse
+       * @throws {{module}}DestroyException
+    */
+    public function destroy(int $id): JsonResponse
+    {
+        $this->{{module_lower}}_service->delete($id);
+
+        return $this
+            ->setMessage(
+                __('apiResponse.deleteSuccess', [
+                    'resource' => Helper::getResourceName(
+                        $this->{{module_lower}}_service->{{module_lower}}Repository->model
+                    ),
+                ])
+            )
+            ->respond(null);
+    }
+}

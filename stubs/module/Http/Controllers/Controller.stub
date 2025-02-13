@@ -2,7 +2,7 @@
 
 namespace App\Modules\{{module}}\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Modules\Core\Http\Controllers\Controller;
 use App\Modules\{{module}}\Models\{{module}};
 use App\Modules\{{module}}\Http\Requests\Create{{module}}Request;
 use App\Modules\{{module}}\Http\Requests\Update{{module}}Request;
