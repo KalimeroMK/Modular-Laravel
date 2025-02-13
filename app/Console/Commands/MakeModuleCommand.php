@@ -60,7 +60,6 @@ class MakeModuleCommand extends Command
             'Config',
             'Http/Controllers',
             'Http/Requests',
-            'Exceptions',
             'Helpers',
             'Interfaces',
             'Models',
@@ -79,6 +78,7 @@ class MakeModuleCommand extends Command
             $structure = array_merge($structure, [
                 'Http/Resources',
                 'Http/Controllers/Api',
+                'Exceptions',
             ]);
         }
 
@@ -191,7 +191,7 @@ class MakeModuleCommand extends Command
 
         return array_merge(
             $stubs,
-            $this->getExceptionStubs($moduleName),
+            $isApi ? $this->getExceptionStubs($moduleName) : [],
             $this->getRequestStubs($moduleName)
         );
     }

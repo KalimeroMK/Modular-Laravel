@@ -64,45 +64,36 @@ php artisan make:module {name} [--api]
 - `{name}` - The name of the module (required).
 - `--api` - Optional flag to generate API-specific controllers, resources, and routes.
 
-## Features
-- Creates a modular directory structure inside `app/Modules/{ModuleName}`.
-- Generates controllers, models, repositories, services, and more.
-- Optionally includes API resources and controllers when `--api` is provided.
-- Updates the `RepositoryServiceProvider` to bind repositories automatically.
-- Cleans up the module structure in case of failures.
-
 ## Module Structure
 The generated module follows a structured format:
 ```
 app/Modules/{ModuleName}
 │── Config/
+│── database/
+│   ├── migrations/
+│   ├── factories/
+│   ├── seeds/
+│── Exeptions (if --api flag is used)
+│── Helpers/
 │── Http/
 │   ├── Controllers/
 │   │   ├── {ModuleName}Controller.php
 │   │   ├── Api/{ModuleName}Controller.php (if --api flag is used)
 │   ├── Requests/
 │   ├── Resources/
+│── Interfaces/{ModuleName}Interface.php
 │── Models/{ModuleName}.php
 │── Repositories/{ModuleName}Repository.php
-│── Services/{ModuleName}Service.php
-│── routes/
+│── Resource
+│    ├── Land
+│    ├── Views
+│── routes
 │   ├── api.php (if --api flag is used)
 │   ├── web.php
-│── database/
-│   ├── migrations/
-│   ├── factories/
-│── Traits/
-│── Exceptions/
-│── Interfaces/
+│── Services/{ModuleName}Service.php
+│── Traits
+└── 
 ```
-
-## Implementation Details
-The command follows these main steps:
-1. **Checks if the module already exists** to prevent overwriting.
-2. **Creates the module structure** based on whether `--api` is included.
-3. **Generates required files** using stub templates.
-4. **Updates the RepositoryServiceProvider** to ensure the module works seamlessly.
-5. **Handles errors and cleans up** if the creation process fails.
 
 ## Example Usage
 - **Basic Module Creation:**

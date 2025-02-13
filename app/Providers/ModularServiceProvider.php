@@ -111,22 +111,9 @@ class ModularServiceProvider extends ServiceProvider
      */
     protected function registerRoute(string $module, string $path, string $namespace, string $type): void
     {
-        $allowed = ['web', 'api'];
-        if (in_array($type, $allowed)) {
-            $file = "{$type}.php";
-
-            $filePath = str_replace(
-                '//',
-                '/',
-                app_path(
-                    Config::get('modules.default.directory')
-                    . DIRECTORY_SEPARATOR
-                    . ($module)
-                    . DIRECTORY_SEPARATOR
-                    . ($path)
-                    . DIRECTORY_SEPARATOR
-                    . ($file)
-                )
+        if (in_array($type, ['web', 'api'])) {
+            $filePath = app_path(
+                Config::get('modules.default.directory') . "/{$module}/{$path}/{$type}.php"
             );
 
             if ($this->files->exists($filePath)) {
