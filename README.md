@@ -113,11 +113,10 @@ The command references stub files for file generation. The key files used are:
 - `stubs/module/Http/Controllers/Controller.stub`
 - `stubs/module/Http/Controllers/ApiController.stub` (if `--api` is used)
 - `stubs/module/Http/Resource/Resource.stub` (if `--api` is used)
+- `stubs/module/Http/Request/` (for all form requests)
 - `stubs/module/Model.stub`
 - `stubs/module/routes/api.stub` (if `--api` is used)
 - `stubs/module/routes/web.stub`
 - `stubs/module/Repository.stub`
 - `stubs/module/Service.stub`
-
-## Conclusion
-`MakeModuleCommand` is a powerful tool for Laravel developers looking to implement modular architectures efficiently. With its ability to generate API-ready modules, it helps streamline development and maintainability.
+- `stubs/module/Interface.stub`
