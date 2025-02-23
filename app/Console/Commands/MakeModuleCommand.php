@@ -3,14 +3,12 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
 class MakeModuleCommand extends Command
 {
     protected $signature = 'make:module {name : The name of the module} {--api : Generate an API controller and routes}';
-
     protected $description = 'Create a new module with predefined structure and files';
 
     protected Filesystem $files;
@@ -21,52 +19,53 @@ class MakeModuleCommand extends Command
         $this->files = $files;
     }
 
-    /**
-     * @return int
-     */
     public function handle(): int
     {
         $moduleName = Str::studly($this->argument('name'));
         $modulePath = app_path("Modules/{$moduleName}");
         $isApi = $this->option('api');
 
+        // Instead of failing if the module folder exists, just warn and continue
         if ($this->files->exists($modulePath)) {
-            $this->error("Module '{$moduleName}' already exists!");
-            return 1;
+            $this->warn("Module '{$moduleName}' already exists. We'll only create missing files.");
+        } else {
+            $this->files->makeDirectory($modulePath, 0755, true);
         }
 
         try {
+            // Create the sub-folders (will skip any that already exist)
             $this->createModuleStructure($modulePath, $isApi);
+
+            // Generate missing files
             $this->generateFiles($modulePath, $moduleName, $isApi);
+
+            // Update the RepositoryServiceProvider (if the interface binding isn't there yet)
             $this->updateRepositoryServiceProvider($moduleName);
-            $this->info("Module '{$moduleName}' created successfully!");
+
+            $this->info("Module '{$moduleName}' is now up-to-date!");
         } catch (\Exception $e) {
-            $this->cleanupModule($modulePath);
-            $this->error("Failed to create module: {$e->getMessage()}");
+            // If it's a brand-new module and something fails, remove partial directory
+            // only if the directory truly didn't exist before.
+            if (!$this->files->exists($modulePath)) {
+                $this->cleanupModule($modulePath);
+            }
+            $this->error("Failed to update/create module: {$e->getMessage()}");
             return 1;
         }
 
         return 0;
     }
 
-    /**
-     * @param  string  $modulePath
-     * @param  bool    $isApi
-     * @return void
-     */
     protected function createModuleStructure(string $modulePath, bool $isApi): void
     {
+        // Shared structure (directories that are relevant for both web and API).
         $structure = [
             'Config',
-            'Http/Controllers',
             'Http/Requests',
             'Helpers',
             'Interfaces',
             'Models',
             'Repositories',
-            'Resources/lang',
-            'Resources/views/layouts',
-            'Resources/views',
             'routes',
             'Services',
             'Traits',
@@ -74,14 +73,24 @@ class MakeModuleCommand extends Command
             'database/factories',
         ];
 
+        // If it's an API module, add additional subfolders relevant to API usage
+        // If it's an API module, add additional subfolders relevant to API usage
         if ($isApi) {
             $structure = array_merge($structure, [
-                'Http/Resources',
                 'Http/Controllers/Api',
+                'Http/Resources',
                 'Exceptions',
+            ]);
+        } else {
+            // Add only for Web
+            $structure = array_merge($structure, [
+                'Resources/lang',
+                'Resources/views/layouts',
+                'Resources/views',
             ]);
         }
 
+        // Create each directory if it doesn't already exist
         foreach ($structure as $directory) {
             $path = "$modulePath/$directory";
             if (!$this->files->exists($path)) {
@@ -90,52 +99,164 @@ class MakeModuleCommand extends Command
         }
     }
 
-
-    /**
-     * @param  string  $modulePath
-     * @param  string  $moduleName
-     * @param  bool    $isApi
-     * @return void
-     * @throws FileNotFoundException
-     */
     protected function generateFiles(string $modulePath, string $moduleName, bool $isApi): void
     {
         $tableName = Str::plural(Str::snake($moduleName));
-        $stubs = $this->getStubFiles($moduleName, $isApi);
 
-        foreach ($stubs as $file => $stubPath) {
+        // 1. Start with all stubs (both web and API).
+        // 2. Then remove the web stubs if it's an API-only run,
+        //    or remove the API stubs if it's a web-only run.
+        $allStubs = [
+            // -- Shared stubs
+            "Interfaces/{{module}}Interface.php" =>
+                base_path('stubs/module/Interface.stub'),
+            "Repositories/{{module}}Repository.php" =>
+                base_path('stubs/module/Repository.stub'),
+            "Models/{{module}}.php" =>
+                base_path('stubs/module/Model.stub'),
+            "database/migrations/{{timestamp}}_create_{{table}}_table.php" =>
+                base_path('stubs/module/Migration.stub'),
+            "database/factories/{{module}}Factory.php" =>
+                base_path('stubs/module/Factory.stub'),
+            "Services/{{module}}Service.php" =>
+                base_path('stubs/module/Service.stub'),
+
+            // -- Web stubs
+            "Http/Controllers/{{module}}Controller.php" =>
+                base_path('stubs/module/Http/Controllers/Controller.stub'),
+            "routes/web.php" =>
+                base_path('stubs/module/routes/web.stub'),
+            "Resources/views/index.blade.php" =>
+                base_path('stubs/module/Resources/index.blade.stub'),
+            "Resources/views/create.blade.php" =>
+                base_path('stubs/module/Resources/create.blade.stub'),
+            "Resources/views/show.blade.php" =>
+                base_path('stubs/module/Resources/show.blade.stub'),
+            "Resources/views/layouts/master.blade.php" =>
+                base_path('stubs/module/Resources/master.blade.stub'),
+        ];
+
+        // API stubs (only needed if --api is set)
+        $apiStubs = [
+            "Http/Controllers/Api/{{module}}Controller.php" =>
+                base_path('stubs/module/Http/Controllers/ApiController.stub'),
+            "routes/api.php" =>
+                base_path('stubs/module/routes/api.stub'),
+            "Http/Resources/{{module}}Resource.php" =>
+                base_path('stubs/module/Http/Resource/Resource.stub'),
+        ];
+
+        // Exception stubs for API
+        $exceptionStubs = [
+            "Exceptions/{{module}}DestroyException.php" =>
+                base_path('stubs/module/Http/Exceptions/DestroyException.stub'),
+            "Exceptions/{{module}}IndexException.php" =>
+                base_path('stubs/module/Http/Exceptions/IndexException.stub'),
+            "Exceptions/{{module}}NotFoundException.php" =>
+                base_path('stubs/module/Http/Exceptions/NotFoundException.stub'),
+            "Exceptions/{{module}}SearchException.php" =>
+                base_path('stubs/module/Http/Exceptions/SearchException.stub'),
+            "Exceptions/{{module}}StoreException.php" =>
+                base_path('stubs/module/Http/Exceptions/StoreException.stub'),
+            "Exceptions/{{module}}UpdateException.php" =>
+                base_path('stubs/module/Http/Exceptions/UpdateException.stub'),
+        ];
+
+        // Request stubs (common to both but we list them here;
+        // they're not strictly 'web' or 'api' only,
+        // though you could treat them as needed).
+        $requestStubs = [
+            "Http/Requests/Create{{module}}Request.php" =>
+                base_path('stubs/module/Http/Request/CreateRequest.stub'),
+            "Http/Requests/Delete{{module}}Request.php" =>
+                base_path('stubs/module/Http/Request/DeleteRequest.stub'),
+            "Http/Requests/Search{{module}}Request.php" =>
+                base_path('stubs/module/Http/Request/SearchRequest.stub'),
+            "Http/Requests/Show{{module}}Request.php" =>
+                base_path('stubs/module/Http/Request/ShowRequest.stub'),
+            "Http/Requests/Update{{module}}Request.php" =>
+                base_path('stubs/module/Http/Request/UpdateRequest.stub'),
+        ];
+
+        // Merge everything into $allStubs
+        // Then if it's API, add $apiStubs + $exceptionStubs.
+        // If not API, skip them.
+        // In any case, add $requestStubs (assuming both web and API might use requests).
+        if ($isApi) {
+            $allStubs = array_merge($allStubs, $apiStubs, $exceptionStubs);
+            // Optionally, remove Web stubs if you never want them in an API-only run:
+            unset(
+                $allStubs["Http/Controllers/{{module}}Controller.php"],
+                $allStubs["routes/web.php"],
+                $allStubs["Resources/views/index.blade.php"],
+                $allStubs["Resources/views/create.blade.php"],
+                $allStubs["Resources/views/show.blade.php"],
+                $allStubs["Resources/views/layouts/master.blade.php"]
+            );
+        } else {
+            // If it's NOT API, remove the API stubs
+            unset(
+                $apiStubs["Http/Controllers/Api/{{module}}Controller.php"],
+                $apiStubs["routes/api.php"],
+                $apiStubs["Http/Resources/{{module}}Resource.php"]
+            );
+            unset(
+                $exceptionStubs["Exceptions/{{module}}DestroyException.php"],
+                $exceptionStubs["Exceptions/{{module}}IndexException.php"],
+                $exceptionStubs["Exceptions/{{module}}NotFoundException.php"],
+                $exceptionStubs["Exceptions/{{module}}SearchException.php"],
+                $exceptionStubs["Exceptions/{{module}}StoreException.php"],
+                $exceptionStubs["Exceptions/{{module}}UpdateException.php"]
+            );
+        }
+
+        // Add Request stubs to the final array
+        $allStubs = array_merge($allStubs, $requestStubs);
+
+        // Now generate all stubs in the final array
+        foreach ($allStubs as $file => $stubPath) {
             if (!$this->files->exists($stubPath)) {
                 $this->error("Stub file not found: {$stubPath}");
                 continue;
             }
 
             $stubContent = $this->files->get($stubPath);
-            $content = str_replace([
-                '{{module}}', '{{module_lower}}', '{{table}}', '{{timestamp}}'
-            ], [
-                $moduleName, Str::lower($moduleName), $tableName, now()->format('Y_m_d_His')
-            ], $stubContent);
 
-            $filePath = "$modulePath/" . str_replace([
-                    '{{module}}', '{{table}}', '{{timestamp}}'
-                ], [
-                    $moduleName, $tableName, now()->format('Y_m_d_His')
-                ], $file);
+            // Perform replacements
+            $content = str_replace(
+                ['{{module}}', '{{module_lower}}', '{{table}}', '{{timestamp}}'],
+                [
+                    $moduleName,
+                    Str::lower($moduleName),
+                    $tableName,
+                    now()->format('Y_m_d_His')
+                ],
+                $stubContent
+            );
 
+            $filePath = "$modulePath/" . str_replace(
+                    ['{{module}}', '{{table}}', '{{timestamp}}'],
+                    [
+                        $moduleName,
+                        $tableName,
+                        now()->format('Y_m_d_His')
+                    ],
+                    $file
+                );
+
+            // If file already exists, skip it
             if ($this->files->exists($filePath)) {
                 $this->info("File already exists, skipping: {$filePath}");
                 continue;
             }
 
+            // Otherwise, create it
+            $this->files->ensureDirectoryExists(dirname($filePath));
             $this->files->put($filePath, $content);
             $this->info("Created file: {$filePath}");
         }
     }
 
-    /**
-     * @param  string  $modulePath
-     * @return void
-     */
     protected function cleanupModule(string $modulePath): void
     {
         if ($this->files->exists($modulePath)) {
@@ -144,106 +265,6 @@ class MakeModuleCommand extends Command
         }
     }
 
-    /**
-     * @param  string  $moduleName
-     * @param  bool    $isApi
-     * @return array
-     */
-    protected function getStubFiles(string $moduleName, bool $isApi): array
-    {
-        $stubs = [
-            'Http/Controllers/{{module}}Controller.php' =>
-                base_path('stubs/module/Http/Controllers/Controller.stub'),
-            'Interfaces/{{module}}Interface.php' =>
-                base_path('stubs/module/Interface.stub'),
-            'Repositories/{{module}}Repository.php' =>
-                base_path('stubs/module/Repository.stub'),
-            'Models/{{module}}.php' =>
-                base_path('stubs/module/Model.stub'),
-            'routes/web.php' =>
-                base_path('stubs/module/routes/web.stub'),
-            'database/migrations/{{timestamp}}_create_{{table}}_table.php' =>
-                base_path('stubs/module/Migration.stub'),
-            'database/factories/{{module}}Factory.php' =>
-                base_path('stubs/module/Factory.stub'),
-            'Services/{{module}}Service.php' =>
-                base_path('stubs/module/Service.stub'),
-            'Resources/views/index.blade.php' =>
-                base_path('stubs/module/Resources/index.blade.stub'),
-            'Resources/views/create.blade.php' =>
-                base_path('stubs/module/Resources/create.blade.stub'),
-            'Resources/views/show.blade.php' =>
-                base_path('stubs/module/Resources/show.blade.stub'),
-            'Resources/views/layouts/master.blade.php' =>
-                base_path('stubs/module/Resources/master.blade.stub'),
-        ];
-
-        if ($isApi) {
-            $stubs = array_merge($stubs, [
-                'Http/Controllers/Api/{{module}}Controller.php' =>
-                    base_path('stubs/module/Http/Controllers/ApiController.stub'),
-                'routes/api.php' =>
-                    base_path('stubs/module/routes/api.stub'),
-                'Http/Resources/{{module}}Resource.php' =>
-                    base_path('stubs/module/Http/Resource/Resource.stub'),
-            ]);
-        }
-
-        return array_merge(
-            $stubs,
-            $isApi ? $this->getExceptionStubs($moduleName) : [],
-            $this->getRequestStubs($moduleName)
-        );
-    }
-
-
-    /**
-     * @param  string  $moduleName
-     * @return array
-     */
-    protected function getExceptionStubs(string $moduleName): array
-    {
-        return [
-            "Exceptions/{$moduleName}DestroyException.php" =>
-                base_path('stubs/module/Http/Exceptions/DestroyException.stub'),
-            "Exceptions/{$moduleName}IndexException.php" =>
-                base_path('stubs/module/Http/Exceptions/IndexException.stub'),
-            "Exceptions/{$moduleName}NotFoundException.php" =>
-                base_path('stubs/module/Http/Exceptions/NotFoundException.stub'),
-            "Exceptions/{$moduleName}SearchException.php" =>
-                base_path('stubs/module/Http/Exceptions/SearchException.stub'),
-            "Exceptions/{$moduleName}StoreException.php" =>
-                base_path('stubs/module/Http/Exceptions/StoreException.stub'),
-            "Exceptions/{$moduleName}UpdateException.php" =>
-                base_path('stubs/module/Http/Exceptions/UpdateException.stub'),
-        ];
-    }
-
-    /**
-     * @param  string  $moduleName
-     * @return array
-     */
-    protected function getRequestStubs(string $moduleName): array
-    {
-        return [
-            "Http/Requests/Create{$moduleName}Request.php" =>
-                base_path('stubs/module/Http/Request/CreateRequest.stub'),
-            "Http/Requests/Delete{$moduleName}Request.php" =>
-                base_path('stubs/module/Http/Request/DeleteRequest.stub'),
-            "Http/Requests/Search{$moduleName}Request.php" =>
-                base_path('stubs/module/Http/Request/SearchRequest.stub'),
-            "Http/Requests/Show{$moduleName}Request.php" =>
-                base_path('stubs/module/Http/Request/ShowRequest.stub'),
-            "Http/Requests/Update{$moduleName}Request.php" =>
-                base_path('stubs/module/Http/Request/UpdateRequest.stub'),
-        ];
-    }
-
-    /**
-     * @param  string  $moduleName
-     * @return void
-     * @throws FileNotFoundException
-     */
     protected function updateRepositoryServiceProvider(string $moduleName): void
     {
         $providerPath = app_path('Providers/RepositoryServiceProvider.php');
@@ -262,11 +283,13 @@ class MakeModuleCommand extends Command
             $existingEntries = trim($matches[1]);
             $newEntry = "        \\{$interface}::class => \\{$repository}::class,";
 
-            if (str_contains($existingEntries, $newEntry)) {
+            // If it’s already there, skip
+            if (Str::contains($existingEntries, $newEntry)) {
                 $this->info("Entry for {$interface} already exists in RepositoryServiceProvider.php");
                 return;
             }
 
+            // Otherwise, add it
             $updatedEntries = $existingEntries ? "{$existingEntries}\n{$newEntry}" : $newEntry;
             $replacement = "protected array \$repositories = [\n{$updatedEntries}\n];";
             $content = preg_replace($pattern, $replacement, $content);
