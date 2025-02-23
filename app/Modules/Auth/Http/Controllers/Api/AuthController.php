@@ -30,7 +30,7 @@ class AuthController extends Controller
                 'password' => bcrypt($request['password']),
             ]
         )) {
-            return response()->json(null, 201);
+            return response()->json('User created successfully', 200);
         }
 
         return response()->json(null, 404);

@@ -36,7 +36,7 @@ services:
     container_name: nginx_module
     restart: unless-stopped
     ports:
-      - "88:80"
+      - "8080:80"
     volumes:
       - ./:/var/www
       - ./.docker/nginx:/etc/nginx/conf.d
