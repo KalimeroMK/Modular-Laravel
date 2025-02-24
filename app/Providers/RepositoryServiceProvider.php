@@ -14,6 +14,9 @@ class RepositoryServiceProvider extends ServiceProvider
     protected array $repositories = [
 UserInterface::class => UserRepository::class,
         \App\Modules\Auth\Interfaces\AuthInterface::class => \App\Modules\Auth\Repositories\AuthRepository::class,
+        \App\Modules\Role\Interfaces\RoleInterface::class => \App\Modules\Role\Repositories\RoleRepository::class,
+        \App\Modules\Permmisions\Interfaces\PermmisionsInterface::class => \App\Modules\Permmisions\Repositories\PermmisionsRepository::class,
+        \App\Modules\Permission\Interfaces\PermissionInterface::class => \App\Modules\Permission\Repositories\PermissionRepository::class,
 ];
 
     /**
