@@ -11,17 +11,12 @@ abstract class DeleteFormRequest extends FormRequest
 
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function validationData(): array
     {
         return array_merge($this->request->all(), [
@@ -32,20 +27,19 @@ abstract class DeleteFormRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
      * @throws FormRequestTableNotFoundException
      */
     public function rules(): array
     {
-        if (!$this->table) {
+        if (! $this->table) {
             throw new FormRequestTableNotFoundException;
         }
 
         return [
             'id' => [
                 'required',
-                Rule::exists($this->table, 'id')
-            ]
+                Rule::exists($this->table, 'id'),
+            ],
         ];
     }
 }

@@ -15,9 +15,6 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap the application services.
-     *
-     * @param Filesystem $files
-     * @return void
      */
     public function boot(Filesystem $files): void
     {
@@ -36,10 +33,6 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Register a module by its name
-     *
-     * @param string $name
-     *
-     * @return void
      */
     protected function registerModule(string $name): void
     {
@@ -57,14 +50,10 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Register the routes for a module by its name
-     *
-     * @param string $module
-     *
-     * @return void
      */
     protected function registerRoutes(string $module): void
     {
-        if (!$this->app->routesAreCached()) {
+        if (! $this->app->routesAreCached()) {
             $data = $this->getRoutingConfig($module);
 
             foreach ($data['types'] as $type) {
@@ -75,10 +64,6 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Collect the needed data to register the routes
-     *
-     * @param string $module
-     *
-     * @return array
      */
     protected function getRoutingConfig(string $module): array
     {
@@ -91,29 +76,22 @@ class ModularServiceProvider extends ServiceProvider
             config('modules.default.structure.controllers', 'Http/Controllers')
         );
 
-        $namespace = $this->app->getNamespace() . trim(
-                Config::get('modules.default.directory') . "\\{$module}\\Http\\" . implode('\\', explode('/', $cp)),
-                '\\'
-            );
+        $namespace = $this->app->getNamespace().trim(
+            Config::get('modules.default.directory')."\\{$module}\\Http\\".implode('\\', explode('/', $cp)),
+            '\\'
+        );
 
         return compact('types', 'path', 'namespace');
     }
 
     /**
      * Registers a single route
-     *
-     * @param string $module
-     * @param string $path
-     * @param string $namespace
-     * @param string $type
-     *
-     * @return void
      */
     protected function registerRoute(string $module, string $path, string $namespace, string $type): void
     {
         if (in_array($type, ['web', 'api'])) {
             $filePath = app_path(
-                Config::get('modules.default.directory') . "/{$module}/{$path}/{$type}.php"
+                Config::get('modules.default.directory')."/{$module}/{$path}/{$type}.php"
             );
 
             if ($this->files->exists($filePath)) {
@@ -124,10 +102,6 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Register the helpers file for a module by its name
-     *
-     * @param string $module
-     *
-     * @return void
      */
     protected function registerHelpers(string $module): void
     {
@@ -138,12 +112,6 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Prepare component registration
-     *
-     * @param  string  $module
-     * @param  string  $component
-     * @param  string  $file
-     *
-     * @return false|string
      */
     protected function prepareComponent(string $module, string $component, string $file = ''): false|string
     {
@@ -153,15 +121,15 @@ class ModularServiceProvider extends ServiceProvider
         );
 
         $resource = rtrim(
-            str_replace('//', '/', app_path(Config::get('modules.default.directory') . "/{$module}/{$path}/{$file}")),
+            str_replace('//', '/', app_path(Config::get('modules.default.directory')."/{$module}/{$path}/{$file}")),
             '/'
         );
 
-        if ($file && !$this->files->exists($resource)) {
+        if ($file && ! $this->files->exists($resource)) {
             return false;
         }
 
-        if (!$file && !$this->files->isDirectory($resource)) {
+        if (! $file && ! $this->files->isDirectory($resource)) {
             return false;
         }
 
@@ -170,28 +138,19 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Register the views for a module by its name
-     *
-     * @param string $module
-     *
-     * @return void
      */
     protected function registerViews(string $module): void
     {
         $viewsPath = config("modules.specific.{$module}.structure.views", config('modules.default.structure.views'));
 
-        $moduleViewsPath = app_path(config('modules.default.directory') . "/{$module}/{$viewsPath}");
+        $moduleViewsPath = app_path(config('modules.default.directory')."/{$module}/{$viewsPath}");
         if ($this->files->isDirectory($moduleViewsPath)) {
             $this->loadViewsFrom($moduleViewsPath, Str::kebab($module));
         }
     }
 
-
     /**
      * Register the translations for a module by its name
-     *
-     * @param string $module
-     *
-     * @return void
      */
     protected function registerTranslations(string $module): void
     {
@@ -200,9 +159,6 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * @param string $module
-     */
     protected function registerFilters(string $module): void
     {
         if ($filters = $this->prepareComponent($module, 'filters')) {
@@ -212,10 +168,6 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Register a translation file namespace.
-     *
-     * @param string $path
-     * @param string $namespace
-     * @return void
      */
     protected function loadFiltersFrom(string $path, string $namespace): void
     {
@@ -226,8 +178,6 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -236,26 +186,22 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Publish modules configuration
-     *
-     * @return void
      */
     protected function registerPublishConfig(): void
     {
         $publishPath = $this->app->configPath('modules.php');
         $this->publishes([$publishPath], 'config');
     }
-    /**
-     * @param string $module
-     */
+
     protected function registerFactories(string $module): void
     {
         Factory::guessFactoryNamesUsing(function (string $module) {
-            return 'Database\\Factories\\' . class_basename($module) . 'Factory';
+            return 'Database\\Factories\\'.class_basename($module).'Factory';
         });
     }
 
     private function registerMigrations(string $name): void
     {
-        $this->loadMigrationsFrom(app_path(Config::get('modules.default.directory') . "/{$name}/database/migrations"));
+        $this->loadMigrationsFrom(app_path(Config::get('modules.default.directory')."/{$name}/database/migrations"));
     }
 }

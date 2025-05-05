@@ -9,10 +9,11 @@ class PermissionFactory extends Factory
 {
     protected $model = Permission::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
-            // Define fake data here
+            'name' => $this->faker->name(),
+            'guard' => 'web',
         ];
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Modules\Role\Http\Controllers\Api\RoleController;
+use Illuminate\Support\Facades\Route;
 
-Route::prefix('api/v1')->group(function () {
+Route::prefix('api/v1')->group(function (): void {
     Route::apiResource('roles', RoleController::class);
 });

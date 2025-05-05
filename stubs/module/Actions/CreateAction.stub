@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Modules\{{module}}\Http\Actions;
+
+class Create{{module}}Action
+{
+    public function execute(array $data)
+    {
+        // Implement create logic here
+    }
+}

@@ -1,0 +1,13 @@
+<?php
+
+namespace {{namespace}};
+
+use {{modelNamespace}};
+
+class {{className}}
+{
+    public function execute($id): ?{{modelName}}
+    {
+        return {{modelName}}::find($id);
+    }
+}

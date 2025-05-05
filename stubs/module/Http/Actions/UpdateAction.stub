@@ -1,0 +1,17 @@
+<?php
+
+namespace {{namespace}};
+
+use {{modelNamespace}};
+use Illuminate\Support\Facades\DB;
+
+class {{className}}
+{
+    public function execute({{modelName}} ${{modelVariable}}, array $data): {{modelName}}
+    {
+        return DB::transaction(function () use (${{modelVariable}}, $data) {
+            ${{modelVariable}}->update($data);
+            return ${{modelVariable}};
+        });
+    }
+}

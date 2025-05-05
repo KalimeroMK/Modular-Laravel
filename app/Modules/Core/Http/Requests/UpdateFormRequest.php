@@ -8,17 +8,12 @@ abstract class UpdateFormRequest extends FormRequest
 
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function validationData(): array
     {
         return array_merge($this->request->all(), [
@@ -28,8 +23,6 @@ abstract class UpdateFormRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     abstract public function rules(): array;
 }

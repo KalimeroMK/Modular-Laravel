@@ -24,7 +24,7 @@ class Create{{module}}Request extends CreateFormRequest
     public function rules(): array
     {
         return [
-            // Add validation rules here
+            // {{validation_rules}}
         ];
     }
 }

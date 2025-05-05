@@ -16,8 +16,7 @@ class {{module}}Resource extends CoreResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            // Add other fields as necessary
+            // {{resource_fields}}
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

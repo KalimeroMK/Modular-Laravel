@@ -1,0 +1,16 @@
+<?php
+
+namespace {{namespace}};
+
+use {{modelNamespace}};
+use Illuminate\Support\Facades\DB;
+
+class {{className}}
+{
+    public function execute({{modelName}} ${{modelVariable}}): void
+    {
+        DB::transaction(function () use (${{modelVariable}}) {
+            ${{modelVariable}}->delete();
+        });
+    }
+}

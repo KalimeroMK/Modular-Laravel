@@ -1,0 +1,16 @@
+<?php
+
+namespace {{namespace}};
+
+use {{modelNamespace}};
+use Illuminate\Support\Facades\DB;
+
+class {{className}}
+{
+    public function execute(array $data): {{modelName}}
+    {
+        return DB::transaction(function () use ($data) {
+            return {{modelName}}::create($data);
+        });
+    }
+}

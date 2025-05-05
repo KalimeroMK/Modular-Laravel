@@ -27,8 +27,8 @@ class GeneralException extends Exception
 
     /**
      * GeneralException constructor.
-     * @param Exception|null $exception
-     * @param array $data
+     *
+     * @param  array  $data
      */
     public function __construct(?Exception $exception = null, $data = [])
     {
@@ -38,33 +38,21 @@ class GeneralException extends Exception
         parent::__construct($this->message());
     }
 
-    /**
-     * @return string
-     */
     public function message(): ?string
     {
         return $this->message;
     }
 
-    /**
-     * @return null
-     */
     public function getException(): null
     {
         return $this->exception;
     }
 
-    /**
-     * @param  null  $exception
-     */
     public function setException(null $exception): void
     {
         $this->exception = $exception;
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data;
@@ -73,7 +61,6 @@ class GeneralException extends Exception
     /**
      * Set the extra data to send with the response.
      *
-     * @param array $data
      *
      * @return $this
      */
@@ -84,17 +71,11 @@ class GeneralException extends Exception
         return $this;
     }
 
-    /**
-     * @param int $code
-     */
     public function setCode(int $code): void
     {
         $this->code = $code;
     }
 
-    /**
-     * @param string $message
-     */
     public function setMessage(string $message): void
     {
         $this->message = $message;
@@ -103,20 +84,15 @@ class GeneralException extends Exception
     public function render($request): JsonResponse
     {
         $this->isLog() ? $this->renderLog() : null;
+
         return $this->prepareResponse();
     }
 
-    /**
-     * @return bool
-     */
     public function isLog(): bool
     {
         return $this->log;
     }
 
-    /**
-     * @param bool $log
-     */
     public function setLog(bool $log): void
     {
         $this->log = $log;
@@ -130,9 +106,6 @@ class GeneralException extends Exception
         Log::error(print_r($this->getLogResponse(), true));
     }
 
-    /**
-     * @return array
-     */
     public function getLogResponse(): array
     {
         return [
@@ -143,33 +116,21 @@ class GeneralException extends Exception
         ];
     }
 
-    /**
-     * @return string
-     */
     public function getLogMessage(): string
     {
         return $this->exception ? $this->exception->getMessage() : '';
     }
 
-    /**
-     * @param string $logMessage
-     */
     public function setLogMessage(string $logMessage): void
     {
         $this->logMessage = $logMessage;
     }
 
-    /**
-     * @return int|string
-     */
     public function line(): int|string
     {
         return $this->exception ? $this->exception->getLine() : 'none';
     }
 
-    /**
-     * @return int|string
-     */
     public function file(): int|string
     {
         return $this->exception ? $this->exception->getFile() : 'none';
@@ -183,9 +144,6 @@ class GeneralException extends Exception
         return response()->json($this->getResponse());
     }
 
-    /**
-     * @return array
-     */
     public function getResponse(): array
     {
         return [
@@ -193,5 +151,4 @@ class GeneralException extends Exception
             'message' => $this->message(),
         ];
     }
-
 }

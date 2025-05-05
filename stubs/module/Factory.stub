@@ -12,7 +12,7 @@ class {{module}}Factory extends Factory
     public function definition()
     {
         return [
-            // Define fake data here
+            {{factory_fields}}
         ];
     }
 }

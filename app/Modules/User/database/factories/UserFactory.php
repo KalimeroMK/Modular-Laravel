@@ -18,10 +18,10 @@ class UserFactory extends Factory
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => Carbon::now(),
-            'password' => Hash::make('password'),// password
+            'password' => Hash::make('password'), // password
             'remember_token' => Str::random(10),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-            ];
+        ];
     }
 }

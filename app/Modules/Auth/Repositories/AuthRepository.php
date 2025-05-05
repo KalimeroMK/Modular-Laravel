@@ -2,45 +2,26 @@
 
 namespace App\Modules\Auth\Repositories;
 
-use App\Modules\Core\Interfaces\SearchInterface;
-use App\Modules\Core\Repositories\Repository;
 use App\Modules\Auth\Exceptions\AuthSearchException;
 use App\Modules\Auth\Interfaces\AuthInterface;
-use App\Modules\Auth\Models\Auth;
-use Exception;
-use Illuminate\Support\Arr;
+use App\Modules\Core\Interfaces\SearchInterface;
+use App\Modules\Core\Repositories\Repository;
+use App\Modules\User\Models\User;
 
 class AuthRepository extends Repository implements AuthInterface, SearchInterface
 {
     /**
      * @var string
      */
-    public $model = Auth::class;
+    public $model = User::class;
 
     /**
-     * Perform a search on the resource.
-     *
-     * @param array $request
-     * @return mixed
-     * @throws AuthSearchException
+     * The SearchException class to use for search errors.
      */
-    public function search(array $request): mixed
+    protected string $searchException = AuthSearchException::class;
+
+    public function findByEmail(string $email): mixed
     {
-        try {
-            $query = $this->model::filterBy($request);
-
-            $query->orderBy(
-                Arr::get($request, 'order_by', 'id'),
-                Arr::get($request, 'sort', 'desc')
-            );
-
-            if (Arr::has($request, 'list') && (bool)Arr::get($request, 'list') === true) {
-                return $query->get();
-            }
-
-            return $query->paginate(Arr::get($request, 'per_page', (new $this->model)->getPerPage()));
-        } catch (Exception $exception) {
-            throw new AuthSearchException($exception);
-        }
+        return $this->findBy('email', $email);
     }
 }

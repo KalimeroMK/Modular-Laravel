@@ -2,59 +2,60 @@
 
 namespace App\Modules\Auth\Http\Controllers\Api;
 
+use App\Modules\Auth\Exceptions\AuthNotFoundException;
+use App\Modules\Auth\Exceptions\AuthStoreException;
+use App\Modules\Auth\Http\Actions\CreateAuthAction;
+use App\Modules\Auth\Http\Actions\FindAuthByEmailAction;
+use App\Modules\Auth\Http\Actions\GetAuthenticatedUserAction;
+use App\Modules\Auth\Http\Actions\LogoutAuthAction;
+use App\Modules\Auth\Http\Actions\ResetPasswordAction;
+use App\Modules\Auth\Http\Actions\SendPasswordResetLinkEmailAction;
+use App\Modules\Auth\Http\DTOs\CreateAuthDTO;
 use App\Modules\Auth\Http\Requests\CreateAuthRequest;
 use App\Modules\Auth\Http\Requests\LoginAuthRequest;
-use App\Modules\User\Models\User;
-use Illuminate\Auth\Events\PasswordReset;
+use App\Modules\Core\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Modules\Core\Http\Controllers\ApiController as Controller;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
     /**
-     * @param  CreateAuthRequest  $request
-     *
      * @return JsonResponse
+     *
+     * @throws AuthStoreException
      */
     public function signup(CreateAuthRequest $request)
     {
-        if (User::create(
-            [
-                'name'     => $request['name'],
-                'email'    => $request['email'],
-                'password' => bcrypt($request['password']),
-            ]
-        )) {
-            return response()->json('User created successfully', 200);
-        }
+        $dto = CreateAuthDTO::fromArray($request->validated());
+        $result = app(CreateAuthAction::class)->execute($dto);
 
-        return response()->json(null, 404);
+        return $result
+            ? response()->json('User created successfully', 200)
+            : response()->json(null, 404);
     }
 
     /**
-     * @param  LoginAuthRequest  $request
-     *
      * @return JsonResponse
+     *
+     * @throws AuthNotFoundException
      */
     public function login(LoginAuthRequest $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $credentials = $request->validated();
+        $user = app(FindAuthByEmailAction::class)->execute($credentials['email']);
 
-        if ( ! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
         return response()->json([
-            'user'         => $user,
-            'access_token' => $user->createToken($request->email)->plainTextToken,
-        ], 200);
+            'user' => $user,
+            'access_token' => $user->createToken($credentials['email'])->plainTextToken,
+        ]);
     }
 
     /*
@@ -62,10 +63,8 @@ class AuthController extends Controller
     */
     public function logout(Request $request)
     {
-        // Revoke the token that was used to authenticate the current request
-        $request->user()->currentAccessToken()->delete();
+        app(LogoutAuthAction::class)->execute($request);
 
-        //$request->user->tokens()->delete(); // use this to revoke all tokens (logout from all devices)
         return response()->json(null, 200);
     }
 
@@ -74,53 +73,20 @@ class AuthController extends Controller
     */
     public function getAuthenticatedUser(Request $request)
     {
-        return $request->user();
+        return app(GetAuthenticatedUserAction::class)->execute($request);
     }
 
     public function sendPasswordResetLinkEmail(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
+        $result = app(SendPasswordResetLinkEmailAction::class)->execute($request);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => __($status)], 200);
-        } else {
-            throw ValidationException::withMessages([
-                'email' => __($status),
-            ]);
-        }
+        return response()->json($result, 200);
     }
 
     public function resetPassword(Request $request)
     {
-        $request->validate([
-            'token'    => 'required',
-            'email'    => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
+        $result = app(ResetPasswordAction::class)->execute($request);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                ])->setRememberToken(Str::random(60));
-
-                $user->save();
-
-                event(new PasswordReset($user));
-            }
-        );
-
-        if ($status == Password::PASSWORD_RESET) {
-            return response()->json(['message' => __($status)], 200);
-        } else {
-            throw ValidationException::withMessages([
-                'email' => __($status),
-            ]);
-        }
+        return response()->json($result, 200);
     }
 }
