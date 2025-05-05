@@ -32,7 +32,7 @@ Modular Laravel is a boilerplate and code generator for quickly scaffolding feat
 
 1. **Clone the repository and install dependencies:**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/KalimeroMK/Modular-Laravel>
    composer install
    cp .env.example .env
    php artisan key:generate
