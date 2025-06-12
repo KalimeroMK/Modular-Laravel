@@ -2,7 +2,9 @@
 
 namespace App\Modules\{{module}}\Interfaces;
 
-interface {{module}}Interface
+use App\Modules\Core\Interfaces\RepositoryInterface;
+
+interface {{module}}Interface extends RepositoryInterface
 {
-    // Define your interface methods here
+    // Add module-specific method signatures if needed
 }

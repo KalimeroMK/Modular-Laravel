@@ -2,25 +2,15 @@
 
 namespace App\Modules\Role\Http\Actions;
 
-use App\Modules\Role\Exceptions\RoleDestroyException;
 use App\Modules\Role\Interfaces\RoleInterface;
-use Exception;
+use App\Modules\Role\Models\Role;
 
 class DeleteRoleAction
 {
-    protected RoleInterface $roleRepository;
+    public function __construct(protected RoleInterface $repository) {}
 
-    public function __construct(RoleInterface $roleRepository)
+    public function execute(Role $role): void
     {
-        $this->roleRepository = $roleRepository;
-    }
-
-    public function execute(int $id): void
-    {
-        try {
-            $this->roleRepository->delete($id);
-        } catch (Exception $exception) {
-            throw new RoleDestroyException($exception);
-        }
+        $this->repository->delete($role->id);
     }
 }

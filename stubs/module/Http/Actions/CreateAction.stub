@@ -1,16 +1,17 @@
 <?php
 
-namespace {{namespace}};
+namespace App\Modules\{{ module }}\Http\Actions;
 
-use {{modelNamespace}};
-use Illuminate\Support\Facades\DB;
+use App\Modules\{{ module }}\Http\DTOs\Create{{ class }}DTO;
+use App\Modules\{{ module }}\Interfaces\{{ class }}Interface;
+use App\Modules\{{ module }}\Models\{{ class }};
 
-class {{className}}
+class Create{{ class }}Action
 {
-    public function execute(array $data): {{modelName}}
+    public function __construct(protected {{ class }}Interface $repository) {}
+
+    public function execute(Create{{ class }}DTO $dto): {{ class }}
     {
-        return DB::transaction(function () use ($data) {
-            return {{modelName}}::create($data);
-        });
+        return $this->repository->create($dto->toArray());
     }
 }

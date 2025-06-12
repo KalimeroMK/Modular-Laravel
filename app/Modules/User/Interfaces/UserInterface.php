@@ -2,8 +2,9 @@
 
 namespace App\Modules\User\Interfaces;
 
-interface UserInterface
+use App\Modules\Core\Interfaces\RepositoryInterface;
+
+interface UserInterface extends RepositoryInterface
 {
-    public function getAll(): mixed;
-    public function findById(int $id): mixed;
+
 }

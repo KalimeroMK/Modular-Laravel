@@ -2,25 +2,16 @@
 
 namespace App\Modules\Role\Http\Actions;
 
-use App\Modules\Role\Exceptions\RoleNotFoundException;
 use App\Modules\Role\Interfaces\RoleInterface;
-use Exception;
+use App\Modules\Role\Models\Role;
+use Illuminate\Database\Eloquent\Model;
 
 class GetRoleByIdAction
 {
-    protected RoleInterface $roleRepository;
+    public function __construct(protected RoleInterface $repository) {}
 
-    public function __construct(RoleInterface $roleRepository)
+    public function execute(Role $role): Model
     {
-        $this->roleRepository = $roleRepository;
-    }
-
-    public function execute(int $id): mixed
-    {
-        try {
-            return $this->roleRepository->findById($id);
-        } catch (Exception $exception) {
-            throw new RoleNotFoundException($exception);
-        }
+        return $this->repository->findOrFail($role->id);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Modules\Permission\Http\Requests;
 
-use App\Modules\Core\Http\Requests\DeleteFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class DeletePermissionRequest extends DeleteFormRequest
+class DeletePermissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

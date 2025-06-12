@@ -3,17 +3,21 @@
 namespace App\Modules\User\Http\Actions;
 
 use App\Modules\User\Http\DTOs\UpdateUserDTO;
+use App\Modules\User\Interfaces\UserInterface;
 use App\Modules\User\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
 class UpdateUserAction
 {
-    public function execute(User $user, UpdateUserDTO $dto): User
+    public function __construct(protected UserInterface $repository) {
+
+    }
+
+    public function execute(User $user, UpdateUserDTO $dto): Model
     {
-        $user->update([
+        return $this->repository->update($user->id, [
             'name' => $dto->name,
             'email' => $dto->email,
         ]);
-
-        return $user->fresh();
     }
 }

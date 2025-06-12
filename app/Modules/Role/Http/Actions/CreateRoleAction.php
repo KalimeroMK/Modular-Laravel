@@ -2,26 +2,18 @@
 
 namespace App\Modules\Role\Http\Actions;
 
-use App\Modules\Role\Exceptions\RoleStoreException;
 use App\Modules\Role\Http\DTOs\CreateRoleDTO;
 use App\Modules\Role\Interfaces\RoleInterface;
-use Exception;
+use App\Modules\Role\Models\Role;
 
 class CreateRoleAction
 {
-    protected RoleInterface $roleRepository;
+    public function __construct(protected RoleInterface $repository) {}
 
-    public function __construct(RoleInterface $roleRepository)
+    public function execute(CreateRoleDTO $dto): Role
     {
-        $this->roleRepository = $roleRepository;
-    }
-
-    public function execute(CreateRoleDTO $dto): mixed
-    {
-        try {
-            return $this->roleRepository->create($dto->toArray());
-        } catch (Exception $exception) {
-            throw new RoleStoreException($exception);
-        }
+        return $this->repository->create([
+            'name' => $dto->name,
+        ]);
     }
 }

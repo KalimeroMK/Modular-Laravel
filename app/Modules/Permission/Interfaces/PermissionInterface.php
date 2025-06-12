@@ -2,7 +2,9 @@
 
 namespace App\Modules\Permission\Interfaces;
 
-interface PermissionInterface
+use App\Modules\Core\Interfaces\RepositoryInterface;
+
+interface PermissionInterface extends RepositoryInterface
 {
-    // Define your interface methods here
+    // Add custom permission-specific methods if needed
 }

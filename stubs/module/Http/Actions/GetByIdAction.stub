@@ -5,12 +5,12 @@ namespace App\Modules\{{ module }}\Http\Actions;
 use App\Modules\{{ module }}\Interfaces\{{ class }}Interface;
 use App\Modules\{{ module }}\Models\{{ class }};
 
-class Delete{{ class }}Action
+class GetById{{ class }}Action
 {
     public function __construct(protected {{ class }}Interface $repository) {}
 
-    public function execute({{ class }} $model): bool
+    public function execute(int $id): {{ class }}
     {
-        return $model->delete();
+        return $this->repository->find($id);
     }
 }

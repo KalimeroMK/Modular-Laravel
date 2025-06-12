@@ -2,21 +2,21 @@
 
 namespace App\Modules\Role\Http\Resources;
 
-use App\Modules\Core\Http\Resources\CoreResource;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class RoleResource extends CoreResource
+class RoleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      */
     public function toArray($request): array
     {
         return [
             'id' => $this->id,
             'name' => $this->name,
-            // Add other fields as necessary
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

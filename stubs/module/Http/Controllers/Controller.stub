@@ -1,91 +1,51 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\Controllers;
+namespace App\Modules\{{module}}\Http\Controllers\Api;
 
-use App\Modules\Core\Http\Controllers\Controller;
+use App\Modules\Core\Http\Controllers\ApiController;
 use App\Modules\{{module}}\Models\{{module}};
 use App\Modules\{{module}}\Http\Requests\Create{{module}}Request;
 use App\Modules\{{module}}\Http\Requests\Update{{module}}Request;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
+use App\Modules\{{module}}\Http\Resources\{{module}}Resource;
+use App\Modules\{{module}}\Http\DTOs\Create{{module}}DTO;
+use App\Modules\{{module}}\Http\DTOs\Update{{module}}DTO;
+use App\Modules\{{module}}\Http\Actions\Create{{module}}Action;
+use App\Modules\{{module}}\Http\Actions\Update{{module}}Action;
+use App\Modules\{{module}}\Http\Actions\Delete{{module}}Action;
+use App\Modules\{{module}}\Http\Actions\GetAll{{module}}Action;
+use App\Modules\{{module}}\Http\Actions\Get{{module}}ByIdAction;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
-
-class {{module}}Controller extends Controller
+class {{module}}Controller extends ApiController
 {
-     /**
-         * @return view
-         */
-        public function index():view
+    public function index(GetAll{{module}}Action $action): ResourceCollection
     {
-        $items = {{module}}::all(); // Fetch all records
-        return view('{{module_lower}}::index', compact('items'));
+        return {{module}}Resource::collection($action->execute());
     }
 
-  /**
-      * Show the form for creating a new resource.
-      * @return view
-      */
-     public function create():view
+    public function show({{module}} ${{ moduleVar }}, Get{{module}}ByIdAction $action): JsonResponse
     {
-        return view('{{module}}::create');
+        return response()->json(new {{module}}Resource($action->execute(${{ moduleVar }})));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  Create{{module}}Request  $request
-     * @return View
-     */
-    public function store(Create{{module}}Request $request): view
+    public function store(Create{{module}}Request $request, Create{{module}}Action $action): JsonResponse
     {
-        ${{module_lower}} = {{module}}::create($request->validated());
-        return view('{{module_lower}}::show', compact('{{module_lower}}'));
+        $dto = Create{{module}}DTO::fromRequest($request);
+        $model = $action->execute($dto);
+        return response()->json(new {{module}}Resource($model), 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  {{module}} ${{module_lower}}
-     * @return view
-     */
-    public function show({{module}} ${{module_lower}}) : view
+    public function update({{module}} ${{ moduleVar }}, Update{{module}}Request $request, Update{{module}}Action $action): JsonResponse
     {
-        return view('{{module_lower}}::show', compact('{{module_lower}}'));
+        $dto = Update{{module}}DTO::fromRequest($request);
+        $model = $action->execute(${{ moduleVar }}, $dto);
+        return response()->json(new {{module}}Resource($model));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  {{module}} ${{module_lower}}
-     * @return view
-     */
-    public function edit({{module}} ${{module_lower}}): view
+    public function destroy({{module}} ${{ moduleVar }}, Delete{{module}}Action $action): JsonResponse
     {
-        return view('{{module_lower}}::edit', compact('{{module_lower}}'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Update{{module}}Request  $request
-     * @param  {{module}} ${{module_lower}}
-     * @return RedirectResponse
-     */
-    public function update(Update{{module}}Request $request, {{module}} ${{module_lower}}): RedirectResponse
-    {
-        ${{module_lower}}->update($request->validated());
-        return redirect()->route('${{module_lower}}.index');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  {{module}} ${{module_lower}}
-     * @return RedirectResponse
-     */
-    public function destroy({{module}} ${{module_lower}}): RedirectResponse
-    {
-        ${{module_lower}}->delete();
-        return redirect()->route('${{module_lower}}.index');
+        $action->execute(${{ moduleVar }});
+        return response()->json(['message' => '{{module}} deleted successfully.']);
     }
 }

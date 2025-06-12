@@ -2,9 +2,9 @@
 
 namespace App\Modules\Permission\Http\Requests;
 
-use App\Modules\Core\Http\Requests\SearchFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class SearchPermissionRequest extends SearchFormRequest
+class SearchPermissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

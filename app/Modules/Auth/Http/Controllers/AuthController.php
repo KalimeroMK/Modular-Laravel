@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Modules\Auth\Http\Controllers\Api;
+namespace App\Modules\Auth\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Modules\Auth\Http\Actions\LoginAction;
 use App\Modules\Auth\Http\Actions\LogoutAction;
 use App\Modules\Auth\Http\Actions\MeAction;
 use App\Modules\Auth\Http\Actions\RegisterAction;
-use App\Modules\Auth\Http\Actions\SendPasswordResetLinkAction;
 use App\Modules\Auth\Http\Actions\ResetPasswordAction;
+use App\Modules\Auth\Http\Actions\SendPasswordResetLinkAction;
 use App\Modules\Auth\Http\DTOs\LoginDTO;
 use App\Modules\Auth\Http\DTOs\RegisterDTO;
 use App\Modules\Auth\Http\Requests\LoginRequest;
 use App\Modules\Auth\Http\Requests\RegisterRequest;
-use App\Modules\Auth\Http\Requests\SendResetLinkRequest;
 use App\Modules\Auth\Http\Requests\ResetPasswordRequest;
-use App\Modules\Core\Http\Controllers\ApiController;
+use App\Modules\Auth\Http\Requests\SendResetLinkRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-class AuthController extends ApiController
+class AuthController extends Controller
 {
     public function login(LoginRequest $request, LoginAction $action): JsonResponse
     {

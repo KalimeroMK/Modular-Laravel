@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Modules\User\Http\Controllers\Api;
+namespace App\Modules\User\Http\Controllers;
 
+use App\Modules\User\Http\Actions\CreateUserAction;
+use App\Modules\User\Http\Actions\DeleteUserAction;
 use App\Modules\User\Http\Actions\GetAllUserAction;
 use App\Modules\User\Http\Actions\GetUserByIdAction;
-use App\Modules\User\Http\Requests\CreateUserRequest;
-use App\Modules\User\Http\Requests\UpdateUserRequest;
-use App\Modules\User\Http\Actions\CreateUserAction;
 use App\Modules\User\Http\Actions\UpdateUserAction;
-use App\Modules\User\Http\Actions\DeleteUserAction;
 use App\Modules\User\Http\DTOs\CreateUserDTO;
 use App\Modules\User\Http\DTOs\UpdateUserDTO;
+use App\Modules\User\Http\Requests\CreateUserRequest;
+use App\Modules\User\Http\Requests\UpdateUserRequest;
 use App\Modules\User\Http\Resources\UserResource;
 use App\Modules\User\Models\User;
 use Illuminate\Http\JsonResponse;

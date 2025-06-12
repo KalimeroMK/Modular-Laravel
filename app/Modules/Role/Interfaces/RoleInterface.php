@@ -2,7 +2,9 @@
 
 namespace App\Modules\Role\Interfaces;
 
-interface RoleInterface
+use App\Modules\Core\Interfaces\RepositoryInterface;
+
+interface RoleInterface extends RepositoryInterface
 {
-    // Define your interface methods here
+
 }

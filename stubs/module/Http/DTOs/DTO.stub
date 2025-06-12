@@ -2,18 +2,18 @@
 
 namespace App\Modules\{{module}}\Http\DTOs;
 
-class {{module}}DTO
-{
-    {{fields}}
+use Illuminate\Http\Request;
 
+readonly class {{type}}{{module}}DTO
+{
     public function __construct(
         {{constructor_args}}
-    ) {
-        {{constructor_body}}
-    }
+    ) {}
 
-    public static function fromArray(array $data): self
+    public static function fromRequest(Request $request): self
     {
+        $data = $request->validated();
+
         return new self(
             {{from_array_args}}
         );

@@ -3,10 +3,10 @@
 namespace App\Modules\{{module}}\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Modules\Core\Models\Core;
+use Illuminate\Database\Eloquent\Model;
 use App\Modules\{{module}}\database\factories\{{module}}Factory;
 
-class {{module}} extends Core
+class {{module}} extends Model
 {
     /** @use HasFactory<{{module}}Factory> */
     use HasFactory;

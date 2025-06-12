@@ -1,17 +1,18 @@
 <?php
 
-namespace {{namespace}};
+namespace App\Modules\{{ module }}\Http\Actions;
 
-use {{modelNamespace}};
-use Illuminate\Support\Facades\DB;
+use App\Modules\{{ module }}\Http\DTOs\Update{{ class }}DTO;
+use App\Modules\{{ module }}\Interfaces\{{ class }}Interface;
+use App\Modules\{{ module }}\Models\{{ class }};
 
-class {{className}}
+class Update{{ class }}Action
 {
-    public function execute({{modelName}} ${{modelVariable}}, array $data): {{modelName}}
+    public function __construct(protected {{ class }}Interface $repository) {}
+
+    public function execute(Update{{ class }}DTO $dto, {{ class }} $model): {{ class }}
     {
-        return DB::transaction(function () use (${{modelVariable}}, $data) {
-            ${{modelVariable}}->update($data);
-            return ${{modelVariable}};
-        });
+        $model->update($dto->toArray());
+        return $model;
     }
 }

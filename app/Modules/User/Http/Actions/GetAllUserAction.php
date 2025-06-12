@@ -2,13 +2,15 @@
 
 namespace App\Modules\User\Http\Actions;
 
-use App\Modules\User\Models\User;
+use App\Modules\User\Interfaces\UserInterface;
 use Illuminate\Support\Collection;
 
 class GetAllUserAction
 {
+    public function __construct(protected UserInterface $repository) {}
+
     public function execute(): Collection
     {
-        return User::all();
+        return $this->repository->all();
     }
 }

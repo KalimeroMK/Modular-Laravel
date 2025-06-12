@@ -2,31 +2,20 @@
 
 namespace App\Modules\Role\Http\DTOs;
 
-class UpdateRoleDTO
+use Illuminate\Http\Request;
+
+readonly class UpdateRoleDTO
 {
-    public string $name;
+    public function __construct(
+        public string $name
+    ) {}
 
-    public string $description;
-
-    public function __construct(string $name, string $description)
+    public static function fromRequest(Request $request): self
     {
-        $this->name = $name;
-        $this->description = $description;
-    }
+        $data = $request->validated();
 
-    public static function fromArray(array $data): self
-    {
         return new self(
-            $data['name'] ?? '',
-            $data['description'] ?? ''
+            name: $data['name']
         );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'name' => $this->name,
-            'description' => $this->description,
-        ];
     }
 }

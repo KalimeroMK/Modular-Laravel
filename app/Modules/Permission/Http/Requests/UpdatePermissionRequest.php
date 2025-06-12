@@ -2,9 +2,9 @@
 
 namespace App\Modules\Permission\Http\Requests;
 
-use App\Modules\Core\Http\Requests\UpdateFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePermissionRequest extends UpdateFormRequest
+class UpdatePermissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,7 +21,6 @@ class UpdatePermissionRequest extends UpdateFormRequest
     {
         return [
             'id' => ['required', 'exists:permissions,id'],
-            // Add other validation rules for update
         ];
     }
 }

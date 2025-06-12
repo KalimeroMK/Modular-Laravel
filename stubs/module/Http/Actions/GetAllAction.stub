@@ -3,14 +3,13 @@
 namespace App\Modules\{{ module }}\Http\Actions;
 
 use App\Modules\{{ module }}\Interfaces\{{ class }}Interface;
-use App\Modules\{{ module }}\Models\{{ class }};
 
-class Delete{{ class }}Action
+class GetAll{{ class }}Action
 {
     public function __construct(protected {{ class }}Interface $repository) {}
 
-    public function execute({{ class }} $model): bool
+    public function execute(): \Illuminate\Support\Collection
     {
-        return $model->delete();
+        return $this->repository->all();
     }
 }

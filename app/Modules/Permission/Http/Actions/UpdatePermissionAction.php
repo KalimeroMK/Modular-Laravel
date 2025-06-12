@@ -2,26 +2,16 @@
 
 namespace App\Modules\Permission\Http\Actions;
 
-use App\Modules\Permission\Exceptions\PermissionUpdateException;
 use App\Modules\Permission\Http\DTOs\UpdatePermissionDTO;
 use App\Modules\Permission\Interfaces\PermissionInterface;
-use Exception;
+use App\Modules\Permission\Models\Permission;
 
 class UpdatePermissionAction
 {
-    protected PermissionInterface $permissionRepository;
+    public function __construct(protected PermissionInterface $repository) {}
 
-    public function __construct(PermissionInterface $permissionRepository)
+    public function execute(Permission $permission, UpdatePermissionDTO $dto): Permission
     {
-        $this->permissionRepository = $permissionRepository;
-    }
-
-    public function execute(int $id, UpdatePermissionDTO $dto): mixed
-    {
-        try {
-            return $this->permissionRepository->update($id, $dto->toArray());
-        } catch (Exception $exception) {
-            throw new PermissionUpdateException($exception);
-        }
+        return $this->repository->update($permission->id, $dto->toArray());
     }
 }

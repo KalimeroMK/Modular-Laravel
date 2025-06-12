@@ -2,22 +2,20 @@
 
 namespace App\Modules\Role\Http\DTOs;
 
-class SearchRoleDTO
+use Illuminate\Http\Request;
+
+readonly class SearchRoleDTO
 {
-    public string $query;
+    public function __construct(
+        public ?string $name = null
+    ) {}
 
-    public function __construct(string $query)
+    public static function fromRequest(Request $request): self
     {
-        $this->query = $query;
-    }
+        $data = $request->validated();
 
-    public static function fromArray(array $data): self
-    {
-        return new self($data['query'] ?? '');
-    }
-
-    public function toArray(): array
-    {
-        return ['query' => $this->query];
+        return new self(
+            name: $data['name'] ?? null
+        );
     }
 }

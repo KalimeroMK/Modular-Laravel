@@ -2,23 +2,14 @@
 
 namespace App\Modules\{{module}}\Repositories;
 
-use App\Modules\Core\Interfaces\SearchInterface;
-use App\Modules\Core\Repositories\Repository;
-use App\Modules\{{module}}\Exceptions\{{module}}SearchException;
+use App\Modules\Core\Repositories\EloquentRepository;
 use App\Modules\{{module}}\Interfaces\{{module}}Interface;
 use App\Modules\{{module}}\Models\{{module}};
-use Exception;
-use Illuminate\Support\Arr;
 
-class {{module}}Repository extends Repository implements {{module}}Interface, SearchInterface
+class {{module}}Repository extends EloquentRepository implements {{module}}Interface
 {
-    /**
-     * @var string
-     */
-    public $model = {{module}}::class;
-
-    /**
-     * The SearchException class to use for search errors.
-     */
-    protected string $searchException = {{module}}SearchException::class;
+    public function __construct({{module}} $model)
+    {
+        parent::__construct($model);
+    }
 }

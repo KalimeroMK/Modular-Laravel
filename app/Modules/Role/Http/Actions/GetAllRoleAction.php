@@ -2,25 +2,15 @@
 
 namespace App\Modules\Role\Http\Actions;
 
-use App\Modules\Role\Exceptions\RoleIndexException;
 use App\Modules\Role\Interfaces\RoleInterface;
-use Exception;
+use Illuminate\Support\Collection;
 
 class GetAllRoleAction
 {
-    protected RoleInterface $roleRepository;
+    public function __construct(protected RoleInterface $repository) {}
 
-    public function __construct(RoleInterface $roleRepository)
+    public function execute(): Collection
     {
-        $this->roleRepository = $roleRepository;
-    }
-
-    public function execute(): mixed
-    {
-        try {
-            return $this->roleRepository->findAll();
-        } catch (Exception $exception) {
-            throw new RoleIndexException($exception);
-        }
+        return $this->repository->all();
     }
 }

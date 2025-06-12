@@ -2,9 +2,9 @@
 
 namespace App\Modules\Permission\Http\Requests;
 
-use App\Modules\Core\Http\Requests\ShowFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class ShowPermissionRequest extends ShowFormRequest
+class ShowPermissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

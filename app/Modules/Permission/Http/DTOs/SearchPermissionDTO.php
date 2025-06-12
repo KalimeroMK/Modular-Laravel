@@ -2,22 +2,24 @@
 
 namespace App\Modules\Permission\Http\DTOs;
 
-class SearchPermissionDTO
+use Illuminate\Http\Request;
+
+readonly class SearchPermissionDTO
 {
-    public string $query;
+    public function __construct(
+        public ?string $name = null,
+    ) {}
 
-    public function __construct(string $query)
+    public static function fromRequest(Request $request): self
     {
-        $this->query = $query;
-    }
-
-    public static function fromArray(array $data): self
-    {
-        return new self($data['query'] ?? '');
+        $data = $request->validated();
+        return new self(
+            name: $data['name'] ?? null
+        );
     }
 
     public function toArray(): array
     {
-        return ['query' => $this->query];
+        return ['name' => $this->name];
     }
 }

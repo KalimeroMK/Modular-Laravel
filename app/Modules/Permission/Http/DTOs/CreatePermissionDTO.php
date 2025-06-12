@@ -2,31 +2,24 @@
 
 namespace App\Modules\Permission\Http\DTOs;
 
-class CreatePermissionDTO
+use Illuminate\Http\Request;
+
+readonly class CreatePermissionDTO
 {
-    public string $name;
+    public function __construct(
+        public string $name,
+    ) {}
 
-    public string $description;
-
-    public function __construct(string $name, string $description)
+    public static function fromRequest(Request $request): self
     {
-        $this->name = $name;
-        $this->description = $description;
-    }
-
-    public static function fromArray(array $data): self
-    {
+        $data = $request->validated();
         return new self(
-            $data['name'] ?? '',
-            $data['description'] ?? ''
+            name: $data['name']
         );
     }
 
     public function toArray(): array
     {
-        return [
-            'name' => $this->name,
-            'description' => $this->description,
-        ];
+        return ['name' => $this->name];
     }
 }

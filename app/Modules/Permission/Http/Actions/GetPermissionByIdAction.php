@@ -2,25 +2,15 @@
 
 namespace App\Modules\Permission\Http\Actions;
 
-use App\Modules\Permission\Exceptions\PermissionNotFoundException;
 use App\Modules\Permission\Interfaces\PermissionInterface;
-use Exception;
+use App\Modules\Permission\Models\Permission;
 
 class GetPermissionByIdAction
 {
-    protected PermissionInterface $permissionRepository;
+    public function __construct(protected PermissionInterface $repository) {}
 
-    public function __construct(PermissionInterface $permissionRepository)
+    public function execute(Permission $permission): Permission
     {
-        $this->permissionRepository = $permissionRepository;
-    }
-
-    public function execute(int $id): mixed
-    {
-        try {
-            return $this->permissionRepository->findById($id);
-        } catch (Exception $exception) {
-            throw new PermissionNotFoundException($exception);
-        }
+        return $this->repository->findById($permission->id);
     }
 }

@@ -2,25 +2,15 @@
 
 namespace App\Modules\Permission\Http\Actions;
 
-use App\Modules\Permission\Exceptions\PermissionDestroyException;
 use App\Modules\Permission\Interfaces\PermissionInterface;
-use Exception;
+use App\Modules\Permission\Models\Permission;
 
 class DeletePermissionAction
 {
-    protected PermissionInterface $permissionRepository;
+    public function __construct(protected PermissionInterface $repository) {}
 
-    public function __construct(PermissionInterface $permissionRepository)
+    public function execute(Permission $permission): void
     {
-        $this->permissionRepository = $permissionRepository;
-    }
-
-    public function execute(int $id): void
-    {
-        try {
-            $this->permissionRepository->delete($id);
-        } catch (Exception $exception) {
-            throw new PermissionDestroyException($exception);
-        }
+        $this->repository->delete($permission->id);
     }
 }

@@ -2,21 +2,14 @@
 
 namespace App\Modules\Permission\Repositories;
 
-use App\Modules\Core\Interfaces\SearchInterface;
-use App\Modules\Core\Repositories\Repository;
-use App\Modules\Permission\Exceptions\PermissionSearchException;
+use App\Modules\Core\Repositories\EloquentRepository;
 use App\Modules\Permission\Interfaces\PermissionInterface;
 use App\Modules\Permission\Models\Permission;
 
-class PermissionRepository extends Repository implements PermissionInterface, SearchInterface
+class PermissionRepository extends EloquentRepository implements PermissionInterface
 {
-    /**
-     * @var string
-     */
-    public $model = Permission::class;
-
-    /**
-     * The SearchException class to use for search errors.
-     */
-    protected string $searchException = PermissionSearchException::class;
+    public function __construct(Permission $model)
+    {
+        parent::__construct($model);
+    }
 }
