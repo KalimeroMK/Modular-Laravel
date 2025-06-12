@@ -2,26 +2,18 @@
 
 namespace App\Modules\User\Http\Actions;
 
-use App\Modules\User\Exceptions\UserUpdateException;
 use App\Modules\User\Http\DTOs\UpdateUserDTO;
-use App\Modules\User\Interfaces\UserInterface;
-use Exception;
+use App\Modules\User\Models\User;
 
 class UpdateUserAction
 {
-    protected UserInterface $userRepository;
-
-    public function __construct(UserInterface $userRepository)
+    public function execute(User $user, UpdateUserDTO $dto): User
     {
-        $this->userRepository = $userRepository;
-    }
+        $user->update([
+            'name' => $dto->name,
+            'email' => $dto->email,
+        ]);
 
-    public function execute(int $id, UpdateUserDTO $dto): mixed
-    {
-        try {
-            return $this->userRepository->update($id, $dto->toArray());
-        } catch (Exception $exception) {
-            throw new UserUpdateException($exception);
-        }
+        return $user->fresh();
     }
 }

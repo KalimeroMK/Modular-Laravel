@@ -2,26 +2,20 @@
 
 namespace App\Modules\User\Http\Actions;
 
-use App\Modules\User\Exceptions\UserStoreException;
 use App\Modules\User\Http\DTOs\CreateUserDTO;
-use App\Modules\User\Interfaces\UserInterface;
-use Exception;
+use App\Modules\User\Repositories\UserRepository;
+use App\Modules\User\Models\User;
 
 class CreateUserAction
 {
-    protected UserInterface $userRepository;
+    public function __construct(protected UserRepository $repository) {}
 
-    public function __construct(UserInterface $userRepository)
+    public function execute(CreateUserDTO $dto): User
     {
-        $this->userRepository = $userRepository;
-    }
-
-    public function execute(CreateUserDTO $dto): mixed
-    {
-        try {
-            return $this->userRepository->create($dto->toArray());
-        } catch (Exception $exception) {
-            throw new UserStoreException($exception);
-        }
+        return $this->repository->create([
+            'name' => $dto->name,
+            'email' => $dto->email,
+            'password' => $dto->password,
+        ]);
     }
 }

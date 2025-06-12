@@ -2,86 +2,48 @@
 
 namespace App\Modules\User\Http\Controllers\Api;
 
-use App\Modules\Core\Http\Controllers\ApiController as Controller;
-use App\Modules\User\Exceptions\UserDestroyException;
-use App\Modules\User\Exceptions\UserNotFoundException;
-use App\Modules\User\Exceptions\UserStoreException;
-use App\Modules\User\Exceptions\UserUpdateException;
+use App\Modules\User\Http\Actions\GetAllUserAction;
+use App\Modules\User\Http\Actions\GetUserByIdAction;
 use App\Modules\User\Http\Requests\CreateUserRequest;
 use App\Modules\User\Http\Requests\UpdateUserRequest;
+use App\Modules\User\Http\Actions\CreateUserAction;
+use App\Modules\User\Http\Actions\UpdateUserAction;
+use App\Modules\User\Http\Actions\DeleteUserAction;
+use App\Modules\User\Http\DTOs\CreateUserDTO;
+use App\Modules\User\Http\DTOs\UpdateUserDTO;
 use App\Modules\User\Http\Resources\UserResource;
+use App\Modules\User\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class UserController extends Controller
+class UserController
 {
-    public function __construct()
+    public function index(GetAllUserAction $action): AnonymousResourceCollection
     {
-        // No longer inject the service, use action classes
+        return UserResource::collection($action->execute());
     }
 
-    public function index(): ResourceCollection
+    public function show(User $user, GetUserByIdAction $action): UserResource
     {
-        $users = app(\App\Modules\User\Http\Actions\GetAllUserAction::class)->execute();
+        return new UserResource($action->execute($user));
 
-        return UserResource::collection($users);
     }
 
-    /**
-     * @throws UserStoreException
-     */
-    public function store(CreateUserRequest $request): JsonResponse
+    public function store(CreateUserRequest $request, CreateUserAction $action): JsonResponse
     {
-        $dto = \App\Modules\User\Http\DTOs\CreateUserDTO::fromArray($request->validated());
-        $user = app(\App\Modules\User\Http\Actions\CreateUserAction::class)->execute($dto);
-
-        return $this
-            ->setMessage(__('apiResponse.storeSuccess', [
-                'resource' => 'User',
-            ]))
-            ->respond(new UserResource($user));
+        $user = $action->execute(CreateUserDTO::fromRequest($request));
+        return response()->json(['data' => new UserResource($user)]);
     }
 
-    /**
-     * @throws UserNotFoundException
-     */
-    public function show(int $id): JsonResponse
+    public function update(User $user, UpdateUserRequest $request, UpdateUserAction $action): JsonResponse
     {
-        $user = app(\App\Modules\User\Http\Actions\GetUserByIdAction::class)->execute($id);
-
-        return $this
-            ->setMessage(__('apiResponse.ok', [
-                'resource' => 'User',
-            ]))
-            ->respond(new UserResource($user));
+        $user = $action->execute($user, UpdateUserDTO::fromRequest($request));
+        return response()->json(['data' => $user]);
     }
 
-    /**
-     * @throws UserUpdateException
-     */
-    public function update(UpdateUserRequest $request, int $id): JsonResponse
+    public function destroy(User $user, DeleteUserAction $action): JsonResponse
     {
-        $dto = \App\Modules\User\Http\DTOs\UpdateUserDTO::fromArray($request->validated());
-        $user = app(\App\Modules\User\Http\Actions\UpdateUserAction::class)->execute($id, $dto);
-
-        return $this
-            ->setMessage(__('apiResponse.updateSuccess', [
-                'resource' => 'User',
-            ]))
-            ->respond(new UserResource($user));
-    }
-
-    /**
-     * @throws UserDestroyException
-     */
-    public function destroy(int $id): JsonResponse
-    {
-        app(\App\Modules\User\Http\Actions\DeleteUserAction::class)->execute($id);
-
-        return $this
-            ->setMessage(__('apiResponse.deleteSuccess', [
-                'resource' => 'User',
-            ]))
-            ->respond(null);
+        $action->execute($user);
+        return response()->json(['message' => 'User deleted']);
     }
 }

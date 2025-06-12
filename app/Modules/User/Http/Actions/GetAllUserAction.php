@@ -2,25 +2,13 @@
 
 namespace App\Modules\User\Http\Actions;
 
-use App\Modules\User\Exceptions\UserIndexException;
-use App\Modules\User\Interfaces\UserInterface;
-use Exception;
+use App\Modules\User\Models\User;
+use Illuminate\Support\Collection;
 
 class GetAllUserAction
 {
-    protected UserInterface $userRepository;
-
-    public function __construct(UserInterface $userRepository)
+    public function execute(): Collection
     {
-        $this->userRepository = $userRepository;
-    }
-
-    public function execute(): mixed
-    {
-        try {
-            return $this->userRepository->findAll();
-        } catch (Exception $exception) {
-            throw new UserIndexException($exception);
-        }
+        return User::all();
     }
 }

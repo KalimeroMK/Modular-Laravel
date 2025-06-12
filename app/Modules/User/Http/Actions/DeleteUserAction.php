@@ -2,25 +2,12 @@
 
 namespace App\Modules\User\Http\Actions;
 
-use App\Modules\User\Exceptions\UserDestroyException;
-use App\Modules\User\Interfaces\UserInterface;
-use Exception;
+use App\Modules\User\Models\User;
 
 class DeleteUserAction
 {
-    protected UserInterface $userRepository;
-
-    public function __construct(UserInterface $userRepository)
+    public function execute(User $user): void
     {
-        $this->userRepository = $userRepository;
-    }
-
-    public function execute(int $id): void
-    {
-        try {
-            $this->userRepository->delete($id);
-        } catch (Exception $exception) {
-            throw new UserDestroyException($exception);
-        }
+        $user->delete();
     }
 }

@@ -2,36 +2,21 @@
 
 namespace App\Modules\User\Http\DTOs;
 
-class UpdateUserDTO
+use Illuminate\Http\Request;
+
+readonly class UpdateUserDTO
 {
-    public string $name;
+    public function __construct(
+        public string $name,
+        public string $email,
+    ) {}
 
-    public string $email;
-
-    public ?string $password;
-
-    public function __construct(string $name, string $email, ?string $password = null)
+    public static function fromRequest(Request $request): self
     {
-        $this->name = $name;
-        $this->email = $email;
-        $this->password = $password;
-    }
-
-    public static function fromArray(array $data): self
-    {
+        $data = $request->validated();
         return new self(
-            $data['name'] ?? '',
-            $data['email'] ?? '',
-            $data['password'] ?? null
+            name: $data['name'],
+            email: $data['email'],
         );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => $this->password,
-        ];
     }
 }

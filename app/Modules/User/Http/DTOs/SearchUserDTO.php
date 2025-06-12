@@ -2,22 +2,18 @@
 
 namespace App\Modules\User\Http\DTOs;
 
-class SearchUserDTO
+use Illuminate\Http\Request;
+
+readonly class SearchUserDTO
 {
-    public string $query;
+    public function __construct(
+        public ?string $search = null
+    ) {}
 
-    public function __construct(string $query)
+    public static function fromRequest(Request $request): self
     {
-        $this->query = $query;
-    }
-
-    public static function fromArray(array $data): self
-    {
-        return new self($data['query'] ?? '');
-    }
-
-    public function toArray(): array
-    {
-        return ['query' => $this->query];
+        return new self(
+            search: $request->get('search')
+        );
     }
 }

@@ -4,5 +4,6 @@ namespace App\Modules\User\Interfaces;
 
 interface UserInterface
 {
-    // Define your interface methods here
+    public function getAll(): mixed;
+    public function findById(int $id): mixed;
 }

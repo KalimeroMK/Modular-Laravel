@@ -2,21 +2,13 @@
 
 namespace App\Modules\User\Repositories;
 
-use App\Modules\Core\Interfaces\SearchInterface;
-use App\Modules\Core\Repositories\Repository;
-use App\Modules\User\Exceptions\UserSearchException;
-use App\Modules\User\Interfaces\UserInterface;
+use App\Modules\Core\Repositories\EloquentRepository;
 use App\Modules\User\Models\User;
 
-class UserRepository extends Repository implements SearchInterface, UserInterface
+class UserRepository extends EloquentRepository
 {
-    /**
-     * @var string
-     */
-    public $model = User::class;
-
-    /**
-     * The SearchException class to use for search errors.
-     */
-    protected string $searchException = UserSearchException::class;
+    public function __construct(User $model)
+    {
+        parent::__construct($model);
+    }
 }

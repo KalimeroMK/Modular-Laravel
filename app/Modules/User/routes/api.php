@@ -1,8 +1,6 @@
 <?php
 
-use App\Modules\User\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Modules\User\Http\Controllers\Api\UserController;
 
-Route::prefix('api/v1')->group(function (): void {
-    Route::apiResource('users', UserController::class);
-});
+Route::resource('users', UserController::class);

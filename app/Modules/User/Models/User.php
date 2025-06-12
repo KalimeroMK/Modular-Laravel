@@ -2,7 +2,7 @@
 
 namespace App\Modules\User\Models;
 
-use App\Modules\User\database\factories\UserFactory;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -37,9 +37,4 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
-    public static function factory(): UserFactory
-    {
-        return UserFactory::new();
-    }
 }

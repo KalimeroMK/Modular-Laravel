@@ -2,25 +2,12 @@
 
 namespace App\Modules\User\Http\Actions;
 
-use App\Modules\User\Exceptions\UserNotFoundException;
-use App\Modules\User\Interfaces\UserInterface;
-use Exception;
+use App\Modules\User\Models\User;
 
 class GetUserByIdAction
 {
-    protected UserInterface $userRepository;
-
-    public function __construct(UserInterface $userRepository)
+    public function execute(User $user): User
     {
-        $this->userRepository = $userRepository;
-    }
-
-    public function execute(int $id): mixed
-    {
-        try {
-            return $this->userRepository->findById($id);
-        } catch (Exception $exception) {
-            throw new UserNotFoundException($exception);
-        }
+        return $user;
     }
 }
