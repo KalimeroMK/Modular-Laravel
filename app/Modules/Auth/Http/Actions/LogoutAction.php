@@ -4,10 +4,10 @@ namespace App\Modules\Auth\Http\Actions;
 
 use Illuminate\Http\Request;
 
-class LogoutAuthAction
+class LogoutAction
 {
     public function execute(Request $request): void
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()?->tokens()?->delete();
     }
 }

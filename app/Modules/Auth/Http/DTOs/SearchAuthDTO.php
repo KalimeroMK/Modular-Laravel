@@ -2,22 +2,18 @@
 
 namespace App\Modules\Auth\Http\DTOs;
 
-class SearchAuthDTO
+use Illuminate\Http\Request;
+
+readonly class SearchAuthDTO
 {
-    public string $query;
+    public function __construct(
+        public ?string $query = null
+    ) {}
 
-    public function __construct(string $query)
+    public static function fromRequest(Request $request): self
     {
-        $this->query = $query;
-    }
-
-    public static function fromArray(array $data): self
-    {
-        return new self($data['query'] ?? '');
-    }
-
-    public function toArray(): array
-    {
-        return ['query' => $this->query];
+        return new self(
+            $request->get('query')
+        );
     }
 }

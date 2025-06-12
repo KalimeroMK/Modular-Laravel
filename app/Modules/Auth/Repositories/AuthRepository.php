@@ -2,26 +2,13 @@
 
 namespace App\Modules\Auth\Repositories;
 
-use App\Modules\Auth\Exceptions\AuthSearchException;
-use App\Modules\Auth\Interfaces\AuthInterface;
-use App\Modules\Core\Interfaces\SearchInterface;
-use App\Modules\Core\Repositories\Repository;
+use App\Modules\Core\Repositories\EloquentRepository;
 use App\Modules\User\Models\User;
 
-class AuthRepository extends Repository implements AuthInterface, SearchInterface
+class AuthRepository extends EloquentRepository
 {
-    /**
-     * @var string
-     */
-    public $model = User::class;
-
-    /**
-     * The SearchException class to use for search errors.
-     */
-    protected string $searchException = AuthSearchException::class;
-
-    public function findByEmail(string $email): mixed
+    public function __construct(User $model)
     {
-        return $this->findBy('email', $email);
+        parent::__construct($model);
     }
 }

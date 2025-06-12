@@ -4,5 +4,7 @@ namespace App\Modules\Auth\Interfaces;
 
 interface AuthInterface
 {
-    // Define your interface methods here
+    public function login(array $credentials): array;
+    public function logout(): void;
+    public function register(array $data): mixed;
 }

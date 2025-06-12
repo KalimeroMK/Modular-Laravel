@@ -4,21 +4,22 @@ namespace App\Modules\Auth\Http\DTOs;
 
 use Illuminate\Http\Request;
 
-readonly class UpdateAuthDTO
+readonly class RegisterDTO
 {
     public function __construct(
-        public ?string $name = null,
-        public ?string $email = null,
-        public ?string $password = null,
+        public string $name,
+        public string $email,
+        public string $password,
     ) {}
 
     public static function fromRequest(Request $request): self
     {
         $data = $request->validated();
+
         return new self(
-            $data['name'] ?? null,
-            $data['email'] ?? null,
-            $data['password'] ?? null,
+            $data['name'],
+            $data['email'],
+            $data['password']
         );
     }
 }

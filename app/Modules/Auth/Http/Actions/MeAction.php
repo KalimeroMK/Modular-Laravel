@@ -4,9 +4,9 @@ namespace App\Modules\Auth\Http\Actions;
 
 use Illuminate\Http\Request;
 
-class GetAuthenticatedUserAction
+class MeAction
 {
-    public function execute(Request $request)
+    public function execute(Request $request): mixed
     {
         return $request->user();
     }
