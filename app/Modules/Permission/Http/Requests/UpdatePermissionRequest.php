@@ -20,7 +20,7 @@ class UpdatePermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'exists:permissions,id'],
+            'name' => 'required|unique:permissions,name',
         ];
     }
 }

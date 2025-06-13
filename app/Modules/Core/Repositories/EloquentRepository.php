@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Repositories;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 abstract class EloquentRepository

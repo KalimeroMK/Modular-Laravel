@@ -32,18 +32,21 @@ class UserController
     public function store(CreateUserRequest $request, CreateUserAction $action): JsonResponse
     {
         $user = $action->execute(CreateUserDTO::fromRequest($request));
+
         return response()->json(['data' => new UserResource($user)]);
     }
 
     public function update(User $user, UpdateUserRequest $request, UpdateUserAction $action): JsonResponse
     {
         $user = $action->execute($user, UpdateUserDTO::fromRequest($request));
+
         return response()->json(['data' => $user]);
     }
 
     public function destroy(User $user, DeleteUserAction $action): JsonResponse
     {
         $action->execute($user);
+
         return response()->json(['message' => 'User deleted']);
     }
 }

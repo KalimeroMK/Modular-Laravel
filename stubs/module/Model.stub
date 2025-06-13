@@ -1,5 +1,7 @@
 <?php
 
+{{phpdoc_block}}
+
 namespace App\Modules\{{module}}\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,13 +10,16 @@ use App\Modules\{{module}}\database\factories\{{module}}Factory;
 
 class {{module}} extends Model
 {
-    /** @use HasFactory<{{module}}Factory> */
     use HasFactory;
 
     protected $table = '{{table}}';
 
+    protected $casts = [
+        {{casts}}
+    ];
+
     protected $fillable = [
-        // Define fillable fields here
+        {{fillable}}
     ];
 
     public static function factory(): {{module}}Factory
@@ -23,4 +28,5 @@ class {{module}} extends Model
     }
 
     // RELATIONSHIPS
+    {{relationships}}
 }

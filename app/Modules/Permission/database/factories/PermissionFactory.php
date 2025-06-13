@@ -13,7 +13,7 @@ class PermissionFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'guard' => 'web',
+            'guard_name' => 'api',
         ];
     }
 }

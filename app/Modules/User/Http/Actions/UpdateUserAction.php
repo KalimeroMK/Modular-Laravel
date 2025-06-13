@@ -9,9 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UpdateUserAction
 {
-    public function __construct(protected UserInterface $repository) {
-
-    }
+    public function __construct(protected UserInterface $repository) {}
 
     public function execute(User $user, UpdateUserDTO $dto): Model
     {

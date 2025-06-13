@@ -2,10 +2,10 @@
 
 namespace App\Modules\Auth\Http\Actions;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 use App\Modules\Auth\Http\DTOs\LoginDTO;
 use App\Modules\User\Repositories\UserRepository;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class LoginAction
 {
@@ -13,7 +13,7 @@ class LoginAction
 
     public function execute(LoginDTO $dto): array
     {
-        if (!Auth::attempt(['email' => $dto->email, 'password' => $dto->password])) {
+        if (! Auth::attempt(['email' => $dto->email, 'password' => $dto->password])) {
             throw ValidationException::withMessages(['email' => __('auth.failed')]);
         }
 

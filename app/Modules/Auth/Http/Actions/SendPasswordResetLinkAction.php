@@ -2,8 +2,8 @@
 
 namespace App\Modules\Auth\Http\Actions;
 
-use Illuminate\Support\Facades\Password;
 use App\Modules\Auth\Http\Requests\SendResetLinkRequest;
+use Illuminate\Support\Facades\Password;
 
 class SendPasswordResetLinkAction
 {

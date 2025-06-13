@@ -18,19 +18,35 @@ class RepositoryServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected array $repositories = [
-        UserInterface::class => UserRepository::class,
+UserInterface::class => UserRepository::class,
         AuthInterface::class => AuthRepository::class,
         RoleInterface::class => RoleRepository::class,
         PermissionInterface::class => PermissionRepository::class,
-    ];
+        \App\Modules\Test\Interfaces\TestInterface::class => \App\Modules\Test\Repositories\TestRepository::class,
+];
 
     /**
      * Register services.
      */
     public function register(): void
     {
+
         foreach ($this->repositories as $interface => $repository) {
             $this->app->bind($interface, function ($app) use ($repository) {
+                $reflector = new \ReflectionClass($repository);
+                $constructor = $reflector->getConstructor();
+
+                if ($constructor && $constructor->getNumberOfParameters() > 0) {
+                    $param = $constructor->getParameters()[0];
+                    $type = $param->getType();
+
+                    if ($type instanceof \ReflectionNamedType && ! $type->isBuiltin()) {
+                        $modelClass = $type->getName();
+
+                        return new $repository($app->make($modelClass));
+                    }
+                }
+
                 return new $repository;
             });
         }

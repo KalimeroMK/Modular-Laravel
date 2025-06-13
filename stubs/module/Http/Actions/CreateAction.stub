@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Modules\{{ module }}\Http\Actions;
+namespace App\Modules\{{module}}\Http\Actions;
 
-use App\Modules\{{ module }}\Http\DTOs\Create{{ class }}DTO;
-use App\Modules\{{ module }}\Interfaces\{{ class }}Interface;
-use App\Modules\{{ module }}\Models\{{ class }};
+use App\Modules\{{module}}\Http\DTOs\{{module}}DTO;
+use App\Modules\{{module}}\Interfaces\{{class}}Interface;
+use App\Modules\{{module}}\Models\{{class}};
 
-class Create{{ class }}Action
+class Create{{class}}Action
 {
-    public function __construct(protected {{ class }}Interface $repository) {}
+    public function __construct(protected {{class}}Interface $repository) {}
 
-    public function execute(Create{{ class }}DTO $dto): {{ class }}
+    public function execute({{module}}DTO $dto): {{class}}
     {
         return $this->repository->create($dto->toArray());
     }

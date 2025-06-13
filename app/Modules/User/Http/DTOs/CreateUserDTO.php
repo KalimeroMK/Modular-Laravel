@@ -15,6 +15,7 @@ readonly class CreateUserDTO
     public static function fromRequest(Request $request): self
     {
         $data = $request->validated();
+
         return new self(
             name: $data['name'],
             email: $data['email'],

@@ -15,6 +15,7 @@ readonly class UpdateAuthDTO
     public static function fromRequest(Request $request): self
     {
         $data = $request->validated();
+
         return new self(
             $data['name'] ?? null,
             $data['email'] ?? null,

@@ -1,51 +1,50 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\Controllers\Api;
+namespace App\Modules\{{module}}\Http\Controllers;
 
-use App\Modules\Core\Http\Controllers\ApiController;
 use App\Modules\{{module}}\Models\{{module}};
 use App\Modules\{{module}}\Http\Requests\Create{{module}}Request;
 use App\Modules\{{module}}\Http\Requests\Update{{module}}Request;
 use App\Modules\{{module}}\Http\Resources\{{module}}Resource;
-use App\Modules\{{module}}\Http\DTOs\Create{{module}}DTO;
-use App\Modules\{{module}}\Http\DTOs\Update{{module}}DTO;
+use App\Modules\{{module}}\Http\DTOs\{{module}}DTO;
 use App\Modules\{{module}}\Http\Actions\Create{{module}}Action;
 use App\Modules\{{module}}\Http\Actions\Update{{module}}Action;
 use App\Modules\{{module}}\Http\Actions\Delete{{module}}Action;
 use App\Modules\{{module}}\Http\Actions\GetAll{{module}}Action;
-use App\Modules\{{module}}\Http\Actions\Get{{module}}ByIdAction;
+use App\Modules\{{module}}\Http\Actions\GetById{{module}}Action;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Routing\Controller;
 
-class {{module}}Controller extends ApiController
+class {{module}}Controller extends Controller
 {
     public function index(GetAll{{module}}Action $action): ResourceCollection
     {
         return {{module}}Resource::collection($action->execute());
     }
 
-    public function show({{module}} ${{ moduleVar }}, Get{{module}}ByIdAction $action): JsonResponse
+    public function show({{module}} ${{moduleVar}}, GetById{{module}}Action $action): JsonResponse
     {
-        return response()->json(new {{module}}Resource($action->execute(${{ moduleVar }})));
+        return response()->json(new {{module}}Resource($action->execute(${{moduleVar}})));
     }
 
     public function store(Create{{module}}Request $request, Create{{module}}Action $action): JsonResponse
     {
-        $dto = Create{{module}}DTO::fromRequest($request);
+        $dto = {{module}}DTO::fromRequest($request);
         $model = $action->execute($dto);
         return response()->json(new {{module}}Resource($model), 201);
     }
 
-    public function update({{module}} ${{ moduleVar }}, Update{{module}}Request $request, Update{{module}}Action $action): JsonResponse
+    public function update(Update{{module}}Request $request, {{module}} ${{moduleVar}}, Update{{module}}Action $action): JsonResponse
     {
-        $dto = Update{{module}}DTO::fromRequest($request);
-        $model = $action->execute(${{ moduleVar }}, $dto);
+        $dto = {{module}}DTO::fromRequest($request);
+        $model = $action->execute($dto, ${{moduleVar}});
         return response()->json(new {{module}}Resource($model));
     }
 
-    public function destroy({{module}} ${{ moduleVar }}, Delete{{module}}Action $action): JsonResponse
+    public function destroy({{module}} ${{moduleVar}}, Delete{{module}}Action $action): JsonResponse
     {
-        $action->execute(${{ moduleVar }});
+        $action->execute(${{moduleVar}});
         return response()->json(['message' => '{{module}} deleted successfully.']);
     }
 }

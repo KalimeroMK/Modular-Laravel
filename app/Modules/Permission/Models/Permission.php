@@ -2,16 +2,28 @@
 
 namespace App\Modules\Permission\Models;
 
-use App\Modules\Permission\database\factories\PermissionFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Modules\Permission\Database\Factories\PermissionFactory;
+use App\Modules\Role\Models\Role;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Permission\Models\Permission as BasePermission;
 
 class Permission extends BasePermission
 {
-    /** @use HasFactory<PermissionFactory> */
-    use HasFactory;
-
     protected $table = 'permissions';
+
+    protected $attributes = [
+        'guard_name' => 'web',
+    ];
+
+    protected $fillable = [
+        'name',
+        'guard_name',
+    ];
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'role_has_permissions');
+    }
 
     public static function factory(): PermissionFactory
     {

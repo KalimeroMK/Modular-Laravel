@@ -8,6 +8,6 @@ Route::prefix('api/v1')->group(function (): void {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('me', [AuthController::class, 'me'])->middleware('auth:sanctum');
-    Route::post('forgot-password', [AuthController::class, 'sendResetLink']);
+    Route::post('forgot-password', [AuthController::class, 'sendResetLink'])->name('password.reset');
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
 });

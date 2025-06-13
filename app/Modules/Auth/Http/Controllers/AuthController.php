@@ -23,36 +23,42 @@ class AuthController extends Controller
     public function login(LoginRequest $request, LoginAction $action): JsonResponse
     {
         $data = $action->execute(LoginDTO::fromRequest($request));
+
         return response()->json(['status' => 'success', 'data' => $data]);
     }
 
     public function register(RegisterRequest $request, RegisterAction $action): JsonResponse
     {
-        $user = $action->execute(RegisterDTO::fromRequest($request));
-        return response()->json(['status' => 'success', 'data' => $user]);
+        $data = $action->execute(RegisterDTO::fromRequest($request));
+
+        return response()->json(['status' => 'success', 'data' => ['user' => $data['user'], 'token' => $data['token']]]);
     }
 
     public function logout(Request $request, LogoutAction $action): JsonResponse
     {
         $action->execute($request);
+
         return response()->json(['status' => 'success']);
     }
 
     public function me(Request $request, MeAction $action): JsonResponse
     {
         $user = $action->execute($request);
+
         return response()->json(['status' => 'success', 'data' => $user]);
     }
 
     public function sendResetLink(SendResetLinkRequest $request, SendPasswordResetLinkAction $action): JsonResponse
     {
         $status = $action->execute($request);
+
         return response()->json(['status' => 'success', 'message' => __($status)]);
     }
 
     public function resetPassword(ResetPasswordRequest $request, ResetPasswordAction $action): JsonResponse
     {
         $status = $action->execute($request);
+
         return response()->json(['status' => 'success', 'message' => __($status)]);
     }
 }

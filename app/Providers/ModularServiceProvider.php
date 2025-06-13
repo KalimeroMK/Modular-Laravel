@@ -5,13 +5,24 @@ namespace App\Providers;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 
+/**
+ * ModularServiceProvider
+ *
+ * Expects the following config keys:
+ * - modules.default.directory (string): Base directory for modules.
+ * - modules.default.routing (array): Route types to register (e.g., ['api']).
+ * - modules.default.structure.<component> (string): Default structure for components (routes, controllers, helpers, etc.).
+ * - modules.specific.<ModuleName>.enabled (bool): Whether the module is enabled.
+ * - modules.specific.<ModuleName>.routing (array): Route types for this module.
+ * - modules.specific.<ModuleName>.structure.<component> (string): Structure overrides for this module.
+ */
 class ModularServiceProvider extends ServiceProvider
 {
-    protected $files;
+    protected Filesystem $files;
 
     /**
      * Bootstrap the application services.
@@ -19,14 +30,22 @@ class ModularServiceProvider extends ServiceProvider
     public function boot(Filesystem $files): void
     {
         $this->files = $files;
-        if (is_dir(app_path(Config::get('modules.default.directory')))) {
-            $modules = array_map(
-                'class_basename',
-                $this->files->directories(app_path(Config::get('modules.default.directory')))
-            );
-            foreach ($modules as $module) {
-                // Allow routes to be cached
+        $modulesCacheKey = 'modular.modules';
+        $modules = cache()->rememberForever($modulesCacheKey, function () {
+            $modulesDir = app_path(Config::get('modules.default.directory'));
+            if (! is_dir($modulesDir)) {
+                \Log::warning("Modules directory not found: {$modulesDir}");
+
+                return [];
+            }
+
+            return array_map('class_basename', $this->files->directories($modulesDir));
+        });
+        foreach ($modules as $module) {
+            try {
                 $this->registerModule($module);
+            } catch (\Throwable $e) {
+                \Log::error("Failed to register module '{$module}': ".$e->getMessage());
             }
         }
     }
@@ -40,11 +59,11 @@ class ModularServiceProvider extends ServiceProvider
         if ($enabled) {
             $this->registerRoutes($name);
             $this->registerHelpers($name);
-            $this->registerViews($name);
-            $this->registerTranslations($name);
             $this->registerFilters($name);
             $this->registerMigrations($name);
             $this->registerFactories($name);
+            $this->registerObservers($name);
+            $this->registerPolicies($name);
         }
     }
 
@@ -55,9 +74,12 @@ class ModularServiceProvider extends ServiceProvider
     {
         if (! $this->app->routesAreCached()) {
             $data = $this->getRoutingConfig($module);
-
             foreach ($data['types'] as $type) {
-                $this->registerRoute($module, $data['path'], $data['namespace'], $type);
+                try {
+                    $this->registerRoute($module, $data['path'], $data['namespace'], $type);
+                } catch (\Throwable $e) {
+                    \Log::warning("Failed to register route for module '{$module}', type '{$type}': ".$e->getMessage());
+                }
             }
         }
     }
@@ -105,8 +127,12 @@ class ModularServiceProvider extends ServiceProvider
      */
     protected function registerHelpers(string $module): void
     {
-        if ($file = $this->prepareComponent($module, 'helpers', 'helpers.php')) {
-            include_once $file;
+        try {
+            if ($file = $this->prepareComponent($module, 'helpers', 'helpers.php')) {
+                include_once $file;
+            }
+        } catch (\Throwable $e) {
+            \Log::warning("Helpers file missing or failed to load for module '{$module}': ".$e->getMessage());
         }
     }
 
@@ -136,33 +162,14 @@ class ModularServiceProvider extends ServiceProvider
         return $resource;
     }
 
-    /**
-     * Register the views for a module by its name
-     */
-    protected function registerViews(string $module): void
-    {
-        $viewsPath = config("modules.specific.{$module}.structure.views", config('modules.default.structure.views'));
-
-        $moduleViewsPath = app_path(config('modules.default.directory')."/{$module}/{$viewsPath}");
-        if ($this->files->isDirectory($moduleViewsPath)) {
-            $this->loadViewsFrom($moduleViewsPath, Str::kebab($module));
-        }
-    }
-
-    /**
-     * Register the translations for a module by its name
-     */
-    protected function registerTranslations(string $module): void
-    {
-        if ($translations = $this->prepareComponent($module, 'translations')) {
-            $this->loadTranslationsFrom($translations, $module);
-        }
-    }
-
     protected function registerFilters(string $module): void
     {
-        if ($filters = $this->prepareComponent($module, 'filters')) {
-            $this->loadFiltersFrom($filters, $module);
+        try {
+            if ($filters = $this->prepareComponent($module, 'filters')) {
+                $this->loadFiltersFrom($filters, $module);
+            }
+        } catch (\Throwable $e) {
+            \Log::warning("Filters missing or failed to load for module '{$module}': ".$e->getMessage());
         }
     }
 
@@ -195,13 +202,36 @@ class ModularServiceProvider extends ServiceProvider
 
     protected function registerFactories(string $module): void
     {
-        Factory::guessFactoryNamesUsing(function (string $module) {
-            return 'Database\\Factories\\'.class_basename($module).'Factory';
-        });
+        // If you want to scope factories per module, you can extend this logic
+        try {
+            Factory::guessFactoryNamesUsing(function (string $model) use ($module) {
+                return 'App\\Modules\\'.$module.'\\database\\factories\\'.class_basename($model).'Factory';
+            });
+        } catch (\Throwable $e) {
+            \Log::warning("Failed to register factories for module '{$module}': ".$e->getMessage());
+        }
     }
 
     private function registerMigrations(string $name): void
     {
         $this->loadMigrationsFrom(app_path(Config::get('modules.default.directory')."/{$name}/database/migrations"));
+    }
+
+    protected function registerObservers(string $module): void
+    {
+        $observerClass = "App\\Modules\\{$module}\\Observers\\{$module}Observer";
+        $modelClass = "App\\Modules\\{$module}\\Models\\{$module}";
+        if (class_exists($observerClass) && class_exists($modelClass)) {
+            $modelClass::observe($observerClass);
+        }
+    }
+
+    protected function registerPolicies(string $module): void
+    {
+        $policyClass = "App\\Modules\\{$module}\\Policies\\{$module}Policy";
+        $modelClass = "App\\Modules\\{$module}\\Models\\{$module}";
+        if (class_exists($policyClass) && class_exists($modelClass)) {
+            Gate::policy($modelClass, $policyClass);
+        }
     }
 }

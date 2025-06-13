@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Modules\{{module}}\Http\Controllers\Api\{{module}}Controller;
+use App\Modules\{{module}}\Http\Controllers\{{module}}Controller;
 
 Route::prefix('api/v1')->group(function () {
     Route::apiResource('{{table}}', {{module}}Controller::class);

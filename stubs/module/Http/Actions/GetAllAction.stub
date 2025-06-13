@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Modules\{{ module }}\Http\Actions;
+namespace App\Modules\{{module}}\Http\Actions;
 
-use App\Modules\{{ module }}\Interfaces\{{ class }}Interface;
+use App\Modules\{{module}}\Interfaces\{{class}}Interface;
 
-class GetAll{{ class }}Action
+class GetAll{{class}}Action
 {
-    public function __construct(protected {{ class }}Interface $repository) {}
+    public function __construct(protected {{class}}Interface $repository) {}
 
-    public function execute(): \Illuminate\Support\Collection
+    public function execute(): iterable
     {
         return $this->repository->all();
     }

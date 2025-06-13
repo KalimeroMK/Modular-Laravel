@@ -4,13 +4,14 @@ namespace App\Modules\Permission\Http\Actions;
 
 use App\Modules\Permission\Interfaces\PermissionInterface;
 use App\Modules\Permission\Models\Permission;
+use Illuminate\Database\Eloquent\Model;
 
 class GetPermissionByIdAction
 {
     public function __construct(protected PermissionInterface $repository) {}
 
-    public function execute(Permission $permission): Permission
+    public function execute(Permission $permission): Model
     {
-        return $this->repository->findById($permission->id);
+        return $this->repository->findOrFail($permission->id);
     }
 }

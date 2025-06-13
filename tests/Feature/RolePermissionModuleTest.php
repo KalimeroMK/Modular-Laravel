@@ -34,13 +34,9 @@ class RolePermissionModuleTest extends TestCase
 
     public function test_permission_can_be_assigned_to_role()
     {
-        $role = Role::factory()->create();
-        $permission = Permission::factory()->create([
-            'name' => 'assignable-permission',
-        ]);
-
+        $role = Role::create(['name' => 'Admin', 'guard_name' => 'web']);
+        $permission = Permission::create(['name' => 'edit', 'guard_name' => 'web']);
         $role->givePermissionTo($permission);
-
         $this->assertTrue(
             $role->permissions()->where('permissions.id', $permission->id)->exists()
         );

@@ -11,6 +11,10 @@ class Role extends BaseRole
     /** @use HasFactory<RoleFactory> */
     use HasFactory;
 
+    protected $attributes = [
+        'guard_name' => 'web',
+    ];
+
     protected $table = 'roles';
 
     public static function factory(): RoleFactory

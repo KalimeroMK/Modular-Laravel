@@ -7,8 +7,7 @@ use App\Modules\Role\Http\Actions\DeleteRoleAction;
 use App\Modules\Role\Http\Actions\GetAllRoleAction;
 use App\Modules\Role\Http\Actions\GetRoleByIdAction;
 use App\Modules\Role\Http\Actions\UpdateRoleAction;
-use App\Modules\Role\Http\DTOs\CreateRoleDTO;
-use App\Modules\Role\Http\DTOs\UpdateRoleDTO;
+use App\Modules\Role\Http\DTOs\RoleDTO;
 use App\Modules\Role\Http\Requests\CreateRoleRequest;
 use App\Modules\Role\Http\Requests\UpdateRoleRequest;
 use App\Modules\Role\Http\Resources\RoleResource;
@@ -29,17 +28,18 @@ class RoleController
 
     public function store(CreateRoleRequest $request, CreateRoleAction $action): JsonResponse
     {
-        return response()->json(['data' => new RoleResource($action->execute(CreateRoleDTO::fromRequest($request)))]);
+        return response()->json(['data' => new RoleResource($action->execute(RoleDTO::fromRequest($request)))]);
     }
 
     public function update(Role $role, UpdateRoleRequest $request, UpdateRoleAction $action): JsonResponse
     {
-        return response()->json(['data' => new RoleResource($action->execute($role, UpdateRoleDTO::fromRequest($request)))]);
+        return response()->json(['data' => new RoleResource($action->execute($role, RoleDTO::fromRequest($request)))]);
     }
 
     public function destroy(Role $role, DeleteRoleAction $action): JsonResponse
     {
         $action->execute($role);
+
         return response()->json(['message' => 'Role deleted']);
     }
 }

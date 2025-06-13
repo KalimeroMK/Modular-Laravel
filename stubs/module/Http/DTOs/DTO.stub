@@ -4,16 +4,22 @@ namespace App\Modules\{{module}}\Http\DTOs;
 
 use Illuminate\Http\Request;
 
-readonly class {{type}}{{module}}DTO
+readonly class {{module}}DTO
 {
     public function __construct(
         {{constructor_args}}
     ) {}
 
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(Request $request, ?int $id = null): self
     {
         $data = $request->validated();
+        return new self(
+            {{from_array_args}}
+        );
+    }
 
+    public static function fromArray(array $data): self
+    {
         return new self(
             {{from_array_args}}
         );

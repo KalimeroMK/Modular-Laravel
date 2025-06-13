@@ -2,10 +2,10 @@
 
 namespace App\Modules\Auth\Http\Actions;
 
+use App\Modules\Auth\Http\Requests\ResetPasswordRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
-use App\Modules\Auth\Http\Requests\ResetPasswordRequest;
 
 class ResetPasswordAction
 {
