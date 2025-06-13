@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Modules\{{module}}\Observers;
+
+use App\Modules\{{module}}\Models\{{module}};
+
+class {{module}}Observer
+{
+    public function creating({{module}} $model)
+    {
+        // ...
+    }
+
+    public function created({{module}} $model)
+    {
+        // ...
+    }
+
+    public function updating({{module}} $model)
+    {
+        // ...
+    }
+
+    public function updated({{module}} $model)
+    {
+        // ...
+    }
+
+    public function saving({{module}} $model)
+    {
+        // ...
+    }
+
+    public function saved({{module}} $model)
+    {
+        // ...
+    }
+
+    public function deleting({{module}} $model)
+    {
+        // ...
+    }
+
+    public function deleted({{module}} $model)
+    {
+        // ...
+    }
+
+    public function restoring({{module}} $model)
+    {
+        // ...
+    }
+
+    public function restored({{module}} $model)
+    {
+        // ...
+    }
+}
