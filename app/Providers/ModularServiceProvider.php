@@ -46,6 +46,7 @@ class ModularServiceProvider extends ServiceProvider
                 \Log::info('Test module is being loaded!');
             }
             try {
+                \Log::info("Registering migrations for module: {$module}");
                 $this->registerModule($module);
             } catch (\Throwable $e) {
                 \Log::error("Failed to register module '{$module}': ".$e->getMessage());
@@ -212,7 +213,8 @@ class ModularServiceProvider extends ServiceProvider
 
     private function registerMigrations(string $name): void
     {
-        $this->loadMigrationsFrom(app_path(Config::get('modules.default.directory')."/{$name}/database/migrations"));
+        $migrationPath = app_path(Config::get('modules.default.directory')."/{$name}/database/migrations");
+        $this->loadMigrationsFrom($migrationPath);
     }
 
     protected function registerObservers(string $module): void

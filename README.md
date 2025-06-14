@@ -20,19 +20,25 @@ This starter kit provides a robust, API-first modular architecture for Laravel p
 ## Usage
 
 ### 1. Generate a New Module
+
+You can use either style for defining foreign keys in the --model option:
+
+- **Recommended:** Use Laravel-style (`user_id:int`)
+- **Legacy/Advanced:** Use explicit foreign key syntax (`user_id:foreign:users:id`)
+
+Both will work, but the recommended/cleanest approach is to use the standard naming convention:
+
 ```bash
 php artisan make:module Example \
-  --model="title:string,price:float,stock:int,is_active:bool,attributes:array,user_id:foreign:users:id" \
+  --model="title:string,price:float,stock:int,is_active:bool,attributes:array,user_id:int" \
   --relations="user:belongsTo:User,orders:hasMany:Order" \
   --exceptions \
   --observers \
   --policies
 ```
-- `--model`: Define model fields. Supports foreign keys (e.g., `user_id:foreign:users:id`).
-- `--relations`: Define Eloquent relationships. Format: `relationName:type:RelatedModel`. Example: `user:belongsTo:User,orders:hasMany:Order`
-- `--exceptions`: Generate exception classes.
-- `--observers`: Generate observer stub.
-- `--policies`: Generate policy stub.
+
+- `user_id:int` is enough for the generator to treat it as a foreign key and add proper validation.
+- You may still use `user_id:foreign:users:id` for maximum explicitness, but it is not required.
 
 ### 2. Flags
 - Omit any flag to skip generating that component.
@@ -48,6 +54,39 @@ Each module will have:
 
 ### 5. Configuration
 - All module paths and settings are configurable via `config/modules.php`.
+
+## Validation Rules for Foreign Keys (Update June 2025)
+
+When you define a field as a foreign key (e.g. `user_id:int` or `restaurant_id:int`), the generated FormRequest validation will automatically include:
+
+```php
+'user_id' => ['required', 'integer', 'exists:users,id'], // foreign key, integer
+```
+
+- The table name (`users`) is inferred from the field name (`user_id`).
+- The rule ensures the value is an integer and exists in the referenced table.
+- This is fully automatic for any field ending with `_id` and of integer type.
+
+## Example: Generating a Module with a Foreign Key
+
+You can generate a module with a foreign key using a simple command:
+
+```bash
+php artisan make:module Klime \
+  --model="title:string,price:float,stock:int,is_active:bool,attributes:array,user_id:int" \
+  --relations="user:belongsTo:User" \
+  --observers \
+  --policies
+```
+
+- `user_id:int` will be automatically treated as a foreign key.
+- The generated request class will include:
+
+```php
+'user_id' => ['required', 'integer', 'exists:users,id'], // foreign key, integer
+```
+
+No need to use `foreign:users:id` syntax—just use the standard Laravel naming convention for foreign keys.
 
 ## Extending
 - Add new stubs to `stubs/module/` and extend the command as needed.

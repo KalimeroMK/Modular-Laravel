@@ -244,6 +244,67 @@ class MakeModuleCommand extends Command
                 $this->createFromStub($policyStub, $filePath, $policyReplacements);
             }
         }
+
+        // --- CRUD FEATURE TEST GENERATION ---
+        $testStub = base_path('stubs/tests/Feature/CrudTest.stub');
+        $testTarget = base_path("tests/Feature/Modules/{$moduleName}CrudTest.php");
+        if (file_exists($testStub)) {
+            $testReplacements = [
+                '{{module}}' => $moduleName,
+                '{{module_lower}}' => strtolower($moduleName),
+            ];
+
+            // Find required fields or pick a string field for update
+            $requiredFields = array_filter($fields, fn ($f) => ($f['required'] ?? false));
+            $allStringFields = array_filter($fields, fn ($f) => $f['type'] === 'string');
+            $updateField = count($allStringFields) > 0 ? $allStringFields[array_key_first($allStringFields)] : ($fields[0] ?? null);
+
+            // Detect foreign keys for store/update data
+            $foreignKeySetup = '';
+            $storeData = [];
+            $usedFields = count($requiredFields) ? $requiredFields : $fields;
+            foreach ($usedFields as $f) {
+                if (str_ends_with($f['name'], '_id') && in_array($f['type'], ['int', 'bigint', 'unsignedBigInteger'])) {
+                    $relatedModel = ucfirst(str_replace('_id', '', $f['name']));
+                    $foreignKeySetup .= "$relatedModel = \\App\\Models\\$relatedModel::factory()->create();\n";
+                    $storeData[$f['name']] = "{$$relatedModel->id}";
+                } else {
+                    $storeData[$f['name']] = $f['type'] === 'bool' ? true : ($f['type'] === 'int' ? 123 : ($f['type'] === 'float' ? 1.23 : 'test'));
+                }
+            }
+            // Convert $storeData to PHP code, handling foreign keys
+            $storeDataString = var_export($storeData, true);
+            // Replace quoted variable references with real PHP variables
+            $storeDataString = preg_replace("/'\\$(\w+)->id'/", '".$\\$1->id."', $storeDataString);
+
+            // Fill data for update (edit one string field or first field)
+            $updateData = [];
+            $updateSetup = '';
+            if ($updateField) {
+                if (str_ends_with($updateField['name'], '_id') && in_array($updateField['type'], ['int', 'bigint', 'unsignedBigInteger'])) {
+                    $relatedModel = ucfirst(str_replace('_id', '', $updateField['name']));
+                    $updateSetup .= "$relatedModel = \\App\\Models\\$relatedModel::factory()->create();\n";
+                    $updateData[$updateField['name']] = "{$$relatedModel->id}";
+                } else {
+                    $updateData[$updateField['name']] = $updateField['type'] === 'string' ? 'updated' : ($updateField['type'] === 'bool' ? false : ($updateField['type'] === 'int' ? 456 : 4.56));
+                }
+            }
+            $updateDataString = var_export($updateData, true);
+            $updateDataString = preg_replace("/'\\$(\w+)->id'/", '".$\\$1->id."', $updateDataString);
+
+            $testReplacements['{{store_data_setup}}'] = $foreignKeySetup;
+            $testReplacements['{{store_data}}'] = $storeDataString;
+            $testReplacements['{{update_data_setup}}'] = $updateSetup;
+            $testReplacements['{{update_data}}'] = $updateDataString;
+
+            $testContent = str_replace(array_keys($testReplacements), array_values($testReplacements), file_get_contents($testStub));
+            if (! is_dir(dirname($testTarget))) {
+                mkdir(dirname($testTarget), 0777, true);
+            }
+            file_put_contents($testTarget, $testContent);
+            $this->info("CRUD feature test generated: tests/Feature/Modules/{$moduleName}CrudTest.php");
+        }
+        // --- END CRUD FEATURE TEST GENERATION ---
     }
 
     /**
@@ -271,18 +332,32 @@ class MakeModuleCommand extends Command
     /**
      * Parses the model fields option into an array of field definitions.
      * Example: title:string,price:float => [['name'=>'title','type'=>'string'], ...]
+     * Supports both user_id:int and user_id:foreign:users:id
      */
     protected function parseModelFields(string $fieldsOption): array
     {
         $fields = [];
         foreach (explode(',', $fieldsOption) as $field) {
-            [$name, $type] = array_pad(explode(':', $field), 2, 'string');
+            $parts = explode(':', $field);
+            $name = $parts[0];
+            // If user_id:foreign:users:id
+            if (isset($parts[1]) && $parts[1] === 'foreign') {
+                $type = 'int';
+                // Support migration field info for foreign keys
+                $fields[] = [
+                    'name' => $name,
+                    'type' => 'foreign',
+                    'references' => $parts[3] ?? 'id',
+                    'on' => $parts[2] ?? (str_ends_with($name, '_id') ? rtrim($name, '_id').'s' : $name.'s'),
+                ];
+                continue;
+            }
+            $type = $this->mapFieldType($parts[1] ?? 'string');
             $fields[] = [
                 'name' => $name,
-                'type' => $this->mapFieldType($type),
+                'type' => $type,
             ];
         }
-
         return $fields;
     }
 
@@ -483,13 +558,19 @@ class MakeModuleCommand extends Command
     {
         return implode("\n", array_map(
             function ($f) {
+                $isForeignKey = str_ends_with($f['name'], '_id') && in_array($f['type'], ['int', 'bigint', 'unsignedBigInteger', 'foreign']);
                 $ruleType = match ($f['type']) {
-                    'int' => 'integer', 'float' => 'numeric', 'bool' => 'boolean', 'array' => 'array', default => 'string'
+                    'int' => 'integer', 'float' => 'numeric', 'bool' => 'boolean', 'array' => 'array', 'foreign' => 'integer', default => 'string'
                 };
-
+                if ($isForeignKey) {
+                    // Guess table name from field (user_id -> users)
+                    $table = str_replace('_id', '', $f['name']);
+                    $table = str_ends_with($table, 's') ? $table : $table . 's';
+                    return "    '{$f['name']}' => ['required', 'integer', 'exists:{$table},id'], // foreign key, integer";
+                }
                 return "    '{$f['name']}' => ['required', '{$ruleType}'],";
             },
-            $fields
+            array_filter($fields, fn($f) => $f['name'] !== 'id')
         ));
     }
 

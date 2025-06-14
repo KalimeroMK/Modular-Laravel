@@ -18,12 +18,13 @@ class RepositoryServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected array $repositories = [
-UserInterface::class => UserRepository::class,
+        UserInterface::class => UserRepository::class,
         AuthInterface::class => AuthRepository::class,
         RoleInterface::class => RoleRepository::class,
         PermissionInterface::class => PermissionRepository::class,
         \App\Modules\Test\Interfaces\TestInterface::class => \App\Modules\Test\Repositories\TestRepository::class,
-];
+        \App\Modules\Klime\Interfaces\KlimeInterface::class => \App\Modules\Klime\Repositories\KlimeRepository::class,
+    ];
 
     /**
      * Register services.
