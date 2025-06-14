@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Permission\Models;
 
 use App\Modules\Permission\Database\Factories\PermissionFactory;
@@ -20,13 +22,13 @@ class Permission extends BasePermission
         'guard_name',
     ];
 
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'role_has_permissions');
-    }
-
     public static function factory(): PermissionFactory
     {
         return PermissionFactory::new();
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'role_has_permissions');
     }
 }

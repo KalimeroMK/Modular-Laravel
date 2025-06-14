@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Permission\Http\Actions;
 
 use App\Modules\Permission\Http\DTOs\PermissionDTO;

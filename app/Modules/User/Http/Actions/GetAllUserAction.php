@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\User\Http\Actions;
 
 use App\Modules\User\Interfaces\UserInterface;

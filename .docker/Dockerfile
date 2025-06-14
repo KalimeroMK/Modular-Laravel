@@ -1,5 +1,5 @@
 # Stage 1: Build dependencies
-FROM php:8.3-fpm-alpine AS builder
+FROM php:8.4-fpm-alpine AS builder
 
 # Install system dependencies
 RUN apk add --no-cache \
@@ -24,7 +24,7 @@ WORKDIR /var/www
 RUN id -u www-data &>/dev/null || adduser -D -u 1000 -G www-data www-data
 
 # Stage 2: Final image (Minimal)
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Install runtime dependencies (не бара php8-pecl-redis повеќе)
 RUN apk add --no-cache libpng libjpeg freetype libzip icu

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Permission\Http\Controllers;
 
 use App\Modules\Permission\Http\Actions\CreatePermissionAction;

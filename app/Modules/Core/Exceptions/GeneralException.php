@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Core\Exceptions;
 
 use Exception;
@@ -64,7 +66,7 @@ class GeneralException extends Exception
      *
      * @return $this
      */
-    public function setData(array $data): GeneralException
+    public function setData(array $data): self
     {
         $this->data = $data;
 
@@ -136,19 +138,19 @@ class GeneralException extends Exception
         return $this->exception ? $this->exception->getFile() : 'none';
     }
 
-    /**
-     * Handle an ajax response.
-     */
-    protected function prepareResponse(): JsonResponse
-    {
-        return response()->json($this->getResponse());
-    }
-
     public function getResponse(): array
     {
         return [
             'code' => $this->getCode(),
             'message' => $this->message(),
         ];
+    }
+
+    /**
+     * Handle an ajax response.
+     */
+    protected function prepareResponse(): JsonResponse
+    {
+        return response()->json($this->getResponse());
     }
 }

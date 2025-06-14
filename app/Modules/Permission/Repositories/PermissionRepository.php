@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Permission\Repositories;
 
 use App\Modules\Core\Repositories\EloquentRepository;

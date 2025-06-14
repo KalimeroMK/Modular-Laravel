@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Role\Http\Controllers;
 
 use App\Modules\Role\Http\Actions\CreateRoleAction;

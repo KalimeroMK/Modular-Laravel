@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Permission\database\factories;
 
 use App\Modules\Permission\Models\Permission;

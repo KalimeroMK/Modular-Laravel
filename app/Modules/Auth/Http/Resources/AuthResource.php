@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Auth\Http\Resources;
 
 use App\Modules\Core\Http\Resources\CoreResource;

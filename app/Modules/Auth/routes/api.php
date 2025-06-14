@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Modules\Auth\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 

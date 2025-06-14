@@ -13,6 +13,7 @@ services:
       - ./.docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
     networks:
       - laravelapp
+
   db:
     image: mariadb:latest
     container_name: mysql_module
@@ -25,12 +26,13 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     ports:
-      - "3319:3306"
+      - "3306:3306"
     volumes:
-      - ./.docker/dbdata:/var/lib/mysql
+      - dbdata:/var/lib/mysql
       - ./.docker/mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - laravelapp
+
   nginx:
     image: nginx:latest
     container_name: nginx_module
@@ -42,6 +44,10 @@ services:
       - ./.docker/nginx:/etc/nginx/conf.d
     networks:
       - laravelapp
+
+volumes:
+  dbdata:
+
 networks:
   laravelapp:
     driver: bridge

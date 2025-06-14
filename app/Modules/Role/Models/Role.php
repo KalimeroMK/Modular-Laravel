@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Role\Models;
 
 use App\Modules\Role\database\factories\RoleFactory;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use App\Modules\Auth\Interfaces\AuthInterface;
@@ -11,6 +13,8 @@ use App\Modules\Role\Repositories\RoleRepository;
 use App\Modules\User\Interfaces\UserInterface;
 use App\Modules\User\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
+use ReflectionClass;
+use ReflectionNamedType;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -34,14 +38,14 @@ class RepositoryServiceProvider extends ServiceProvider
 
         foreach ($this->repositories as $interface => $repository) {
             $this->app->bind($interface, function ($app) use ($repository) {
-                $reflector = new \ReflectionClass($repository);
+                $reflector = new ReflectionClass($repository);
                 $constructor = $reflector->getConstructor();
 
                 if ($constructor && $constructor->getNumberOfParameters() > 0) {
                     $param = $constructor->getParameters()[0];
                     $type = $param->getType();
 
-                    if ($type instanceof \ReflectionNamedType && ! $type->isBuiltin()) {
+                    if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
                         $modelClass = $type->getName();
 
                         return new $repository($app->make($modelClass));
