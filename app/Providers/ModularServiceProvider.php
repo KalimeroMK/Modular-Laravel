@@ -42,6 +42,9 @@ class ModularServiceProvider extends ServiceProvider
             return array_map('class_basename', $this->files->directories($modulesDir));
         });
         foreach ($modules as $module) {
+            if ($module === 'Test') {
+                \Log::info('Test module is being loaded!');
+            }
             try {
                 $this->registerModule($module);
             } catch (\Throwable $e) {
@@ -74,12 +77,10 @@ class ModularServiceProvider extends ServiceProvider
     {
         if (! $this->app->routesAreCached()) {
             $data = $this->getRoutingConfig($module);
-            foreach ($data['types'] as $type) {
-                try {
-                    $this->registerRoute($module, $data['path'], $data['namespace'], $type);
-                } catch (\Throwable $e) {
-                    \Log::warning("Failed to register route for module '{$module}', type '{$type}': ".$e->getMessage());
-                }
+            try {
+                $this->registerRoute($module, $data['path'], $data['namespace']);
+            } catch (\Throwable $e) {
+                \Log::warning("Failed to register route for module '{$module}': ".$e->getMessage());
             }
         }
     }
@@ -89,7 +90,6 @@ class ModularServiceProvider extends ServiceProvider
      */
     protected function getRoutingConfig(string $module): array
     {
-        $types = config("modules.specific.{$module}.routing", config('modules.default.routing'));
         $path = config("modules.specific.{$module}.structure.routes", config('modules.default.structure.routes'));
 
         // Update the controllers path to include 'Http'
@@ -103,22 +103,20 @@ class ModularServiceProvider extends ServiceProvider
             '\\'
         );
 
-        return compact('types', 'path', 'namespace');
+        return compact('path', 'namespace');
     }
 
     /**
      * Registers a single route
      */
-    protected function registerRoute(string $module, string $path, string $namespace, string $type): void
+    protected function registerRoute(string $module, string $path, string $namespace): void
     {
-        if (in_array($type, ['web', 'api'])) {
-            $filePath = app_path(
-                Config::get('modules.default.directory')."/{$module}/{$path}/{$type}.php"
-            );
+        $filePath = app_path(
+            Config::get('modules.default.directory')."/{$module}/{$path}/api.php"
+        );
 
-            if ($this->files->exists($filePath)) {
-                Route::middleware($type)->namespace($namespace)->group($filePath);
-            }
+        if ($this->files->exists($filePath)) {
+            Route::middleware('api')->namespace($namespace)->group($filePath);
         }
     }
 

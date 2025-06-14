@@ -59,6 +59,8 @@ class MakeModuleCommand extends Command
                 }
             }
             $this->info("Module '{$moduleName}' is now up-to-date!");
+            // After generating files, clear config and route cache and show route list
+            \Artisan::call('optimize:clear');
         } catch (\Exception $e) {
             if (! $this->files->exists($modulePath)) {
                 $this->cleanupModule($modulePath);
@@ -111,15 +113,15 @@ class MakeModuleCommand extends Command
         // --- DTO GENERATION PATCH ---
         // Always generate DTO with all fields, no types, no defaults, just one DTO per module
         $dtoReplacements = [
-            '{{constructor_args}}' => implode(",\n        ", array_map(fn($f) => '$' . $f['name'], $fields)),
-            '{{from_array_args}}' => implode(",\n            ", array_map(fn($f) => "\$data['{$f['name']}'] ?? null", $fields)),
+            '{{constructor_args}}' => implode(",\n        ", array_map(fn ($f) => '$'.$f['name'], $fields)),
+            '{{from_array_args}}' => implode(",\n            ", array_map(fn ($f) => "\$data['{$f['name']}'] ?? null", $fields)),
             // Use double backslash and single quotes for literal output in stub
-            '{{to_array_body}}' => implode(",\n            ", array_map(fn($f) => "'{$f['name']}' => \$this->{$f['name']}", $fields)),
+            '{{to_array_body}}' => implode(",\n            ", array_map(fn ($f) => "'{$f['name']}' => \$this->{$f['name']}", $fields)),
             '{{module}}' => $moduleName,
         ];
         // Patch only the DTO stub
         foreach ($this->dtoFiles as $target => $stubPath) {
-            $outputPath = $modulePath . '/' . str_replace(['{{module}}'], [$moduleName], $target);
+            $outputPath = $modulePath.'/'.str_replace(['{{module}}'], [$moduleName], $target);
             $this->createFromStub($stubPath, $outputPath, $dtoReplacements);
         }
         // --- END DTO PATCH ---
@@ -440,6 +442,7 @@ class MakeModuleCommand extends Command
                     default => " = ''",
                 };
                 $nullable = $f['type'] === 'int' ? '?' : '';
+
                 return "public {$nullable}{$f['type']} \\${$f['name']}{$default}";
             },
             $fields
@@ -454,6 +457,7 @@ class MakeModuleCommand extends Command
                     'array' => '[]',
                     default => "''",
                 };
+
                 return "\$data['{$f['name']}'] ?? {$default}";
             },
             $fields

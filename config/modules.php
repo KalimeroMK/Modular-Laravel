@@ -36,7 +36,7 @@ return [
         |
         */
 
-        'routing' => ['web', 'api'],
+        'routing' => ['api'],
 
         /*
         |--------------------------------------------------------------------------
@@ -51,16 +51,17 @@ return [
 
         'structure' => [
             'controllers' => 'Controllers',
-            'resources' => 'Transformers',
-            'requests' => 'Requests',
+            'resources' => 'Http/Resources',
+            'requests' => 'Http/Requests',
             'models' => 'Models',
+            'dto' => 'Http/DTOs',
+            'actions' => 'Http/Actions',
             'mails' => 'Mail',
             'notifications' => 'Notifications',
             'events' => 'Events',
             'listeners' => 'Listeners',
             'observers' => 'Observers',
             'jobs' => 'Jobs',
-            'views' => 'Resources/views',
             'translations' => 'Resources/lang',
             'routes' => 'routes',
             'migrations' => 'database/migrations',
