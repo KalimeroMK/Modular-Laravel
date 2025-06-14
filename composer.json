@@ -1,9 +1,23 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "kalimeromk/modular-laravel-bolerplate",
+    "name": "kalimeromk/modular-laravel-boilerplate",
     "type": "library",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "A modular, API-first Laravel boilerplate with support for DTOs, actions, repository pattern, auto-discovery, and powerful module generation CLI.",
+    "keywords": [
+        "laravel",
+        "modular",
+        "api",
+        "boilerplate",
+        "soa",
+        "starter-kit",
+        "laravel-modules",
+        "laravel-starter",
+        "dto",
+        "repository-pattern",
+        "sanctum",
+        "spatie",
+        "auto-discovery"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",

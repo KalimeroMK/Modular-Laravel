@@ -194,7 +194,7 @@ This starter kit includes full support for Docker. You can spin up the app, data
 
 6. **MySQL connection (host machine)**:
   - **Host**: `127.0.0.1`
-  - **Port**: `3319`
+  - **Port**: `3306`
   - **User**: `homestead`
   - **Password**: `secret`
   - **Database**: `homestead`
