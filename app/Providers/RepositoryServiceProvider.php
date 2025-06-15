@@ -19,7 +19,9 @@ use ReflectionNamedType;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
-     * @var string[]
+     * Map of interfaces to their concrete repository classes.
+     *
+     * @var array<class-string, class-string>
      */
     protected array $repositories = [
         UserInterface::class => UserRepository::class,
@@ -33,10 +35,9 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-
-        foreach ($this->repositories as $interface => $repository) {
-            $this->app->bind($interface, function ($app) use ($repository) {
-                $reflector = new ReflectionClass($repository);
+        foreach ($this->repositories as $interface => $repositoryClass) {
+            $this->app->bind($interface, function ($app) use ($repositoryClass) {
+                $reflector = new ReflectionClass($repositoryClass);
                 $constructor = $reflector->getConstructor();
 
                 if ($constructor && $constructor->getNumberOfParameters() > 0) {
@@ -46,22 +47,20 @@ class RepositoryServiceProvider extends ServiceProvider
                     if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
                         $modelClass = $type->getName();
 
-                        return new $repository($app->make($modelClass));
+                        return new $repositoryClass($app->make($modelClass));
                     }
                 }
 
-                return new $repository;
+                return new $repositoryClass();
             });
         }
     }
 
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-        //
+        // No boot logic needed
     }
 }

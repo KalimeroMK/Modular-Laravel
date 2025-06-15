@@ -8,23 +8,25 @@ use Illuminate\Http\Request;
 
 readonly class RoleDTO
 {
+    /**
+     * @param  array<int, mixed>  $permissions
+     */
     public function __construct(
         public ?int $id,
         public string $name,
         public array $permissions = []
     ) {}
 
-    public static function fromRequest(Request $request, ?int $id = null): self
+    public static function fromRequest(Request $request): self
     {
-        $validated = $request->validated();
+        $data = $request->all();
 
-        return new self(
-            id: $id ?? $validated['id'] ?? null,
-            name: $validated['name'] ?? '',
-            permissions: $validated['permissions'] ?? []
-        );
+        return self::fromArray($data);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(

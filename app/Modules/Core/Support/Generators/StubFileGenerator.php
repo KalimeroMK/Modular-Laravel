@@ -30,11 +30,11 @@ class StubFileGenerator
             'Interfaces/{{module}}Interface.php' => 'stubs/module/Interface.stub',
             'Repositories/{{module}}Repository.php' => 'stubs/module/Repository.stub',
             'Models/{{module}}.php' => 'stubs/module/Model.stub',
-            'database/factories/{{module}}Factory.php' => 'stubs/module/Factory.stub',
+            'Database/Factories/{{module}}Factory.php' => 'stubs/module/Factory.stub',
             'routes/api.php' => 'stubs/module/routes/api.stub',
             'Http/Controllers/{{module}}Controller.php' => 'stubs/module/Http/Controllers/Controller.stub',
             'Http/Resources/{{module}}Resource.php' => 'stubs/module/Http/Resource/Resource.stub',
-            'database/migrations/{{timestamp}}_create_{{table}}_table.php' => 'stubs/module/Migration.stub',
+            'Database/Migrations/{{timestamp}}_create_{{table}}_table.php' => 'stubs/module/Migration.stub',
         ];
 
         foreach ($stubMap as $target => $stubPath) {

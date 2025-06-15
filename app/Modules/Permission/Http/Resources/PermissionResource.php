@@ -13,15 +13,16 @@ class PermissionResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
+     * @return array<string, mixed>
      */
     public function toArray($request): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'guard_name' => $this->guard_name,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'id' => $this->resource->id,
+            'name' => $this->resource->name,
+            'guard_name' => $this->resource->guard_name,
+            'created_at' => $this->resource->created_at,
+            'updated_at' => $this->resource->updated_at,
         ];
     }
 }
