@@ -34,23 +34,14 @@ class ModularServiceProvider extends ServiceProvider
     public function boot(Filesystem $files): void
     {
         $this->files = $files;
-        $modulesCacheKey = 'modular.modules';
-        $modules = cache()->rememberForever($modulesCacheKey, function () {
-            $modulesDir = app_path(Config::get('modules.default.directory'));
-            if (! is_dir($modulesDir)) {
-                Log::warning("Modules directory not found: {$modulesDir}");
-
-                return [];
-            }
-
-            return array_map('class_basename', $this->files->directories($modulesDir));
-        });
+        $modulesDir = app_path(Config::get('modules.default.directory'));
+        if (! is_dir($modulesDir)) {
+            $modules = [];
+        } else {
+            $modules = array_map('class_basename', $this->files->directories($modulesDir));
+        }
         foreach ($modules as $module) {
-            if ($module === 'Test') {
-                Log::info('Test module is being loaded!');
-            }
             try {
-                Log::info("Registering migrations for module: {$module}");
                 $this->registerModule($module);
             } catch (Throwable $e) {
                 Log::error("Failed to register module '{$module}': ".$e->getMessage());
