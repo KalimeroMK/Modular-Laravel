@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Role\database\factories;
+namespace App\Modules\Role\Database\Factories;
 
 use App\Modules\Role\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
