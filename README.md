@@ -192,8 +192,7 @@ This will:
 
 ## ✅ Requirements
 
-- Laravel 9.x+
-- PHP 8.0+
+- PHP 8.3+
 
 ## 💡 Notes
 
