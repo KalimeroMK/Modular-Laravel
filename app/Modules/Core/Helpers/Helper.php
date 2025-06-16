@@ -10,13 +10,10 @@ use ReflectionException;
 
 class Helper
 {
-    /**
-     * @param  class-string|object  $class
-     */
     public static function getResourceName($class): string
     {
         try {
-            return (new ReflectionClass(is_object($class) ? get_class($class) : (string) $class))->getShortName();
+            return (new ReflectionClass($class))->getShortName();
         } catch (ReflectionException $exception) {
             return $exception->getMessage();
         }

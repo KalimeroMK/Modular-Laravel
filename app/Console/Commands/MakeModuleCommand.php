@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Modules\Core\Support\Generators\ModuleGenerator;
-use Artisan;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Artisan;
 use Throwable;
 
 class MakeModuleCommand extends Command
@@ -26,27 +26,38 @@ class MakeModuleCommand extends Command
     {
         $name = Str::studly($this->argument('name'));
 
-        // Resolve generator manually since Laravel doesn't auto-inject in Command
-        $generator = app(ModuleGenerator::class);
-
         $options = [
             'model' => $this->option('model') ?? '',
             'relations' => $this->option('relations') ?? '',
             'exceptions' => $this->option('exceptions'),
             'observers' => $this->option('observers'),
             'policies' => $this->option('policies'),
+            'repositories' => [], // ensure safe default
         ];
 
+        $fields = $this->parseFields($options['model']);
+
         try {
-            $generator->generate($name, $options);
+            $generator = app(ModuleGenerator::class);
+            $generator->generate($name, $fields, $options);
             Artisan::call('optimize:clear');
             $this->info("✅ Module '{$name}' generated successfully.");
-
             return 0;
         } catch (Throwable $e) {
             $this->error("❌ Error generating module: {$e->getMessage()}");
-
             return 1;
         }
+    }
+
+    protected function parseFields(string $model): array
+    {
+        if (empty($model)) {
+            return [];
+        }
+
+        return array_map(function ($field) {
+            [$name, $type] = explode(':', $field);
+            return ['name' => trim($name), 'type' => trim($type)];
+        }, explode(',', $model));
     }
 }

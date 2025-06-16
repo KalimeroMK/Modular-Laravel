@@ -2,15 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\User\Database\Factories;
+namespace App\Modules\User\database\factories;
 
 use App\Modules\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-/**
- * @extends Factory<User>
- */
 class UserFactory extends Factory
 {
     protected $model = User::class;

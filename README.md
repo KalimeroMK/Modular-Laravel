@@ -20,9 +20,9 @@ This kit is ideal for teams and developers who want a clean, well-structured cod
 - **Powerful CLI Generator**: Create complete modules via `php artisan make:module`
 - **Dynamic field handling**: Fillables, casts, and relationships auto-handled
 - **Flexible flags**:
-  - `--exceptions`: Generate exception classes
-  - `--observers`: Generate observer stubs
-  - `--policies`: Generate policy stubs
+    - `--exceptions`: Generate exception classes
+    - `--observers`: Generate observer stubs
+    - `--policies`: Generate policy stubs
 - **Auto-discovery**: Routes, migrations, factories, observers, and policies
 - **Repository pattern**: Interface-to-implementation binding out-of-the-box
 - **Fully configurable**: `config/modules.php` for structure and behaviors
@@ -132,6 +132,51 @@ If a field ends in `_id`, the generated FormRequest will contain:
 'user_id' => ['required', 'integer', 'exists:users,id'],
 ```
 
+
+## 📦 Module Generation via YAML
+
+In addition to the `php artisan make:module` command, you can now generate multiple modules at once using a YAML configuration file.
+
+### 🔧 Usage
+
+1. Create a `modules.yaml` file in the root of your project:
+
+```yaml
+modules:
+  Product:
+    fields:
+      name: string
+      price: float
+      is_active: boolean
+    relations:
+      belongsToMany: [Category]
+      user: belongsTo:User
+    observers: true
+    policies: true
+
+  Category:
+    fields:
+      name: string
+    relations:
+      belongsToMany: [Product]
+```
+
+2. Run the command:
+
+```bash
+php artisan modules:build-from-yaml
+```
+
+This will:
+
+> 📌 Note: Pivot migrations are automatically generated **only** when using `modules:build-from-yaml` and when both related modules define a `belongsToMany` relationship to each other.
+
+- Automatically generate all modules using the same logic as `make:module`
+- Parse `fields`, `relations`, and options like `observers` and `policies`
+- Fill in `fillable`, `casts`, `migrations`, `factories`, and `resources`
+- Avoids manual repetition by letting you define multiple modules at once
+
+
 ## 🧩 Planned Features
 
 - [x] Event and Listener support
@@ -139,9 +184,10 @@ If a field ends in `_id`, the generated FormRequest will contain:
 - [x] Relationship sync logic from DTO
 - [x] Sanctum authentication integration
 - [x] Exception handling stubs per action
-- [x] Resource, DTO, Request,Action,Controller 
+- [x] Resource, DTO, Request,Action,Controller
 - [x] Feature test generation
 - [x] Migration and Factory generators
+- [x] Add Yaml support for module generation
 - [ ] Interactive CLI wizard (make:module step-by-step)
 
 ## ✅ Requirements
@@ -193,9 +239,9 @@ This starter kit includes full support for Docker. You can spin up the app, data
    ```
 
 6. **MySQL connection (host machine)**:
-  - **Host**: `127.0.0.1`
-  - **Port**: `3306`
-  - **User**: `homestead`
-  - **Password**: `secret`
-  - **Database**: `homestead`
+- **Host**: `127.0.0.1`
+- **Port**: `3306`
+- **User**: `homestead`
+- **Password**: `secret`
+- **Database**: `homestead`
 

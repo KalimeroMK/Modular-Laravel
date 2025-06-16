@@ -1,0 +1,17 @@
+modules:
+  Product:
+    fields:
+      name: string
+      price: float
+      is_active: boolean
+    relations:
+      belongsToMany: [ Category ]
+      user: belongsTo:User
+    observers: true
+    policies: true
+
+  Category:
+    fields:
+      name: string
+    relations:
+      belongsToMany: [Product]

@@ -14,17 +14,14 @@ readonly class CreateUserDTO
         public string $password,
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
     public static function fromRequest(Request $request): self
     {
-        $data = $request->all();
+        $data = $request->validated();
 
         return new self(
-            $data['name'],
-            $data['email'],
-            bcrypt($data['password'])
+            name: $data['name'],
+            email: $data['email'],
+            password: bcrypt($data['password']),
         );
     }
 }

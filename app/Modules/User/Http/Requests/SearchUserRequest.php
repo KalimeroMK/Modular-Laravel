@@ -8,9 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SearchUserRequest extends FormRequest
 {
-    /**
-     * @return array<string, mixed>
-     */
     public function rules(): array
     {
         return [

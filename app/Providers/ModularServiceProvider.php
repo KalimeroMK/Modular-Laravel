@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Log;
 use Throwable;
 
 /**
@@ -35,15 +34,23 @@ class ModularServiceProvider extends ServiceProvider
     public function boot(Filesystem $files): void
     {
         $this->files = $files;
-        $modulesDir = app_path(Config::get('modules.default.directory'));
-        if (! is_dir($modulesDir)) {
-            $modules = [];
-        } else {
-            $modules = array_map('class_basename', $this->files->directories($modulesDir));
-        }
+        $modulesCacheKey = 'modular.modules';
+        $modules = cache()->rememberForever($modulesCacheKey, function () {
+            $modulesDir = app_path(Config::get('modules.default.directory'));
+            if (! is_dir($modulesDir)) {
+                Log::warning("Modules directory not found: {$modulesDir}");
 
+                return [];
+            }
+
+            return array_map('class_basename', $this->files->directories($modulesDir));
+        });
         foreach ($modules as $module) {
+            if ($module === 'Test') {
+                Log::info('Test module is being loaded!');
+            }
             try {
+                Log::info("Registering migrations for module: {$module}");
                 $this->registerModule($module);
             } catch (Throwable $e) {
                 Log::error("Failed to register module '{$module}': ".$e->getMessage());
@@ -59,6 +66,9 @@ class ModularServiceProvider extends ServiceProvider
         $this->registerPublishConfig();
     }
 
+    /**
+     * Register a module by its name
+     */
     protected function registerModule(string $name): void
     {
         $enabled = config("modules.specific.{$name}.enabled", true);
@@ -73,6 +83,9 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Register the routes for a module by its name
+     */
     protected function registerRoutes(string $module): void
     {
         if (! $this->app->routesAreCached()) {
@@ -86,12 +99,13 @@ class ModularServiceProvider extends ServiceProvider
     }
 
     /**
-     * @return array<string, mixed>
+     * Collect the needed data to register the routes
      */
     protected function getRoutingConfig(string $module): array
     {
         $path = config("modules.specific.{$module}.structure.routes", config('modules.default.structure.routes'));
 
+        // Update the controllers path to include 'Http'
         $cp = config(
             "modules.specific.{$module}.structure.controllers",
             config('modules.default.structure.controllers', 'Http/Controllers')
@@ -105,6 +119,9 @@ class ModularServiceProvider extends ServiceProvider
         return compact('path', 'namespace');
     }
 
+    /**
+     * Registers a single route
+     */
     protected function registerRoute(string $module, string $path, string $namespace): void
     {
         $filePath = app_path(
@@ -116,6 +133,9 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Register the helpers file for a module by its name
+     */
     protected function registerHelpers(string $module): void
     {
         try {
@@ -127,6 +147,9 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Prepare component registration
+     */
     protected function prepareComponent(string $module, string $component, string $file = ''): false|string
     {
         $path = config(
@@ -161,6 +184,9 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Register a translation file namespace.
+     */
     protected function loadFiltersFrom(string $path, string $namespace): void
     {
         $this->callAfterResolving('filters', function ($filter) use ($path, $namespace): void {
@@ -168,6 +194,9 @@ class ModularServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Publish modules configuration
+     */
     protected function registerPublishConfig(): void
     {
         $publishPath = $this->app->configPath('modules.php');
@@ -176,16 +205,11 @@ class ModularServiceProvider extends ServiceProvider
 
     protected function registerFactories(string $module): void
     {
+        // If you want to scope factories per module, you can extend this logic
         try {
-            Factory::guessFactoryNamesUsing(
-                /**
-                 * @param  class-string<Model>  $modelName
-                 * @return class-string<Factory>
-                 */
-                static function (string $modelName): string {
-                    return str_replace('Models', 'Database\\Factories', $modelName).'Factory';
-                }
-            );
+            Factory::guessFactoryNamesUsing(function (string $model) use ($module) {
+                return 'App\\Modules\\'.$module.'\\database\\factories\\'.class_basename($model).'Factory';
+            });
         } catch (Throwable $e) {
             Log::warning("Failed to register factories for module '{$module}': ".$e->getMessage());
         }

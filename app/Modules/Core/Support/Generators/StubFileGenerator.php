@@ -30,11 +30,11 @@ class StubFileGenerator
             'Interfaces/{{module}}Interface.php' => 'stubs/module/Interface.stub',
             'Repositories/{{module}}Repository.php' => 'stubs/module/Repository.stub',
             'Models/{{module}}.php' => 'stubs/module/Model.stub',
-            'Database/Factories/{{module}}Factory.php' => 'stubs/module/Factory.stub',
+            'database/factories/{{module}}Factory.php' => 'stubs/module/Factory.stub',
             'routes/api.php' => 'stubs/module/routes/api.stub',
             'Http/Controllers/{{module}}Controller.php' => 'stubs/module/Http/Controllers/Controller.stub',
             'Http/Resources/{{module}}Resource.php' => 'stubs/module/Http/Resource/Resource.stub',
-            'Database/Migrations/{{timestamp}}_create_{{table}}_table.php' => 'stubs/module/Migration.stub',
+            'database/migrations/{{timestamp}}_create_{{table}}_table.php' => 'stubs/module/Migration.stub',
         ];
 
         foreach ($stubMap as $target => $stubPath) {
@@ -53,6 +53,10 @@ class StubFileGenerator
 
             if (Str::endsWith($stubPath, 'Migration.stub')) {
                 $currentReplacements['{{migration_fields}}'] = $this->buildMigrationFields($fields);
+            }
+
+            if (Str::endsWith($stubPath, 'Resource.stub')) {
+                $currentReplacements['{{resource_fields}}'] = $this->buildResourceFields($fields);
             }
 
             $content = $this->files->get($stubFullPath);
@@ -126,6 +130,17 @@ class StubFileGenerator
                 };
                 $lines[] = "            \$table->{$column};";
             }
+        }
+
+        return implode("\n", $lines);
+    }
+
+    protected function buildResourceFields(array $fields): string
+    {
+        $lines = [];
+        foreach ($fields as $field) {
+            $name = $field['name'];
+            $lines[] = "            '{$name}' => \$this->{$name},";
         }
 
         return implode("\n", $lines);

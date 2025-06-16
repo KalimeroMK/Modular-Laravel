@@ -19,25 +19,29 @@ use ReflectionNamedType;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
-     * Map of interfaces to their concrete repository classes.
-     *
-     * @var array<class-string, class-string>
+     * @var string[]
      */
     protected array $repositories = [
-        UserInterface::class => UserRepository::class,
+UserInterface::class => UserRepository::class,
         AuthInterface::class => AuthRepository::class,
         RoleInterface::class => RoleRepository::class,
         PermissionInterface::class => PermissionRepository::class,
-    ];
+        \App\Modules\Test\Interfaces\TestInterface::class => \App\Modules\Test\Repositories\TestRepository::class,
+        \App\Modules\Klime\Interfaces\KlimeInterface::class => \App\Modules\Klime\Repositories\KlimeRepository::class,
+        \App\Modules\Product\Interfaces\ProductInterface::class => \App\Modules\Product\Repositories\ProductRepository::class,
+        \App\Modules\Category\Interfaces\CategoryInterface::class => \App\Modules\Category\Repositories\CategoryRepository::class,
+        \App\Modules\Tag\Interfaces\TagInterface::class => \App\Modules\Tag\Repositories\TagRepository::class,
+];
 
     /**
      * Register services.
      */
     public function register(): void
     {
-        foreach ($this->repositories as $interface => $repositoryClass) {
-            $this->app->bind($interface, function ($app) use ($repositoryClass) {
-                $reflector = new ReflectionClass($repositoryClass);
+
+        foreach ($this->repositories as $interface => $repository) {
+            $this->app->bind($interface, function ($app) use ($repository) {
+                $reflector = new ReflectionClass($repository);
                 $constructor = $reflector->getConstructor();
 
                 if ($constructor && $constructor->getNumberOfParameters() > 0) {
@@ -47,20 +51,22 @@ class RepositoryServiceProvider extends ServiceProvider
                     if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
                         $modelClass = $type->getName();
 
-                        return new $repositoryClass($app->make($modelClass));
+                        return new $repository($app->make($modelClass));
                     }
                 }
 
-                return new $repositoryClass();
+                return new $repository;
             });
         }
     }
 
     /**
      * Bootstrap services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
-        // No boot logic needed
+        //
     }
 }
