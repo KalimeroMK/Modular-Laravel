@@ -45,6 +45,9 @@ class ModulesBuildFromYamlCommand extends Command
                     'repositories' => [],
                 ];
 
+                $options['table'] = $options['table'] ?? Str::plural(Str::snake($name));
+                $options['relationships'] = $options['relationships'] ?? $this->buildRelationships($options['relations']);
+
                 $generator->generate(Str::studly($name), $fields, $options);
 
                 $this->info("✅ Module '{$name}' generated successfully.");
@@ -54,7 +57,6 @@ class ModulesBuildFromYamlCommand extends Command
         }
 
         $this->generatePivotMigrations($allModules);
-
         $this->info("✅ All modules processed.");
     }
 
@@ -104,5 +106,28 @@ class ModulesBuildFromYamlCommand extends Command
 
         file_put_contents($target, $content);
         $this->info("📦 Pivot migration created: {$fileName}");
+    }
+
+    protected function buildRelationships($relations): string
+    {
+        if (empty($relations)) {
+            return '';
+        }
+
+        if (is_string($relations)) {
+            $relations = explode(',', $relations);
+        }
+
+        $lines = [];
+        foreach ($relations as $rel) {
+            $parts = explode(':', $rel);
+            if (count($parts) < 2) continue;
+            $relName = trim($parts[0]);
+            $relType = trim($parts[1]);
+            $relModel = $parts[2] ?? ucfirst($relName);
+            $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }\n";
+        }
+
+        return implode("\n", $lines);
     }
 }

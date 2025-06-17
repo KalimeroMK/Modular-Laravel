@@ -32,14 +32,17 @@ class MakeModuleCommand extends Command
             'exceptions' => $this->option('exceptions'),
             'observers' => $this->option('observers'),
             'policies' => $this->option('policies'),
-            'repositories' => [], // ensure safe default
+            'repositories' => [],
         ];
+
+        $options['table'] = Str::plural(Str::snake($name));
+        $options['relationships'] = $options['relationships'] ?? $this->buildRelationships($options['relations']);
 
         $fields = $this->parseFields($options['model']);
 
         try {
             $generator = app(ModuleGenerator::class);
-            $generator->generate($name, $options);
+            $generator->generate($name, $fields, $options);
             Artisan::call('optimize:clear');
             $this->info("✅ Module '{$name}' generated successfully.");
             return 0;
@@ -59,5 +62,24 @@ class MakeModuleCommand extends Command
             [$name, $type] = explode(':', $field);
             return ['name' => trim($name), 'type' => trim($type)];
         }, explode(',', $model));
+    }
+
+    protected function buildRelationships(string $relations): string
+    {
+        if (empty($relations)) {
+            return '';
+        }
+
+        $lines = [];
+        foreach (explode(',', $relations) as $rel) {
+            $parts = explode(':', $rel);
+            if (count($parts) < 2) continue;
+            $relName = trim($parts[0]);
+            $relType = trim($parts[1]);
+            $relModel = $parts[2] ?? ucfirst($relName);
+            $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }\n";
+        }
+
+        return implode("\n", $lines);
     }
 }
