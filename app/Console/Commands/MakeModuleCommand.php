@@ -39,7 +39,7 @@ class MakeModuleCommand extends Command
 
         try {
             $generator = app(ModuleGenerator::class);
-            $generator->generate($name, $fields, $options);
+            $generator->generate($name, $options);
             Artisan::call('optimize:clear');
             $this->info("✅ Module '{$name}' generated successfully.");
             return 0;
