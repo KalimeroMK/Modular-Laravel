@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Core\Support\Generators;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 
 class FeatureTestGenerator
 {
@@ -12,57 +13,72 @@ class FeatureTestGenerator
 
     public function generate(string $moduleName, array $fields): void
     {
-        $stubPath = base_path('stubs/tests/Feature/CrudTest.stub');
-        $targetPath = base_path("tests/Feature/Modules/{$moduleName}CrudTest.php");
+        $path = base_path("tests/Feature/Modules/{$moduleName}/{$moduleName}CrudTest.php");
+        $stubPath = base_path('stubs/module/Tests/Feature/CrudTest.stub');
 
         if (! $this->files->exists($stubPath)) {
             return;
         }
 
-        $requiredFields = array_filter($fields, fn ($f) => ($f['required'] ?? false));
-        $allStringFields = array_filter($fields, fn ($f) => $f['type'] === 'string');
-        $updateField = count($allStringFields) > 0 ? $allStringFields[array_key_first($allStringFields)] : ($fields[0] ?? null);
-
-        $foreignKeySetup = '';
-        $storeData = [];
-        $usedFields = count($requiredFields) ? $requiredFields : $fields;
-
-        foreach ($usedFields as $f) {
-            if (str_ends_with($f['name'], '_id') && in_array($f['type'], ['int', 'bigint', 'unsignedBigInteger'])) {
-                $relatedModel = ucfirst(str_replace('_id', '', $f['name']));
-                $foreignKeySetup .= "$relatedModel = \\App\\Models\\$relatedModel::factory()->create();\n";
-                $storeData[$f['name']] = "\$${relatedModel}->id";
-            } else {
-                $storeData[$f['name']] = $f['type'] === 'bool' ? true : ($f['type'] === 'int' ? 123 : ($f['type'] === 'float' ? 1.23 : 'test'));
-            }
-        }
-
-        $updateData = [];
-        $updateSetup = '';
-
-        if ($updateField) {
-            if (str_ends_with($updateField['name'], '_id') && in_array($updateField['type'], ['int', 'bigint', 'unsignedBigInteger'])) {
-                $relatedModel = ucfirst(str_replace('_id', '', $updateField['name']));
-                $updateSetup .= "$relatedModel = \\App\\Models\\$relatedModel::factory()->create();\n";
-                $updateData[$updateField['name']] = "\$${relatedModel}->id";
-            } else {
-                $updateData[$updateField['name']] = $updateField['type'] === 'string' ? 'updated' : ($updateField['type'] === 'bool' ? false : ($updateField['type'] === 'int' ? 456 : 4.56));
-            }
-        }
-
-        $replacements = [
-            '{{module}}' => $moduleName,
-            '{{module_lower}}' => mb_strtolower($moduleName),
-            '{{store_data_setup}}' => $foreignKeySetup,
-            '{{store_data}}' => var_export($storeData, true),
-            '{{update_data_setup}}' => $updateSetup,
-            '{{update_data}}' => var_export($updateData, true),
-        ];
+        $storeData = $this->buildTestData($fields, false);
+        $updateData = $this->buildTestData($fields, true);
 
         $content = $this->files->get($stubPath);
-        $content = str_replace(array_keys($replacements), array_values($replacements), $content);
+        $content = str_replace(
+            ['{{module}}', '{{module_lower}}', '{{store_data}}', '{{update_data}}', '{{related_factories}}'],
+            [
+                $moduleName,
+                Str::lower($moduleName),
+                $storeData,
+                $updateData,
+                $this->buildRelatedFactories($fields),
+            ],
+            $content
+        );
 
-        $this->files->ensureDirectoryExists(dirname($targetPath));
-        $this->files->put($targetPath, $content);
+        $this->files->ensureDirectoryExists(dirname($path));
+        $this->files->put($path, $content);
+    }
+
+    protected function buildTestData(array $fields, bool $forUpdate = false): string
+    {
+        $lines = [];
+
+        foreach ($fields as $field) {
+            if ($field['type'] === 'foreign') {
+                continue; // handled separately
+            }
+
+            $value = match ($field['type']) {
+                'string', 'text', 'char' => "'test'",
+                'float', 'decimal', 'double' => 99.99,
+                'int', 'integer', 'bigint' => 123,
+                'bool', 'boolean' => 'true',
+                'array', 'json' => "['key' => 'value']",
+                default => "'sample'",
+            };
+
+            if ($forUpdate && $field['name'] === 'title') {
+                $value = "'updated title'";
+            }
+
+            $lines[] = "            '{$field['name']}' => {$value},";
+        }
+
+        return implode("\n", $lines);
+    }
+
+    protected function buildRelatedFactories(array $fields): string
+    {
+        $lines = [];
+
+        foreach ($fields as $field) {
+            if ($field['type'] === 'foreign') {
+                $model = Str::studly(Str::before($field['name'], '_id'));
+                $lines[] = "        '{$field['name']}' => \App\Models\\{$model}::factory()->create()->id,";
+            }
+        }
+
+        return "[\n" . implode("\n", $lines) . "\n    ]";
     }
 }

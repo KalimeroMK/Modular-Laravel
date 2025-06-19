@@ -18,8 +18,12 @@ class {{module}}CrudTest extends TestCase
 
     public function test_store_creates_resource()
     {
-        {{store_data_setup}}
-        $data = {{store_data}};
+        $related = $this->createRelatedModels();
+
+        $data = array_merge([
+            {{store_data}}
+        ], $related);
+
         $response = $this->postJson('/api/v1/{{module_lower}}s', $data);
         $response->assertCreated();
     }
@@ -34,8 +38,11 @@ class {{module}}CrudTest extends TestCase
     public function test_update_modifies_resource()
     {
         $model = {{module}}::factory()->create();
-        {{update_data_setup}}
-        $data = {{update_data}};
+
+        $data = array_merge([
+            {{update_data}}
+        ], $this->createRelatedModels());
+
         $response = $this->putJson("/api/v1/{{module_lower}}s/{$model->id}", $data);
         $response->assertOk();
     }
@@ -45,5 +52,11 @@ class {{module}}CrudTest extends TestCase
         $model = {{module}}::factory()->create();
         $response = $this->deleteJson("/api/v1/{{module_lower}}s/{$model->id}");
         $response->assertNoContent();
+    }
+
+    protected function createRelatedModels(): array
+    {
+        // This will be replaced dynamically
+        return {{related_factories}};
     }
 }
