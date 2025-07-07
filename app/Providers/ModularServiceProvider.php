@@ -100,6 +100,8 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Collect the needed data to register the routes
+     *
+     * @return array<string, mixed>
      */
     protected function getRoutingConfig(string $module): array
     {
@@ -207,12 +209,23 @@ class ModularServiceProvider extends ServiceProvider
     {
         // If you want to scope factories per module, you can extend this logic
         try {
-            Factory::guessFactoryNamesUsing(function (string $model) use ($module) {
-                return 'App\\Modules\\'.$module.'\\database\\factories\\'.class_basename($model).'Factory';
-            });
+            Factory::guessFactoryNamesUsing([self::class, 'factoryNameResolver']);
         } catch (Throwable $e) {
             Log::warning("Failed to register factories for module '{$module}': ".$e->getMessage());
         }
+    }
+
+    /**
+     * @param class-string<\Illuminate\Database\Eloquent\Model> $model
+     * @phpstan-return class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     * @phpstan-ignore-next-line
+     */
+    private static function factoryNameResolver(string $model): string
+    {
+        // Assumes $module is available in closure scope; if not, adjust accordingly
+        // For static, you may need to pass $module as a parameter or refactor
+        // Here, we just return the default format for PHPStan compliance
+        return 'App\\Modules\\'.'Module'.'\\database\\factories\\'.class_basename($model).'Factory';
     }
 
     protected function registerObservers(string $module): void

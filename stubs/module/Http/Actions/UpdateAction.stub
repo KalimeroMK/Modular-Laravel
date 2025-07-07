@@ -10,9 +10,11 @@ class Update{{class}}Action
 {
     public function __construct(protected {{class}}Interface $repository) {}
 
-    public function execute({{module}}DTO $dto, {{class}} $model): {{class}}
+    /**
+     * @return {{class}}|null
+     */
+    public function execute({{module}}DTO $dto, {{class}} $model): ?{{class}}
     {
-        $model->update($dto->toArray());
-        return $model;
+        return $this->repository->update($model->id, $dto->toArray());
     }
 }

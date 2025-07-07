@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class SyncRelations
 {
+    /**
+     * @param array<string, mixed> $relations
+     */
     public static function execute(Model $model, array $relations): void
     {
         $hasChanges = false;

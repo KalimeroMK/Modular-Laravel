@@ -14,7 +14,7 @@ class UpdatePermissionAction
 
     public function execute(PermissionDTO $dto): Model
     {
-        return $this->repository->update($dto->id, [
+        return $this->repository->update((int)$dto->id, [
             'name' => $dto->name,
             'guard_name' => $dto->guard_name,
         ]);

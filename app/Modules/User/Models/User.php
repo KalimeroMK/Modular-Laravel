@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Models;
 
-use Database\Factories\UserFactory;
+use App\Modules\User\Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -39,4 +40,12 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    /**
+     * Ensure Laravel can find the correct factory for this model.
+     */
+    protected static function newFactory(): Factory|UserFactory
+    {
+        return UserFactory::new();
+    }
 }

@@ -11,12 +11,16 @@ readonly class RoleDTO
     public function __construct(
         public ?int $id,
         public string $name,
+        /**
+         * @var array<int, string>
+         */
         public array $permissions = []
     ) {}
 
     public static function fromRequest(Request $request, ?int $id = null): self
     {
-        $validated = $request->validated();
+        /** @var array{id?: int, name?: string, permissions?: array<int, string>} $validated */
+        $validated = method_exists($request, 'validated') ? $request->validated() : $request->all();
 
         return new self(
             id: $id ?? $validated['id'] ?? null,
@@ -25,8 +29,12 @@ readonly class RoleDTO
         );
     }
 
+    /**
+     * @param array{id?: int, name?: string, permissions?: array<int, string>} $data
+     */
     public static function fromArray(array $data): self
     {
+        /** @var array{id?: int, name?: string, permissions?: array<int, string>} $data */
         return new self(
             id: $data['id'] ?? null,
             name: $data['name'] ?? '',

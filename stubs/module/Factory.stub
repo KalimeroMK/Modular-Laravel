@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Modules\{{module}}\database\factories;
+namespace App\Modules\{{module}}\Database\Factories;
 
 use App\Modules\{{module}}\Models\{{module}};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<{{module}}>
+ */
 class {{module}}Factory extends Factory
 {
     protected $model = {{module}}::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
             {{factory_fields}}

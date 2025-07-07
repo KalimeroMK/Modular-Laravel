@@ -15,7 +15,7 @@ class UpdateRoleAction
 
     public function execute(Role $role, RoleDTO $dto): Model
     {
-        return $this->repository->update($role->id, [
+        return $this->repository->update((int)$role->id, [
             'name' => $dto->name,
         ]);
     }

@@ -13,6 +13,9 @@ class StubFileGenerator
     public function __construct(protected Filesystem $files) {}
 
     /**
+     * @param string $moduleName
+     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     * @param array<string, mixed> $options
      * @throws FileNotFoundException
      */
     public function generate(string $moduleName, array $fields, array $options): void
@@ -75,6 +78,9 @@ class StubFileGenerator
         }
     }
 
+    /**
+     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     */
     protected function buildFactoryFields(array $fields): string
     {
         $lines = [];
@@ -102,6 +108,9 @@ class StubFileGenerator
         return implode("\n", $lines);
     }
 
+    /**
+     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     */
     protected function buildMigrationFields(array $fields): string
     {
         $lines = [];
@@ -147,6 +156,9 @@ class StubFileGenerator
         return implode("\n", $lines);
     }
 
+    /**
+     * @param array<int, array{name: string, type: string}> $fields
+     */
     protected function buildResourceFields(array $fields): string
     {
         $lines = [];
@@ -159,6 +171,9 @@ class StubFileGenerator
         return implode("\n", $lines);
     }
 
+    /**
+     * @param array<int, array{name: string, type: string}> $fields
+     */
     protected function buildCasts(array $fields): string
     {
         $lines = [];
@@ -180,6 +195,9 @@ class StubFileGenerator
         return implode("\n", $lines);
     }
 
+    /**
+     * @param array<int, array{name: string, type: string}> $fields
+     */
     protected function buildPhpDoc(array $fields): string
     {
         $lines = ["/**", " * @property int \$id"];

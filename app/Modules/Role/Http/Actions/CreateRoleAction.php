@@ -12,10 +12,15 @@ class CreateRoleAction
 {
     public function __construct(protected RoleInterface $repository) {}
 
+    /**
+     * @return \App\Modules\Role\Models\Role
+     */
     public function execute(RoleDTO $dto): Role
     {
-        return $this->repository->create([
+        /** @var Role $role */
+        $role = $this->repository->create([
             'name' => $dto->name,
         ]);
+        return $role;
     }
 }

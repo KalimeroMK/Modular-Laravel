@@ -6,7 +6,6 @@ namespace App\Modules\{{module}}\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Modules\{{module}}\database\factories\{{module}}Factory;
 
 class {{module}} extends Model
 {
@@ -22,9 +21,9 @@ class {{module}} extends Model
         {{fillable}}
     ];
 
-    public static function factory(): {{module}}Factory
+    public static function newFactory(): \App\Modules\{{module}}\Database\Factories\{{module}}Factory
     {
-        return {{module}}Factory::new();
+        return \App\Modules\{{module}}\Database\Factories\{{module}}Factory::new();
     }
 
     // RELATIONSHIPS

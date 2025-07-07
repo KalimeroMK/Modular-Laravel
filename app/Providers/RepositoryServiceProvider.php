@@ -22,11 +22,11 @@ class RepositoryServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected array $repositories = [
-        UserInterface::class => UserRepository::class,
+UserInterface::class => UserRepository::class,
         AuthInterface::class => AuthRepository::class,
         RoleInterface::class => RoleRepository::class,
         PermissionInterface::class => PermissionRepository::class,
-    ];
+];
 
     /**
      * Register services.
@@ -36,7 +36,8 @@ class RepositoryServiceProvider extends ServiceProvider
 
         foreach ($this->repositories as $interface => $repository) {
             $this->app->bind($interface, function ($app) use ($repository) {
-                $reflector = new ReflectionClass($repository);
+                /** @var class-string $repository */
+                $reflector = new \ReflectionClass($repository);
                 $constructor = $reflector->getConstructor();
 
                 if ($constructor && $constructor->getNumberOfParameters() > 0) {

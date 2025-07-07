@@ -36,7 +36,7 @@ class RepositoryBinder
             $replacement = 'protected array $repositories = [' . "\n" . $updatedEntries . "\n];";
             $content = preg_replace($pattern, $replacement, $content);
 
-            $this->files->put($providerPath, $content);
+            $this->files->put($providerPath, (string) $content);
         }
     }
 }

@@ -6,6 +6,9 @@ namespace App\Modules\Core\Support\Generators;
 
 class FieldParser
 {
+    /**
+     * @return array<int, array{name: string, type: string, references?: string, on?: string}>
+     */
     public function parse(string $fieldsOption): array
     {
         $fields = [];

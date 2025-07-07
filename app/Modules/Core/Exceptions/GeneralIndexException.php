@@ -6,7 +6,10 @@ namespace App\Modules\Core\Exceptions;
 
 class GeneralIndexException extends GeneralException
 {
-    public $code = 500;
+    /**
+     * @var int
+     */
+    protected $code = 500;
 
     public function message(): ?string
     {

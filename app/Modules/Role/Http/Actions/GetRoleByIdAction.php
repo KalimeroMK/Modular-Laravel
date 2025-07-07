@@ -14,6 +14,6 @@ class GetRoleByIdAction
 
     public function execute(Role $role): Model
     {
-        return $this->repository->findOrFail($role->id);
+        return $this->repository->findOrFail((int)$role->id);
     }
 }

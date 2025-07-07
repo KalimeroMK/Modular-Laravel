@@ -11,6 +11,6 @@ class Delete{{class}}Action
 
     public function execute({{class}} $model): bool
     {
-        return $model->delete();
+        return $this->repository->delete($model->id);
     }
 }
