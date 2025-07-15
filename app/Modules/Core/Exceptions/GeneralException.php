@@ -6,6 +6,7 @@ namespace App\Modules\Core\Exceptions;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class GeneralException extends Exception
@@ -13,31 +14,41 @@ class GeneralException extends Exception
     /**
      * Any extra data to send with the response.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     public $data = [];
 
+    /**
+     * @var int
+     */
     protected $code = 500;
 
+    /**
+     * @var string
+     */
     protected $message = 'Internal system error';
 
     protected string $logMessage = 'Internal system error';
 
     protected bool $log = true;
 
-    protected null $exception = null;
+    /**
+     * @var Exception|null
+     */
+    protected $exception = null;
 
     /**
      * GeneralException constructor.
      *
-     * @param  array  $data
+     * @param Exception|null $exception
+     * @param array<string, mixed> $data
      */
-    public function __construct(?Exception $exception = null, $data = [])
+    public function __construct(Exception|null $exception = null, array $data = [])
     {
         $this->setException($exception);
         $this->setData($data);
 
-        parent::__construct($this->message());
+        parent::__construct((string) $this->message());
     }
 
     public function message(): ?string
@@ -45,16 +56,25 @@ class GeneralException extends Exception
         return $this->message;
     }
 
-    public function getException(): null
+    /**
+     * @return Exception|null
+     */
+    public function getException(): Exception|null
     {
         return $this->exception;
     }
 
-    public function setException(null $exception): void
+    /**
+     * @param Exception|null $exception
+     */
+    public function setException(Exception|null $exception): void
     {
         $this->exception = $exception;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return $this->data;
@@ -63,7 +83,7 @@ class GeneralException extends Exception
     /**
      * Set the extra data to send with the response.
      *
-     *
+     * @param array<string, mixed> $data
      * @return $this
      */
     public function setData(array $data): self
@@ -83,7 +103,10 @@ class GeneralException extends Exception
         $this->message = $message;
     }
 
-    public function render($request): JsonResponse
+    /**
+     * @param \Illuminate\Http\Request $request
+     */
+    public function render(Request $request): JsonResponse
     {
         $this->isLog() ? $this->renderLog() : null;
 
@@ -108,6 +131,9 @@ class GeneralException extends Exception
         Log::error(print_r($this->getLogResponse(), true));
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getLogResponse(): array
     {
         return [
@@ -138,6 +164,9 @@ class GeneralException extends Exception
         return $this->exception ? $this->exception->getFile() : 'none';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getResponse(): array
     {
         return [

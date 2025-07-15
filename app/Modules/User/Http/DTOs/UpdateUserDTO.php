@@ -15,7 +15,8 @@ readonly class UpdateUserDTO
 
     public static function fromRequest(Request $request): self
     {
-        $data = $request->validated();
+        /** @var array{name: string, email: string} $data */
+        $data = method_exists($request, 'validated') ? $request->validated() : $request->all();
 
         return new self(
             name: $data['name'],

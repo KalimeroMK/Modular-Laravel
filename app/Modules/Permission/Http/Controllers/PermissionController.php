@@ -39,7 +39,7 @@ class PermissionController
     {
         return response()->json([
             'data' => new PermissionResource(
-                $action->execute(PermissionDTO::fromRequest($request, $permission->id, $permission))
+                $action->execute(PermissionDTO::fromRequest($request, (int)$permission->id, $permission))
             ),
         ]);
     }

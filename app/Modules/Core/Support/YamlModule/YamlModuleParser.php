@@ -16,6 +16,9 @@ class YamlModuleParser
         $this->file = $file;
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public function parse(): array
     {
         $data = Yaml::parseFile($this->file);

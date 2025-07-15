@@ -14,6 +14,8 @@ class CreatePermissionAction
 
     public function execute(PermissionDTO $dto): Permission
     {
-        return $this->repository->create($dto->toArray());
+        /** @var Permission $permission */
+        $permission = $this->repository->create($dto->toArray());
+        return $permission;
     }
 }

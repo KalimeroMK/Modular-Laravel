@@ -3,13 +3,16 @@
 namespace App\Modules\{{module}}\Http\Actions;
 
 use App\Modules\{{module}}\Interfaces\{{class}}Interface;
-use Illuminate\Database\Eloquent\Model;
+use App\Modules\{{module}}\Models\{{class}};
 
 class GetById{{class}}Action
 {
     public function __construct(protected {{class}}Interface $repository) {}
 
-    public function execute($id): Model
+    /**
+     * @return {{class}}|null
+     */
+    public function execute(int|string $id): ?{{class}}
     {
         return $this->repository->find($id);
     }

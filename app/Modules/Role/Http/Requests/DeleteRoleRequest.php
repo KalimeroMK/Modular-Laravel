@@ -17,6 +17,7 @@ class DeleteRoleRequest extends FormRequest
     }
 
     /**
+     * @return array<string, array<int, string>>
      * Get the validation rules that apply to the request.
      */
     public function rules(): array

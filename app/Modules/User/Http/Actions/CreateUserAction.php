@@ -14,10 +14,12 @@ class CreateUserAction
 
     public function execute(CreateUserDTO $dto): User
     {
-        return $this->repository->create([
+        /** @var User $user */
+        $user = $this->repository->create([
             'name' => $dto->name,
             'email' => $dto->email,
             'password' => bcrypt($dto->password),
         ]);
+        return $user;
     }
 }

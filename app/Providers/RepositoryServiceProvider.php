@@ -26,8 +26,6 @@ UserInterface::class => UserRepository::class,
         AuthInterface::class => AuthRepository::class,
         RoleInterface::class => RoleRepository::class,
         PermissionInterface::class => PermissionRepository::class,
-        \App\Modules\Product\Interfaces\ProductInterface::class => \App\Modules\Product\Repositories\ProductRepository::class,
-        \App\Modules\Category\Interfaces\CategoryInterface::class => \App\Modules\Category\Repositories\CategoryRepository::class,
 ];
 
     /**
@@ -38,7 +36,8 @@ UserInterface::class => UserRepository::class,
 
         foreach ($this->repositories as $interface => $repository) {
             $this->app->bind($interface, function ($app) use ($repository) {
-                $reflector = new ReflectionClass($repository);
+                /** @var class-string $repository */
+                $reflector = new \ReflectionClass($repository);
                 $constructor = $reflector->getConstructor();
 
                 if ($constructor && $constructor->getNumberOfParameters() > 0) {

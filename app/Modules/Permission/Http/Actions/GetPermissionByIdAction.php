@@ -14,6 +14,6 @@ class GetPermissionByIdAction
 
     public function execute(Permission $permission): Model
     {
-        return $this->repository->findOrFail($permission->id);
+        return $this->repository->findOrFail((int)$permission->id);
     }
 }

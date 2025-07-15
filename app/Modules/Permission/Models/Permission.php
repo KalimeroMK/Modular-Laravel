@@ -27,6 +27,9 @@ class Permission extends BasePermission
         return PermissionFactory::new();
     }
 
+    /**
+     * @return BelongsToMany<Role, Permission, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'>
+     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_has_permissions');

@@ -37,6 +37,7 @@ class ModulesBuildFromYamlCommand extends Command
                     return ['name' => trim($name), 'type' => trim($type)];
                 }, $definition['fields']);
 
+                /** @var array{relations: string, exceptions: mixed, observers: mixed, policies: mixed, repositories: array<mixed>, table?: string, relationships?: string} $options */
                 $options = [
                     'relations'    => implode(',', $definition['relations']),
                     'exceptions'   => $definition['exceptions'] ?? false,
@@ -45,8 +46,8 @@ class ModulesBuildFromYamlCommand extends Command
                     'repositories' => [],
                 ];
 
-                $options['table'] = $options['table'] ?? Str::plural(Str::snake($name));
-                $options['relationships'] = $options['relationships'] ?? $this->buildRelationships($options['relations']);
+                $options['table'] = Str::plural(Str::snake($name));
+                $options['relationships'] = $this->buildRelationships($options['relations']);
 
                 $generator->generate(Str::studly($name), $fields, $options);
 
@@ -60,6 +61,13 @@ class ModulesBuildFromYamlCommand extends Command
         $this->info("✅ All modules processed.");
     }
 
+    /**
+     * Generate pivot migrations for many-to-many relationships
+     *
+     * @param \Illuminate\Support\Collection<string, array<string, mixed>> $modules
+     * @return void
+     * @phpstan-param \Illuminate\Support\Collection<string, array<string, mixed>> $modules
+     */
     protected function generatePivotMigrations(\Illuminate\Support\Collection $modules): void
     {
         $names = $modules->keys();
@@ -97,7 +105,14 @@ class ModulesBuildFromYamlCommand extends Command
             return;
         }
 
-        $content = file_get_contents($stub);
+        $fileContent = file_get_contents($stub);
+        if ($fileContent === false) {
+            $this->error("Could not read pivot stub file: {$stub}");
+            return;
+        }
+
+        /** @var string $content */
+        $content = $fileContent;
         $content = str_replace(
             ['{{table}}', '{{first_column}}', '{{second_column}}'],
             [$table, $first, $second],
@@ -108,7 +123,13 @@ class ModulesBuildFromYamlCommand extends Command
         $this->info("📦 Pivot migration created: {$fileName}");
     }
 
-    protected function buildRelationships($relations): string
+    /**
+     * Build relationship methods from relation definitions
+     *
+     * @param string|array<int, string> $relations
+     * @return string
+     */
+    protected function buildRelationships(string|array $relations): string
     {
         if (empty($relations)) {
             return '';

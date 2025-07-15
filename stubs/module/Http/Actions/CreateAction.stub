@@ -10,7 +10,10 @@ class Create{{class}}Action
 {
     public function __construct(protected {{class}}Interface $repository) {}
 
-    public function execute({{module}}DTO $dto): {{class}}
+    /**
+     * @return {{class}}|null
+     */
+    public function execute({{module}}DTO $dto): ?{{class}}
     {
         return $this->repository->create($dto->toArray());
     }

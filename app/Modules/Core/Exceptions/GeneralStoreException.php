@@ -6,7 +6,10 @@ namespace App\Modules\Core\Exceptions;
 
 class GeneralStoreException extends GeneralException
 {
-    public $code = 422;
+    /**
+     * @var int
+     */
+    protected $code = 422;
 
     public function message(): ?string
     {

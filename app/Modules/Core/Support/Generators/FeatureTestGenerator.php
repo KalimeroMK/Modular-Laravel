@@ -11,6 +11,9 @@ class FeatureTestGenerator
 {
     public function __construct(protected Filesystem $files) {}
 
+    /**
+     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     */
     public function generate(string $moduleName, array $fields): void
     {
         $path = base_path("tests/Feature/Modules/{$moduleName}/{$moduleName}CrudTest.php");
@@ -40,6 +43,9 @@ class FeatureTestGenerator
         $this->files->put($path, $content);
     }
 
+    /**
+     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     */
     protected function buildTestData(array $fields, bool $forUpdate = false): string
     {
         $lines = [];
@@ -68,6 +74,9 @@ class FeatureTestGenerator
         return implode("\n", $lines);
     }
 
+    /**
+     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     */
     protected function buildRelatedFactories(array $fields): string
     {
         $lines = [];

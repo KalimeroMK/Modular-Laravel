@@ -22,10 +22,16 @@ class MakeModuleCommand extends Command
 
     protected $description = 'Create a new API module with predefined structure and files';
 
+    /**
+     * Handle the command execution
+     * 
+     * @return int
+     */
     public function handle(): int
     {
         $name = Str::studly($this->argument('name'));
 
+        /** @var array{model: string, relations: string, exceptions: bool, observers: bool, policies: bool, repositories: array<mixed>, table?: string, relationships?: string} $options */
         $options = [
             'model' => $this->option('model') ?? '',
             'relations' => $this->option('relations') ?? '',
@@ -36,7 +42,7 @@ class MakeModuleCommand extends Command
         ];
 
         $options['table'] = Str::plural(Str::snake($name));
-        $options['relationships'] = $options['relationships'] ?? $this->buildRelationships($options['relations']);
+        $options['relationships'] = $this->buildRelationships($options['relations']);
 
         $fields = $this->parseFields($options['model']);
 
@@ -52,16 +58,25 @@ class MakeModuleCommand extends Command
         }
     }
 
+    /**
+     * Parse model fields from string format to structured array
+     *
+     * @param string $model
+     * @return array<int, array{name: string, type: string}>
+     */
     protected function parseFields(string $model): array
     {
         if (empty($model)) {
             return [];
         }
 
-        return array_map(function ($field) {
+        /** @var array<int, array{name: string, type: string}> $result */
+        $result = array_map(function ($field) {
             [$name, $type] = explode(':', $field);
             return ['name' => trim($name), 'type' => trim($type)];
         }, explode(',', $model));
+
+        return $result;
     }
 
     protected function buildRelationships(string $relations): string

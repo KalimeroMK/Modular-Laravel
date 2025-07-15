@@ -6,7 +6,10 @@ namespace App\Modules\Core\Exceptions;
 
 class GeneralNotFoundException extends GeneralException
 {
-    public $code = 404;
+    /**
+     * @var int
+     */
+    protected $code = 404;
 
     public function message(): ?string
     {
