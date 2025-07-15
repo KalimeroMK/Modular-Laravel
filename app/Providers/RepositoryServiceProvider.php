@@ -22,11 +22,13 @@ class RepositoryServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected array $repositories = [
-        UserInterface::class => UserRepository::class,
+UserInterface::class => UserRepository::class,
         AuthInterface::class => AuthRepository::class,
         RoleInterface::class => RoleRepository::class,
         PermissionInterface::class => PermissionRepository::class,
-    ];
+        \App\Modules\Product\Interfaces\ProductInterface::class => \App\Modules\Product\Repositories\ProductRepository::class,
+        \App\Modules\Category\Interfaces\CategoryInterface::class => \App\Modules\Category\Repositories\CategoryRepository::class,
+];
 
     /**
      * Register services.

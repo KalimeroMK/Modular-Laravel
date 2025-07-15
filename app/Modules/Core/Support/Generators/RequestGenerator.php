@@ -17,7 +17,7 @@ class RequestGenerator
     public function generate(string $moduleName, array $fields): void
     {
         foreach (['Create', 'Update'] as $type) {
-            $className = $type . $moduleName . 'Request';
+            $className = $type.$moduleName.'Request';
             $path = app_path("Modules/{$moduleName}/Http/Requests/{$className}.php");
             $stubPath = base_path("stubs/module/Http/Requests/{$type}Request.stub");
 
@@ -26,7 +26,7 @@ class RequestGenerator
             }
 
             $rules = implode("\n", array_filter(array_map(function ($f) {
-                if (!isset($f['name']) || !isset($f['type']) || $f['name'] === 'id') {
+                if (! isset($f['name']) || ! isset($f['type']) || $f['name'] === 'id') {
                     return null;
                 }
 
@@ -38,7 +38,7 @@ class RequestGenerator
                     'float', 'double', 'decimal' => 'numeric',
                     'bool', 'boolean' => 'boolean',
                     'array', 'json' => 'array',
-                    'foreign' => 'integer|exists:' . ($f['on'] ?? 'users') . ',' . ($f['references'] ?? 'id'),
+                    'foreign' => 'integer|exists:'.($f['on'] ?? 'users').','.($f['references'] ?? 'id'),
                     default => 'string'
                 };
 

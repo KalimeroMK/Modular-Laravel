@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth\Http\Resources;
 
-
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AuthResource extends JsonResource

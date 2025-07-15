@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\Core\Support\YamlModule;
 
+use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
 
 class YamlModuleParser
@@ -17,8 +20,8 @@ class YamlModuleParser
     {
         $data = Yaml::parseFile($this->file);
 
-        if (!isset($data['modules'])) {
-            throw new \InvalidArgumentException("YAML must contain 'modules' key.");
+        if (! isset($data['modules'])) {
+            throw new InvalidArgumentException("YAML must contain 'modules' key.");
         }
 
         $modules = [];

@@ -79,6 +79,6 @@ class FeatureTestGenerator
             }
         }
 
-        return "[\n" . implode("\n", $lines) . "\n    ]";
+        return "[\n".implode("\n", $lines)."\n    ]";
     }
 }

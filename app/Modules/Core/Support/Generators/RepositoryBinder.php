@@ -25,7 +25,7 @@ class RepositoryBinder
         $pattern = '/protected\s+array\s+\$repositories\s*=\s*\[(.*?)\];/s';
 
         if (preg_match($pattern, $content, $matches)) {
-            $existingEntries = trim($matches[1]);
+            $existingEntries = mb_trim($matches[1]);
             $newEntry = "        \\{$interface}::class => \\{$repository}::class,";
 
             if (Str::contains($existingEntries, $newEntry)) {
@@ -33,7 +33,7 @@ class RepositoryBinder
             }
 
             $updatedEntries = $existingEntries ? "$existingEntries\n$newEntry" : $newEntry;
-            $replacement = 'protected array $repositories = [' . "\n" . $updatedEntries . "\n];";
+            $replacement = 'protected array $repositories = ['."\n".$updatedEntries."\n];";
             $content = preg_replace($pattern, $replacement, $content);
 
             $this->files->put($providerPath, $content);

@@ -17,7 +17,7 @@ class FieldParser
                     'name' => $name,
                     'type' => 'foreign',
                     'references' => $parts[3] ?? 'id',
-                    'on' => $parts[2] ?? (str_ends_with($name, '_id') ? rtrim($name, '_id').'s' : $name.'s'),
+                    'on' => $parts[2] ?? (str_ends_with($name, '_id') ? mb_rtrim($name, '_id').'s' : $name.'s'),
                 ];
 
                 continue;

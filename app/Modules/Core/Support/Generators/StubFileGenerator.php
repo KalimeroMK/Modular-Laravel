@@ -30,11 +30,11 @@ class StubFileGenerator
             'Interfaces/{{module}}Interface.php' => 'stubs/module/Interface.stub',
             'Repositories/{{module}}Repository.php' => 'stubs/module/Repository.stub',
             'Models/{{module}}.php' => 'stubs/module/Model.stub',
-            'database/factories/{{module}}Factory.php' => 'stubs/module/Factory.stub',
+            'Database/Factories/{{module}}Factory.php' => 'stubs/module/Factory.stub',
             'routes/api.php' => 'stubs/module/routes/api.stub',
             'Http/Controllers/{{module}}Controller.php' => 'stubs/module/Http/Controllers/Controller.stub',
             'Http/Resources/{{module}}Resource.php' => 'stubs/module/Http/Resource/Resource.stub',
-            'database/migrations/{{timestamp}}_create_{{table}}_table.php' => 'stubs/module/Migration.stub',
+            'Database/migrations/{{timestamp}}_create_{{table}}_table.php' => 'stubs/module/Migration.stub',
         ];
 
         foreach ($stubMap as $target => $stubPath) {
@@ -61,7 +61,7 @@ class StubFileGenerator
 
             if (Str::endsWith($stubPath, 'Model.stub')) {
                 $currentReplacements['{{table}}'] = $replacements['{{table}}'];
-                $currentReplacements['{{fillable}}'] = implode(', ', array_map(fn($f) => "'{$f['name']}'", $fields));
+                $currentReplacements['{{fillable}}'] = implode(', ', array_map(fn ($f) => "'{$f['name']}'", $fields));
                 $currentReplacements['{{casts}}'] = $this->buildCasts($fields);
                 $currentReplacements['{{phpdoc_block}}'] = $this->buildPhpDoc($fields);
                 $currentReplacements['{{relationships}}'] = $options['relationships'] ?? '';
@@ -182,7 +182,7 @@ class StubFileGenerator
 
     protected function buildPhpDoc(array $fields): string
     {
-        $lines = ["/**", " * @property int \$id"];
+        $lines = ['/**', ' * @property int $id'];
 
         foreach ($fields as $field) {
             $type = match ($field['type']) {
@@ -200,7 +200,7 @@ class StubFileGenerator
 
         $lines[] = " * @property \Illuminate\Support\Carbon|null \$created_at";
         $lines[] = " * @property \Illuminate\Support\Carbon|null \$updated_at";
-        $lines[] = " */";
+        $lines[] = ' */';
 
         return implode("\n", $lines);
     }
