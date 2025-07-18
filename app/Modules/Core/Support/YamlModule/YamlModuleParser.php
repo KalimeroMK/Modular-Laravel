@@ -39,7 +39,19 @@ class YamlModuleParser
             foreach ($config['relations'] ?? [] as $type => $related) {
                 if (is_array($related)) {
                     foreach ($related as $model) {
-                        $relations[] = "{$model}:{$type}";
+                        if (is_array($model)) {
+                            // Handle polymorphic relations with structure like ['model' => 'Comment', 'morph_name' => 'commentable']
+                            $modelName = $model['model'] ?? '';
+                            $morphName = $model['morph_name'] ?? $model['name'] ?? '';
+                            if ($modelName && $morphName) {
+                                $relations[] = "{$modelName}:{$type}:{$modelName}:{$morphName}";
+                            } elseif ($modelName) {
+                                $relations[] = "{$modelName}:{$type}";
+                            }
+                        } else {
+                            // Simple model name as string
+                            $relations[] = "{$model}:{$type}";
+                        }
                     }
                 } elseif (is_string($related)) {
                     $relations[] = "{$type}:{$related}";

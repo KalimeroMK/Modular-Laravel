@@ -92,9 +92,48 @@ class MakeModuleCommand extends Command
             $relName = trim($parts[0]);
             $relType = trim($parts[1]);
             $relModel = $parts[2] ?? ucfirst($relName);
-            $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }\n";
+            
+            // Handle polymorphic relationships
+            if (in_array($relType, ['morphTo', 'morphMany', 'morphOne', 'morphToMany'])) {
+                $lines[] = $this->buildPolymorphicRelationship($relName, $relType, $relModel, $parts);
+            } else {
+                $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }\n";
+            }
         }
 
         return implode("\n", $lines);
+    }
+
+    /**
+     * Build polymorphic relationship method
+     *
+     * @param string $relName
+     * @param string $relType
+     * @param string $relModel
+     * @param array<int, string> $parts
+     * @return string
+     */
+    protected function buildPolymorphicRelationship(string $relName, string $relType, string $relModel, array $parts): string
+    {
+        switch ($relType) {
+            case 'morphTo':
+                return "    public function {$relName}()\n    {\n        return \$this->morphTo();\n    }\n";
+            
+            case 'morphMany':
+                $morphName = $parts[3] ?? $relName;
+                return "    public function {$relName}()\n    {\n        return \$this->morphMany({$relModel}::class, '{$morphName}');\n    }\n";
+            
+            case 'morphOne':
+                $morphName = $parts[3] ?? $relName;
+                return "    public function {$relName}()\n    {\n        return \$this->morphOne({$relModel}::class, '{$morphName}');\n    }\n";
+            
+            case 'morphToMany':
+                $morphName = $parts[3] ?? $relName;
+                return "    public function {$relName}()\n    {\n        return \$this->morphToMany({$relModel}::class, '{$morphName}');\n    }\n";
+            
+            default:
+                // Fallback to standard relationship
+                return "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }\n";
+        }
     }
 }

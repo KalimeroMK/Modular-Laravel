@@ -53,10 +53,10 @@ class PolymorphicRelationshipsIntegrationTest extends TestCase
 
         // Check model content
         $modelContent = File::get($modelPath);
-        $this->assertStringContains('commentable_type', $modelContent);
-        $this->assertStringContains('commentable_id', $modelContent);
-        $this->assertStringContains('public function commentable()', $modelContent);
-        $this->assertStringContains('return $this->morphTo()', $modelContent);
+        $this->assertStringContainsString('commentable_type', $modelContent);
+        $this->assertStringContainsString('commentable_id', $modelContent);
+        $this->assertStringContainsString('public function commentable()', $modelContent);
+        $this->assertStringContainsString('return $this->morphTo()', $modelContent);
 
         // Check migration was created
         $migrationsPath = app_path('Modules/TestComment/Database/migrations');
@@ -64,7 +64,7 @@ class PolymorphicRelationshipsIntegrationTest extends TestCase
         $this->assertNotEmpty($migrationFiles);
 
         $migrationContent = File::get($migrationFiles[0]);
-        $this->assertStringContains('$table->morphs(\'commentable\')', $migrationContent);
+        $this->assertStringContainsString('$table->morphs(\'commentable\')', $migrationContent);
 
         $this->generatedFiles[] = $modelPath;
         $this->generatedFiles = array_merge($this->generatedFiles, $migrationFiles);
@@ -85,10 +85,10 @@ class PolymorphicRelationshipsIntegrationTest extends TestCase
         $this->assertTrue(File::exists($modelPath));
 
         $modelContent = File::get($modelPath);
-        $this->assertStringContains('public function comments()', $modelContent);
-        $this->assertStringContains('return $this->morphMany(TestComment::class, \'commentable\')', $modelContent);
-        $this->assertStringContains('public function tags()', $modelContent);
-        $this->assertStringContains('return $this->morphToMany(TestTag::class, \'taggable\')', $modelContent);
+        $this->assertStringContainsString('public function comments()', $modelContent);
+        $this->assertStringContainsString('return $this->morphMany(TestComment::class, \'commentable\')', $modelContent);
+        $this->assertStringContainsString('public function tags()', $modelContent);
+        $this->assertStringContainsString('return $this->morphToMany(TestTag::class, \'taggable\')', $modelContent);
 
         $this->generatedFiles[] = $modelPath;
     }
@@ -126,8 +126,8 @@ modules:
         $this->assertTrue(File::exists($modelPath));
 
         $modelContent = File::get($modelPath);
-        $this->assertStringContains('public function TestProduct()', $modelContent);
-        $this->assertStringContains('return $this->morphToMany(TestProduct::class, \'taggable\')', $modelContent);
+        $this->assertStringContainsString('public function TestProduct()', $modelContent);
+        $this->assertStringContainsString('return $this->morphToMany(TestProduct::class, \'taggable\')', $modelContent);
 
         // Clean up
         File::delete($yamlFile);
@@ -173,9 +173,9 @@ modules:
 
         $result = $method->invoke($stubGenerator, $fields);
 
-        $this->assertStringContains('$table->string(\'content\')', $result);
-        $this->assertStringContains('$table->morphs(\'owner\')', $result);
-        $this->assertStringContains('$table->boolean(\'active\')', $result);
+        $this->assertStringContainsString('$table->string(\'content\')', $result);
+        $this->assertStringContainsString('$table->morphs(\'owner\')', $result);
+        $this->assertStringContainsString('$table->boolean(\'active\')', $result);
         
         // Should only have one morphs() call even though we have both type and id fields
         $this->assertEquals(1, substr_count($result, '$table->morphs(\'owner\')'));
@@ -228,19 +228,19 @@ modules:
 
         // Test morphTo
         $result = $method->invoke($makeModuleCommand, 'owner', 'morphTo', 'Owner', ['owner', 'morphTo']);
-        $this->assertStringContains('return $this->morphTo()', $result);
+        $this->assertStringContainsString('return $this->morphTo()', $result);
 
         // Test morphMany
         $result = $method->invoke($makeModuleCommand, 'comments', 'morphMany', 'Comment', ['comments', 'morphMany', 'Comment', 'commentable']);
-        $this->assertStringContains('return $this->morphMany(Comment::class, \'commentable\')', $result);
+        $this->assertStringContainsString('return $this->morphMany(Comment::class, \'commentable\')', $result);
 
         // Test morphToMany
         $result = $method->invoke($makeModuleCommand, 'tags', 'morphToMany', 'Tag', ['tags', 'morphToMany', 'Tag', 'taggable']);
-        $this->assertStringContains('return $this->morphToMany(Tag::class, \'taggable\')', $result);
+        $this->assertStringContainsString('return $this->morphToMany(Tag::class, \'taggable\')', $result);
 
         // Test morphOne
         $result = $method->invoke($makeModuleCommand, 'avatar', 'morphOne', 'Avatar', ['avatar', 'morphOne', 'Avatar', 'imageable']);
-        $this->assertStringContains('return $this->morphOne(Avatar::class, \'imageable\')', $result);
+        $this->assertStringContainsString('return $this->morphOne(Avatar::class, \'imageable\')', $result);
     }
 
     public function test_full_workflow_generates_working_polymorphic_models(): void
@@ -271,15 +271,15 @@ modules:
         $commentContent = File::get($commentModelPath);
         $productContent = File::get($productModelPath);
 
-        // Comment model should have morphTo relationship
-        $this->assertStringContains('public function commentable()', $commentContent);
-        $this->assertStringContains('return $this->morphTo()', $commentContent);
-        $this->assertStringContains('commentable_type', $commentContent);
-        $this->assertStringContains('commentable_id', $commentContent);
+                // Comment model should have morphTo relationship
+        $this->assertStringContainsString('public function commentable()', $commentContent);
+        $this->assertStringContainsString('return $this->morphTo()', $commentContent);
+        $this->assertStringContainsString('commentable_type', $commentContent);
+        $this->assertStringContainsString('commentable_id', $commentContent);
 
-        // Product model should have morphMany relationship
-        $this->assertStringContains('public function comments()', $productContent);
-        $this->assertStringContains('return $this->morphMany(TestComment::class, \'commentable\')', $productContent);
+        // Product model should have morphMany relationship  
+        $this->assertStringContainsString('public function comments()', $productContent);
+        $this->assertStringContainsString('return $this->morphMany(TestComment::class, \'commentable\')', $productContent);
 
         // 4. Check migrations exist
         $commentMigrations = File::glob(app_path('Modules/TestComment/Database/migrations/*_create_test_comments_table.php'));
@@ -290,7 +290,7 @@ modules:
 
         // 5. Verify migration content
         $commentMigrationContent = File::get($commentMigrations[0]);
-        $this->assertStringContains('$table->morphs(\'commentable\')', $commentMigrationContent);
+        $this->assertStringContainsString('$table->morphs(\'commentable\')', $commentMigrationContent);
 
         $this->generatedFiles[] = $commentModelPath;
         $this->generatedFiles[] = $productModelPath;

@@ -64,7 +64,7 @@ class StubFileGenerator
 
             if (Str::endsWith($stubPath, 'Model.stub')) {
                 $currentReplacements['{{table}}'] = $replacements['{{table}}'];
-                $currentReplacements['{{fillable}}'] = implode(', ', array_map(fn ($f) => "'{$f['name']}'", $fields));
+                $currentReplacements['{{fillable}}'] = $this->buildFillableFields($fields);
                 $currentReplacements['{{casts}}'] = $this->buildCasts($fields);
                 $currentReplacements['{{phpdoc_block}}'] = $this->buildPhpDoc($fields);
                 $currentReplacements['{{relationships}}'] = $options['relationships'] ?? '';
@@ -109,11 +109,12 @@ class StubFileGenerator
     }
 
     /**
-     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     * @param array<int, array{name: string, type: string, references?: string, on?: string, morphable_name?: string}> $fields
      */
     protected function buildMigrationFields(array $fields): string
     {
         $lines = [];
+        $addedMorphs = [];
 
         foreach ($fields as $field) {
             $name = $field['name'];
@@ -123,6 +124,14 @@ class StubFileGenerator
                 $references = $field['references'] ?? 'id';
                 $on = $field['on'] ?? 'users';
                 $lines[] = "            \$table->foreignId('{$name}')->constrained('{$on}')->references('{$references}');";
+            } elseif (isset($field['morphable_name'])) {
+                // Handle morphable fields - generate morphs() instead of individual type/id columns
+                $morphableName = $field['morphable_name'];
+                if (!in_array($morphableName, $addedMorphs)) {
+                    $lines[] = "            \$table->morphs('{$morphableName}');";
+                    $addedMorphs[] = $morphableName;
+                }
+                // Skip individual _type and _id fields since morphs() handles both
             } else {
                 $column = match ($type) {
                     'char' => "char('{$name}', 100)",
@@ -193,6 +202,15 @@ class StubFileGenerator
         }
 
         return implode("\n", $lines);
+    }
+
+    /**
+     * @param array<int, array{name: string, type: string, morphable_name?: string}> $fields
+     */
+    protected function buildFillableFields(array $fields): string
+    {
+        // Include all field names in fillable, including morphable fields
+        return implode(', ', array_map(fn ($f) => "'{$f['name']}'", $fields));
     }
 
     /**

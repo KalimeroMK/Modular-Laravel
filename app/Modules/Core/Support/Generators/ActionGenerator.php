@@ -31,6 +31,7 @@ class ActionGenerator
             $replacements = [
                 '{{module}}' => $moduleName,
                 '{{class}}' => $moduleName,
+                '{{moduleVar}}' => mb_strtolower($moduleName),
             ];
 
             $content = $this->files->get($stubPath);
