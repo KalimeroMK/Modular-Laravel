@@ -49,7 +49,8 @@ class YamlModuleParser
             $modules[$name] = [
                 'fields' => $fields,
                 'relations' => $relations,
-                'raw_relations' => $config['relations'] ?? [], // ✅ ОВА ДОДАЈ ГО
+                'raw_relations' => $config['relations'] ?? [],
+                'exceptions' => $config['exceptions'] ?? false,
                 'observers' => $config['observers'] ?? false,
                 'policies' => $config['policies'] ?? false,
             ];
