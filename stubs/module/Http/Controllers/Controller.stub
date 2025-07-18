@@ -81,7 +81,7 @@ class {{module}}Controller extends Controller
      */
     public function show({{module}} ${{moduleVar}}, GetById{{module}}Action $action): JsonResponse
     {
-        return response()->json(new {{module}}Resource($action->execute(${{moduleVar}})));
+        return response()->json(['data' => new {{module}}Resource($action->execute(${{moduleVar}}))]);
     }
 
     /**
@@ -121,7 +121,7 @@ class {{module}}Controller extends Controller
     {
         $dto = {{module}}DTO::fromRequest($request);
         $model = $action->execute($dto);
-        return response()->json(new {{module}}Resource($model), 201);
+        return response()->json(['data' => new {{module}}Resource($model)], 201);
     }
 
     /**
@@ -172,7 +172,7 @@ class {{module}}Controller extends Controller
     {
         $dto = {{module}}DTO::fromRequest($request);
         $model = $action->execute($dto, ${{moduleVar}});
-        return response()->json(new {{module}}Resource($model));
+        return response()->json(['data' => new {{module}}Resource($model)]);
     }
 
     /**

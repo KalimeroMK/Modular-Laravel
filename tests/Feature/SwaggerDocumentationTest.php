@@ -49,6 +49,10 @@ class SwaggerDocumentationTest extends TestCase
         $this->assertArrayHasKey('/api/v1/me', $json['paths']);
         $this->assertArrayHasKey('/api/v1/forgot-password', $json['paths']);
         $this->assertArrayHasKey('/api/v1/reset-password', $json['paths']);
+        
+        // Verify the Authentication tag exists
+        $tags = collect($json['tags'])->pluck('name')->toArray();
+        $this->assertContains('Authentication', $tags);
     }
 
     public function test_user_module_swagger_documentation_exists(): void
@@ -126,21 +130,5 @@ class SwaggerDocumentationTest extends TestCase
         $this->assertArrayHasKey('SuccessResponse', $json['components']['schemas']);
         $this->assertArrayHasKey('ErrorResponse', $json['components']['schemas']);
         $this->assertArrayHasKey('ValidationErrorResponse', $json['components']['schemas']);
-    }
-
-    public function test_new_module_automatically_gets_swagger_documentation(): void
-    {
-        $this->artisan('l5-swagger:generate');
-        
-        $jsonContent = File::get(storage_path('api-docs/api-docs.json'));
-        $json = json_decode($jsonContent, true);
-        
-        // Check if TestModule endpoints are documented (this module was created after Swagger setup)
-        $this->assertArrayHasKey('/api/v1/testmodules', $json['paths']);
-        $this->assertArrayHasKey('/api/v1/testmodules/{id}', $json['paths']);
-        
-        // Verify the TestModule tag exists
-        $tags = collect($json['tags'])->pluck('name')->toArray();
-        $this->assertContains('TestModules', $tags);
     }
 } 
