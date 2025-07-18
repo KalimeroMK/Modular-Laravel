@@ -132,6 +132,169 @@ If a field ends in `_id`, the generated FormRequest will contain:
 'user_id' => ['required', 'integer', 'exists:users,id'],
 ```
 
+## 🔗 Polymorphic Relationships
+
+The module generator now supports **polymorphic relationships** for flexible data modeling.
+
+### 📋 Polymorphic Relationship Types
+
+| Type | Description | Usage |
+|------|-------------|-------|
+| `morphTo` | Polymorphic belongs-to relationship | `owner:morphTo` |
+| `morphOne` | Polymorphic one-to-one relationship | `profile:morphOne:Profile:ownable` |
+| `morphMany` | Polymorphic one-to-many relationship | `comments:morphMany:Comment:commentable` |
+| `morphToMany` | Polymorphic many-to-many relationship | `tags:morphToMany:Tag:taggable` |
+
+### 💡 Module Generation Examples
+
+#### 1. Comments that can belong to different models
+
+```bash
+# Generate a Comment model that can be attached to any model
+php artisan make:module Comment \
+  --model="content:text,author_name:string" \
+  --relations="commentable:morphTo,user:belongsTo:User"
+```
+
+This will generate a model with `commentable_type` and `commentable_id` fields for the polymorphic relationship.
+
+#### 2. Product with polymorphic relationships
+
+```bash
+# Generate Product model with comments and tags
+php artisan make:module Product \
+  --model="name:string,price:float,description:text" \
+  --relations="comments:morphMany:Comment:commentable,tags:morphToMany:Tag:taggable"
+```
+
+#### 3. Tags that can be applied to different models
+
+```bash
+# Generate Tag model for polymorphic many-to-many relationship
+php artisan make:module Tag \
+  --model="name:string,slug:string,color:string" \
+  --relations="products:morphedByMany:Product:taggable,posts:morphedByMany:Post:taggable"
+```
+
+#### 4. Images/attachments that can belong to different entities
+
+```bash
+# Generate Attachment model
+php artisan make:module Attachment \
+  --model="filename:string,path:string,size:integer,mime_type:string" \
+  --relations="attachable:morphTo,user:belongsTo:User"
+```
+
+### 🎯 YAML Configuration for Polymorphic Relationships
+
+```yaml
+modules:
+  # Comment that can be attached to any model
+  Comment:
+    fields:
+      content: text
+      author_name: string
+      rating: integer
+    relations:
+      commentable: morphTo
+      user: belongsTo:User
+    observers: true
+
+  # Product with polymorphic relationships  
+  Product:
+    fields:
+      name: string
+      price: float
+      description: text
+      is_active: boolean
+    relations:
+      # Standard relationships
+      category: belongsTo:Category
+      # Polymorphic relationships
+      comments: morphMany:Comment:commentable
+      tags: morphToMany:Tag:taggable
+      attachments: morphMany:Attachment:attachable
+    policies: true
+
+  # Tags for polymorphic many-to-many
+  Tag:
+    fields:
+      name: string
+      slug: string
+      color: string
+    relations:
+      # Can be applied to different models
+      products: morphedByMany:Product:taggable
+      posts: morphedByMany:Post:taggable
+
+  # Attachments that can belong to different models
+  Attachment:
+    fields:
+      filename: string
+      path: string
+      size: integer
+      mime_type: string
+    relations:
+      attachable: morphTo
+      user: belongsTo:User
+```
+
+### 🔧 Automatic Syncing of Polymorphic Relationships
+
+The `SyncRelations` class supports automatic syncing of polymorphic relationships:
+
+```php
+use App\Modules\Core\Support\Relations\SyncRelations;
+
+// In your controller or action
+SyncRelations::execute($model, [
+    'tags' => $dto->tag_ids,           // MorphToMany - sync with IDs
+    'commentable' => $product,         // MorphTo - with model instance  
+    'owner' => [                       // MorphTo - with type and id
+        'type' => 'App\\Models\\User',
+        'id' => 123
+    ],
+    'category' => $dto->category_id,   // Standard belongsTo relationship
+]);
+```
+
+**Supported Relationship Types:**
+- **`MorphToMany`**: Uses `sync()` for polymorphic many-to-many
+- **`MorphTo`**: Automatically sets `type` and `id` fields
+  - Accepts model instances: `$user` 
+  - Accepts arrays: `['type' => 'App\\Models\\User', 'id' => 123]`
+  - Accepts `null` to clear the relationship
+
+### 🌟 Benefits of Polymorphic Relationships
+
+1. **Flexibility** - One model can connect to different types
+2. **DRY Principle** - Avoid duplicating tables for similar relationships  
+3. **Scalability** - Easy to add new models without changing existing ones
+4. **Elegance** - Cleaner solution for complex relationships
+
+### 📚 Practical Usage Examples
+
+**Comment System:**
+```php
+// Comment on a product
+$comment->commentable()->associate($product);
+
+// Comment on a blog post
+$comment->commentable()->associate($blogPost);
+
+// Get comments for a product
+$productComments = $product->comments;
+```
+
+**Tagging System:**
+```php
+// Add tags to a product
+$product->tags()->attach([1, 2, 3]);
+
+// Get all products with a specific tag
+$taggedProducts = $tag->products;
+```
+
 
 ## 📦 Module Generation via YAML
 
