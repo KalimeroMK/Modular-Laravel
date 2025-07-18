@@ -26,6 +26,7 @@ UserInterface::class => UserRepository::class,
         AuthInterface::class => AuthRepository::class,
         RoleInterface::class => RoleRepository::class,
         PermissionInterface::class => PermissionRepository::class,
+        \App\Modules\TestModule\Interfaces\TestModuleInterface::class => \App\Modules\TestModule\Repositories\TestModuleRepository::class,
 ];
 
     /**

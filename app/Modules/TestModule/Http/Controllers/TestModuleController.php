@@ -1,35 +1,35 @@
 <?php
 
-declare(strict_types=1);
-
-namespace App\Modules\Permission\Http\Controllers;
+namespace App\Modules\TestModule\Http\Controllers;
 
 use App\Modules\Core\Traits\SwaggerTrait;
-use App\Modules\Permission\Http\Actions\CreatePermissionAction;
-use App\Modules\Permission\Http\Actions\DeletePermissionAction;
-use App\Modules\Permission\Http\Actions\GetAllPermissionAction;
-use App\Modules\Permission\Http\Actions\GetPermissionByIdAction;
-use App\Modules\Permission\Http\Actions\UpdatePermissionAction;
-use App\Modules\Permission\Http\DTOs\PermissionDTO;
-use App\Modules\Permission\Http\Requests\CreatePermissionRequest;
-use App\Modules\Permission\Http\Requests\UpdatePermissionRequest;
-use App\Modules\Permission\Http\Resources\PermissionResource;
-use App\Modules\Permission\Models\Permission;
+use App\Modules\TestModule\Models\TestModule;
+use App\Modules\TestModule\Http\Requests\CreateTestModuleRequest;
+use App\Modules\TestModule\Http\Requests\UpdateTestModuleRequest;
+use App\Modules\TestModule\Http\Resources\TestModuleResource;
+use App\Modules\TestModule\Http\DTOs\TestModuleDTO;
+use App\Modules\TestModule\Http\Actions\CreateTestModuleAction;
+use App\Modules\TestModule\Http\Actions\UpdateTestModuleAction;
+use App\Modules\TestModule\Http\Actions\DeleteTestModuleAction;
+use App\Modules\TestModule\Http\Actions\GetAllTestModuleAction;
+use App\Modules\TestModule\Http\Actions\GetByIdTestModuleAction;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Routing\Controller;
 
-class PermissionController
+class TestModuleController extends Controller
 {
     use SwaggerTrait;
     /**
      * @OA\Get(
-     *     path="/api/v1/permissions",
-     *     summary="List permissions",
-     *     description="Get list of permissions",
-     *     tags={"Permissions"},
+     *     path="/api/v1/testmodules",
+     *     summary="List testmodules",
+     *     description="Get list of testmodules",
+     *     tags={"TestModules"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="Permissions retrieved successfully",
+     *         description="TestModules retrieved successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
      *         )
@@ -41,35 +41,35 @@ class PermissionController
      *     )
      * )
      */
-    public function index(GetAllPermissionAction $action): JsonResponse
+    public function index(GetAllTestModuleAction $action): ResourceCollection
     {
-        return response()->json(['data' => PermissionResource::collection($action->execute())]);
+        return TestModuleResource::collection($action->execute());
     }
 
     /**
      * @OA\Get(
-     *     path="/api/v1/permissions/{id}",
-     *     summary="Get permission by ID",
-     *     description="Get specific permission information",
-     *     tags={"Permissions"},
+     *     path="/api/v1/testmodules/{id}",
+     *     summary="Get testmodule by ID",
+     *     description="Get specific testmodule information",
+     *     tags={"TestModules"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Permission ID",
+     *         description="TestModule ID",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Permission retrieved successfully",
+     *         description="TestModule retrieved successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Permission not found",
+     *         description="TestModule not found",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
      *     @OA\Response(
@@ -79,29 +79,28 @@ class PermissionController
      *     )
      * )
      */
-    public function show(Permission $permission, GetPermissionByIdAction $action): JsonResponse
+    public function show(TestModule $testmodule, GetByIdTestModuleAction $action): JsonResponse
     {
-        return response()->json(['data' => new PermissionResource($action->execute($permission))]);
+        return response()->json(new TestModuleResource($action->execute($testmodule)));
     }
 
     /**
      * @OA\Post(
-     *     path="/api/v1/permissions",
-     *     summary="Create permission",
-     *     description="Create a new permission",
-     *     tags={"Permissions"},
+     *     path="/api/v1/testmodules",
+     *     summary="Create testmodule",
+     *     description="Create a new testmodule",
+     *     tags={"TestModules"},
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
      *             required={"name"},
-     *             @OA\Property(property="name", type="string", example="create-users"),
-     *             @OA\Property(property="guard_name", type="string", example="web")
+     *             @OA\Property(property="name", type="string", example="Example testmodule")
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Permission created successfully",
+     *         description="TestModule created successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="data", type="object")
      *         )
@@ -118,44 +117,43 @@ class PermissionController
      *     )
      * )
      */
-    public function store(CreatePermissionRequest $request, CreatePermissionAction $action): JsonResponse
+    public function store(CreateTestModuleRequest $request, CreateTestModuleAction $action): JsonResponse
     {
-        return response()->json(['data' => new PermissionResource(
-            $action->execute(PermissionDTO::fromRequest($request))
-        )]);
+        $dto = TestModuleDTO::fromRequest($request);
+        $model = $action->execute($dto);
+        return response()->json(new TestModuleResource($model), 201);
     }
 
     /**
      * @OA\Put(
-     *     path="/api/v1/permissions/{id}",
-     *     summary="Update permission",
-     *     description="Update permission information",
-     *     tags={"Permissions"},
+     *     path="/api/v1/testmodules/{id}",
+     *     summary="Update testmodule",
+     *     description="Update testmodule information",
+     *     tags={"TestModules"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Permission ID",
+     *         description="TestModule ID",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="name", type="string", example="create-users"),
-     *             @OA\Property(property="guard_name", type="string", example="web")
+     *             @OA\Property(property="name", type="string", example="Updated testmodule")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Permission updated successfully",
+     *         description="TestModule updated successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Permission not found",
+     *         description="TestModule not found",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
      *     @OA\Response(
@@ -170,39 +168,37 @@ class PermissionController
      *     )
      * )
      */
-    public function update(Permission $permission, UpdatePermissionRequest $request, UpdatePermissionAction $action): JsonResponse
+    public function update(UpdateTestModuleRequest $request, TestModule $testmodule, UpdateTestModuleAction $action): JsonResponse
     {
-        return response()->json([
-            'data' => new PermissionResource(
-                $action->execute(PermissionDTO::fromRequest($request, (int)$permission->id, $permission))
-            ),
-        ]);
+        $dto = TestModuleDTO::fromRequest($request);
+        $model = $action->execute($dto, $testmodule);
+        return response()->json(new TestModuleResource($model));
     }
 
     /**
      * @OA\Delete(
-     *     path="/api/v1/permissions/{id}",
-     *     summary="Delete permission",
-     *     description="Delete a permission",
-     *     tags={"Permissions"},
+     *     path="/api/v1/testmodules/{id}",
+     *     summary="Delete testmodule",
+     *     description="Delete a testmodule",
+     *     tags={"TestModules"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Permission ID",
+     *         description="TestModule ID",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Permission deleted successfully",
+     *         description="TestModule deleted successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Permission deleted")
+     *             @OA\Property(property="message", type="string", example="TestModule deleted successfully.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Permission not found",
+     *         description="TestModule not found",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
      *     @OA\Response(
@@ -212,10 +208,9 @@ class PermissionController
      *     )
      * )
      */
-    public function destroy(Permission $permission, DeletePermissionAction $action): JsonResponse
+    public function destroy(TestModule $testmodule, DeleteTestModuleAction $action): JsonResponse
     {
-        $action->execute($permission);
-
-        return response()->json(['message' => 'Permission deleted']);
+        $action->execute($testmodule);
+        return response()->json(['message' => 'TestModule deleted successfully.']);
     }
 }
