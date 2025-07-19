@@ -20,6 +20,15 @@ use Illuminate\Routing\Controller;
 class {{module}}Controller extends Controller
 {
     use SwaggerTrait;
+    
+    /**
+     * {{module}} Controller
+     * 
+     * All routes are protected with auth:sanctum middleware and Laravel default rate limiting:
+     * - GET operations: 120 requests per minute
+     * - POST/PUT operations: 20 requests per hour  
+     * - DELETE operations: 5 requests per hour
+     */
     /**
      * @OA\Get(
      *     path="/api/v1/{{moduleVar}}s",

@@ -19,6 +19,7 @@ This kit is ideal for teams and developers who want a clean, well-structured cod
 - **Modular structure**: Each module is self-contained under `app/Modules`
 - **Powerful CLI Generator**: Create complete modules via `php artisan make:module`
 - **Dynamic field handling**: Fillables, casts, and relationships auto-handled
+- **Built-in Rate Limiting**: Auto-generated routes include Laravel throttle middleware
 - **Flexible flags**:
     - `--exceptions`: Generate exception classes
     - `--observers`: Generate observer stubs

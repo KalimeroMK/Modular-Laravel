@@ -26,16 +26,7 @@ UserInterface::class => UserRepository::class,
         AuthInterface::class => AuthRepository::class,
         RoleInterface::class => RoleRepository::class,
         PermissionInterface::class => PermissionRepository::class,
-        \App\Modules\TestModule\Interfaces\TestModuleInterface::class => \App\Modules\TestModule\Repositories\TestModuleRepository::class,
-        \App\Modules\Product\Interfaces\ProductInterface::class => \App\Modules\Product\Repositories\ProductRepository::class,
-        \App\Modules\TestCLI\Interfaces\TestCLIInterface::class => \App\Modules\TestCLI\Repositories\TestCLIRepository::class,
-        \App\Modules\TestYAML\Interfaces\TestYAMLInterface::class => \App\Modules\TestYAML\Repositories\TestYAMLRepository::class,
-        \App\Modules\TestYAMLWithExceptions\Interfaces\TestYAMLWithExceptionsInterface::class => \App\Modules\TestYAMLWithExceptions\Repositories\TestYAMLWithExceptionsRepository::class,
-        \App\Modules\TestCLIWithExceptions\Interfaces\TestCLIWithExceptionsInterface::class => \App\Modules\TestCLIWithExceptions\Repositories\TestCLIWithExceptionsRepository::class,
-        \App\Modules\TestComment\Interfaces\TestCommentInterface::class => \App\Modules\TestComment\Repositories\TestCommentRepository::class,
-        \App\Modules\TestProduct\Interfaces\TestProductInterface::class => \App\Modules\TestProduct\Repositories\TestProductRepository::class,
-        \App\Modules\TestTag\Interfaces\TestTagInterface::class => \App\Modules\TestTag\Repositories\TestTagRepository::class,
-];
+       ];
 
     /**
      * Register services.
