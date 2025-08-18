@@ -49,7 +49,7 @@ class ModuleGenerator
             $this->policyGenerator->generate($moduleName);
         }
 
-        $this->testGenerator->generate($moduleName, $fields);
+        $this->testGenerator->generate($moduleName, $fields, $options);
         $this->repositoryBinder->bind($moduleName);
     }
 }

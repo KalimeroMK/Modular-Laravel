@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Log;
 use Throwable;
 
 /**
@@ -113,7 +113,7 @@ class ModularServiceProvider extends ServiceProvider
             config('modules.default.structure.controllers', 'Http/Controllers')
         );
 
-        $namespace = $this->app->getNamespace().trim(
+        $namespace = $this->app->getNamespace().mb_trim(
             Config::get('modules.default.directory')."\\{$module}\\Http\\".implode('\\', explode('/', $cp)),
             '\\'
         );
@@ -159,7 +159,7 @@ class ModularServiceProvider extends ServiceProvider
             config("modules.default.structure.{$component}")
         );
 
-        $resource = rtrim(
+        $resource = mb_rtrim(
             str_replace('//', '/', app_path(Config::get('modules.default.directory')."/{$module}/{$path}/{$file}")),
             '/'
         );

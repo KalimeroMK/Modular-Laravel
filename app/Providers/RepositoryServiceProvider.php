@@ -26,7 +26,7 @@ UserInterface::class => UserRepository::class,
         AuthInterface::class => AuthRepository::class,
         RoleInterface::class => RoleRepository::class,
         PermissionInterface::class => PermissionRepository::class,
-];
+       ];
 
     /**
      * Register services.

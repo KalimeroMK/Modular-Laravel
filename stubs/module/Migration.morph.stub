@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('{{table}}', function (Blueprint $table) {
+            $table->id();
+            $table->morphs('{{morph_name}}');
+            $table->unsignedBigInteger('{{related_table}}_id');
+            $table->timestamps();
+
+            $table->foreign('{{related_table}}_id')
+                  ->references('id')
+                  ->on('{{related_table}}')
+                  ->onDelete('cascade');
+
+            $table->index(['{{morph_name}}_type', '{{morph_name}}_id']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('{{table}}');
+    }
+}; 

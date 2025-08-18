@@ -2,6 +2,7 @@
 
 namespace App\Modules\{{module}}\Http\Controllers;
 
+use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\{{module}}\Models\{{module}};
 use App\Modules\{{module}}\Http\Requests\Create{{module}}Request;
 use App\Modules\{{module}}\Http\Requests\Update{{module}}Request;
@@ -18,30 +19,204 @@ use Illuminate\Routing\Controller;
 
 class {{module}}Controller extends Controller
 {
+    use SwaggerTrait;
+    
+    /**
+     * {{module}} Controller
+     * 
+     * All routes are protected with auth:sanctum middleware and Laravel default rate limiting:
+     * - GET operations: 120 requests per minute
+     * - POST/PUT operations: 20 requests per hour  
+     * - DELETE operations: 5 requests per hour
+     */
+    /**
+     * @OA\Get(
+     *     path="/api/v1/{{moduleVar}}s",
+     *     summary="List {{moduleVar}}s",
+     *     description="Get list of {{moduleVar}}s",
+     *     tags={"{{module}}s"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="{{module}}s retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
+     */
     public function index(GetAll{{module}}Action $action): ResourceCollection
     {
         return {{module}}Resource::collection($action->execute());
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/v1/{{moduleVar}}s/{id}",
+     *     summary="Get {{moduleVar}} by ID",
+     *     description="Get specific {{moduleVar}} information",
+     *     tags={"{{module}}s"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="{{module}} ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="{{module}} retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="{{module}} not found",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
+     */
     public function show({{module}} ${{moduleVar}}, GetById{{module}}Action $action): JsonResponse
     {
-        return response()->json(new {{module}}Resource($action->execute(${{moduleVar}})));
+        return response()->json(['data' => new {{module}}Resource($action->execute(${{moduleVar}}))]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/v1/{{moduleVar}}s",
+     *     summary="Create {{moduleVar}}",
+     *     description="Create a new {{moduleVar}}",
+     *     tags={"{{module}}s"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(property="name", type="string", example="Example {{moduleVar}}")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="{{module}} created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
+     */
     public function store(Create{{module}}Request $request, Create{{module}}Action $action): JsonResponse
     {
         $dto = {{module}}DTO::fromRequest($request);
         $model = $action->execute($dto);
-        return response()->json(new {{module}}Resource($model), 201);
+        return response()->json(['data' => new {{module}}Resource($model)], 201);
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/v1/{{moduleVar}}s/{id}",
+     *     summary="Update {{moduleVar}}",
+     *     description="Update {{moduleVar}} information",
+     *     tags={"{{module}}s"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="{{module}} ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Updated {{moduleVar}}")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="{{module}} updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="{{module}} not found",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
+     */
     public function update(Update{{module}}Request $request, {{module}} ${{moduleVar}}, Update{{module}}Action $action): JsonResponse
     {
         $dto = {{module}}DTO::fromRequest($request);
         $model = $action->execute($dto, ${{moduleVar}});
-        return response()->json(new {{module}}Resource($model));
+        return response()->json(['data' => new {{module}}Resource($model)]);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/v1/{{moduleVar}}s/{id}",
+     *     summary="Delete {{moduleVar}}",
+     *     description="Delete a {{moduleVar}}",
+     *     tags={"{{module}}s"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="{{module}} ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="{{module}} deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="{{module}} deleted successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="{{module}} not found",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
+     */
     public function destroy({{module}} ${{moduleVar}}, Delete{{module}}Action $action): JsonResponse
     {
         $action->execute(${{moduleVar}});

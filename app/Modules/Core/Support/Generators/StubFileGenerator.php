@@ -33,11 +33,11 @@ class StubFileGenerator
             'Interfaces/{{module}}Interface.php' => 'stubs/module/Interface.stub',
             'Repositories/{{module}}Repository.php' => 'stubs/module/Repository.stub',
             'Models/{{module}}.php' => 'stubs/module/Model.stub',
-            'database/factories/{{module}}Factory.php' => 'stubs/module/Factory.stub',
+            'Database/Factories/{{module}}Factory.php' => 'stubs/module/Factory.stub',
             'routes/api.php' => 'stubs/module/routes/api.stub',
             'Http/Controllers/{{module}}Controller.php' => 'stubs/module/Http/Controllers/Controller.stub',
             'Http/Resources/{{module}}Resource.php' => 'stubs/module/Http/Resource/Resource.stub',
-            'database/migrations/{{timestamp}}_create_{{table}}_table.php' => 'stubs/module/Migration.stub',
+            'Database/migrations/{{timestamp}}_create_{{table}}_table.php' => 'stubs/module/Migration.stub',
         ];
 
         foreach ($stubMap as $target => $stubPath) {
@@ -64,7 +64,7 @@ class StubFileGenerator
 
             if (Str::endsWith($stubPath, 'Model.stub')) {
                 $currentReplacements['{{table}}'] = $replacements['{{table}}'];
-                $currentReplacements['{{fillable}}'] = implode(', ', array_map(fn($f) => "'{$f['name']}'", $fields));
+                $currentReplacements['{{fillable}}'] = $this->buildFillableFields($fields);
                 $currentReplacements['{{casts}}'] = $this->buildCasts($fields);
                 $currentReplacements['{{phpdoc_block}}'] = $this->buildPhpDoc($fields);
                 $currentReplacements['{{relationships}}'] = $options['relationships'] ?? '';
@@ -109,11 +109,12 @@ class StubFileGenerator
     }
 
     /**
-     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     * @param array<int, array{name: string, type: string, references?: string, on?: string, morphable_name?: string}> $fields
      */
     protected function buildMigrationFields(array $fields): string
     {
         $lines = [];
+        $addedMorphs = [];
 
         foreach ($fields as $field) {
             $name = $field['name'];
@@ -123,6 +124,14 @@ class StubFileGenerator
                 $references = $field['references'] ?? 'id';
                 $on = $field['on'] ?? 'users';
                 $lines[] = "            \$table->foreignId('{$name}')->constrained('{$on}')->references('{$references}');";
+            } elseif (isset($field['morphable_name'])) {
+                // Handle morphable fields - generate morphs() instead of individual type/id columns
+                $morphableName = $field['morphable_name'];
+                if (!in_array($morphableName, $addedMorphs)) {
+                    $lines[] = "            \$table->morphs('{$morphableName}');";
+                    $addedMorphs[] = $morphableName;
+                }
+                // Skip individual _type and _id fields since morphs() handles both
             } else {
                 $column = match ($type) {
                     'char' => "char('{$name}', 100)",
@@ -196,11 +205,20 @@ class StubFileGenerator
     }
 
     /**
+     * @param array<int, array{name: string, type: string, morphable_name?: string}> $fields
+     */
+    protected function buildFillableFields(array $fields): string
+    {
+        // Include all field names in fillable, including morphable fields
+        return implode(', ', array_map(fn ($f) => "'{$f['name']}'", $fields));
+    }
+
+    /**
      * @param array<int, array{name: string, type: string}> $fields
      */
     protected function buildPhpDoc(array $fields): string
     {
-        $lines = ["/**", " * @property int \$id"];
+        $lines = ['/**', ' * @property int $id'];
 
         foreach ($fields as $field) {
             $type = match ($field['type']) {
@@ -218,7 +236,7 @@ class StubFileGenerator
 
         $lines[] = " * @property \Illuminate\Support\Carbon|null \$created_at";
         $lines[] = " * @property \Illuminate\Support\Carbon|null \$updated_at";
-        $lines[] = " */";
+        $lines[] = ' */';
 
         return implode("\n", $lines);
     }

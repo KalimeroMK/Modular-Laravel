@@ -1,22 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Modules\{{module}};
 
+use App\Modules\{{module}}\Models\{{module}};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Modules\{{module}}\Models\{{module}};
 
 class {{module}}CrudTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_index_returns_ok()
+    public function test_can_list_{{module_lower}}s(): void
     {
+        {{module}}::factory()->count(2)->create();
         $response = $this->getJson('/api/v1/{{module_lower}}s');
-        $response->assertOk();
+        $response->assertStatus(200)
+            ->assertJsonStructure(['data' => [['id']]]);
     }
 
-    public function test_store_creates_resource()
+    public function test_can_create_{{module_lower}}(): void
     {
         $related = $this->createRelatedModels();
 
@@ -25,17 +29,24 @@ class {{module}}CrudTest extends TestCase
         ], $related);
 
         $response = $this->postJson('/api/v1/{{module_lower}}s', $data);
-        $response->assertCreated();
+        $response->assertStatus(201)
+            ->assertJsonStructure(['data' => ['id']]);
+        
+        // Verify in database
+        $responseData = $response->json('data');
+        $this->assertDatabaseHas('{{table}}', ['id' => $responseData['id']]);
     }
 
-    public function test_show_returns_resource()
+    public function test_can_show_{{module_lower}}(): void
     {
         $model = {{module}}::factory()->create();
         $response = $this->getJson("/api/v1/{{module_lower}}s/{$model->id}");
-        $response->assertOk();
+        $response->assertStatus(200)
+            ->assertJsonStructure(['data' => ['id']])
+            ->assertJson(['data' => ['id' => $model->id]]);
     }
 
-    public function test_update_modifies_resource()
+    public function test_can_update_{{module_lower}}(): void
     {
         $model = {{module}}::factory()->create();
 
@@ -44,19 +55,49 @@ class {{module}}CrudTest extends TestCase
         ], $this->createRelatedModels());
 
         $response = $this->putJson("/api/v1/{{module_lower}}s/{$model->id}", $data);
-        $response->assertOk();
+        $response->assertStatus(200)
+            ->assertJsonStructure(['data' => ['id']])
+            ->assertJson(['data' => ['id' => $model->id]]);
+        
+        // Verify changes in database
+        $this->assertDatabaseHas('{{table}}', array_merge(['id' => $model->id], $data));
     }
 
-    public function test_destroy_deletes_resource()
+    public function test_can_delete_{{module_lower}}(): void
     {
         $model = {{module}}::factory()->create();
         $response = $this->deleteJson("/api/v1/{{module_lower}}s/{$model->id}");
-        $response->assertNoContent();
+        $response->assertStatus(200)
+            ->assertJsonStructure(['message']);
+        
+        // Verify deletion in database
+        $this->assertDatabaseMissing('{{table}}', ['id' => $model->id]);
+    }
+
+    public function test_show_{{module_lower}}_not_found(): void
+    {
+        $response = $this->getJson('/api/v1/{{module_lower}}s/999999');
+        $response->assertStatus(404);
+    }
+
+    public function test_update_{{module_lower}}_not_found(): void
+    {
+        $data = array_merge([
+            {{update_data}}
+        ], $this->createRelatedModels());
+
+        $response = $this->putJson('/api/v1/{{module_lower}}s/999999', $data);
+        $response->assertStatus(404);
+    }
+
+    public function test_delete_{{module_lower}}_not_found(): void
+    {
+        $response = $this->deleteJson('/api/v1/{{module_lower}}s/999999');
+        $response->assertStatus(404);
     }
 
     protected function createRelatedModels(): array
     {
-        // This will be replaced dynamically
         return {{related_factories}};
     }
 }

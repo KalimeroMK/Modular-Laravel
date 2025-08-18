@@ -1,0 +1,14 @@
+
+modules:
+  TestTag:
+    fields:
+      name: string
+      slug: string
+    relations:
+      morphToMany: 
+        - model: TestProduct
+          morph_name: taggable
+    exceptions: false
+    observers: false
+    policies: false
+        

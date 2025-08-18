@@ -13,7 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Laravel built-in throttle middleware is already available
+        // No custom middleware needed - use throttle:name or throttle:max,decay
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
