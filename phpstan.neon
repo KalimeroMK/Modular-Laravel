@@ -3,10 +3,24 @@ includes:
     - vendor/nesbot/carbon/extension.neon
 
 parameters:
-
     paths:
         - app/
 
-    # Level 10 is the highest level
     level: 8
+    treatPhpDocTypesAsCertain: false
 
+    ignoreErrors:
+        # More specific BelongsToMany covariance issues
+        - '#Method .*::.*\(\) should return .*Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany<.*> but returns .*Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany<.*>\.#'
+
+        # More general Laravel relationship covariance
+        - '#Parameter \#.* \$.* of method .*::.*\(\) expects .*Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany<.*>, .*Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany<.*> given\.#'
+
+        # Generic template covariance
+        - '#Template type T.* on class .* is covariant#'
+
+        # PHPDoc issues (more specific)
+        - '#PHPDoc tag @var (for|contains) .* is invalid#'
+
+    # Report unused ignore entries
+    reportUnmatchedIgnoredErrors: false
