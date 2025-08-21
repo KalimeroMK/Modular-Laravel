@@ -5,252 +5,215 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Throwable;
 
-/**
- * ModularServiceProvider
- *
- * Expects the following config keys:
- * - modules.default.directory (string): Base directory for modules.
- * - modules.default.routing (array): Route types to register (e.g., ['api']).
- * - modules.default.structure.<component> (string): Default structure for components (routes, controllers, helpers, etc.).
- * - modules.specific.<ModuleName>.enabled (bool): Whether the module is enabled.
- * - modules.specific.<ModuleName>.routing (array): Route types for this module.
- * - modules.specific.<ModuleName>.structure.<component> (string): Structure overrides for this module.
- */
 class ModularServiceProvider extends ServiceProvider
 {
     protected Filesystem $files;
 
-    /**
-     * Bootstrap the application services.
-     */
     public function boot(Filesystem $files): void
     {
         $this->files = $files;
-        $modulesCacheKey = 'modular.modules';
-        $modules = cache()->rememberForever($modulesCacheKey, function () {
-            $modulesDir = app_path(Config::get('modules.default.directory'));
-            if (! is_dir($modulesDir)) {
-                Log::warning("Modules directory not found: {$modulesDir}");
 
-                return [];
-            }
+        // Read base path & namespace from config
+        $basePath = rtrim((string) config('modules.default.base_path', base_path('Modules')), '/');
+        $nsBase = rtrim((string) config('modules.default.namespace', 'App\\Modules'), '\\');
 
-            return array_map('class_basename', $this->files->directories($modulesDir));
+        if (! is_dir($basePath)) {
+            Log::warning("Modules base path not found: {$basePath}");
+
+            return;
+        }
+
+        // Cache modules list (short TTL in dev, forever in prod)
+        $cacheKey = 'modular.modules.list';
+        $ttl = app()->environment('production') ? null : now()->addMinutes(5);
+
+        $modules = Cache::remember($cacheKey, $ttl, function () use ($basePath) {
+            $dirs = array_filter(scandir($basePath) ?: [], function ($d) use ($basePath) {
+                return $d !== '.' && $d !== '..' && is_dir("{$basePath}/{$d}");
+            });
+
+            return array_values($dirs);
         });
+
         foreach ($modules as $module) {
-            if ($module === 'Test') {
-                Log::info('Test module is being loaded!');
-            }
             try {
-                Log::info("Registering migrations for module: {$module}");
-                $this->registerModule($module);
+                if (! $this->isModuleEnabled($module)) {
+                    continue;
+                }
+
+                $this->registerRoutes($module, $basePath, $nsBase);
+                $this->registerHelpers($module, $basePath);
+                $this->registerMigrations($module, $basePath);
+                $this->registerFactoriesResolver($basePath, $nsBase);
+                $this->registerObservers($module, $nsBase);
+                $this->registerPolicies($module, $nsBase);
+
             } catch (Throwable $e) {
                 Log::error("Failed to register module '{$module}': ".$e->getMessage());
             }
         }
     }
 
-    /**
-     * Register the application services.
-     */
     public function register(): void
     {
-        $this->registerPublishConfig();
+        // No-op for app provider. If this becomes a package, wire publishes here.
+    }
+
+    protected function isModuleEnabled(string $module): bool
+    {
+        return (bool) config("modules.specific.{$module}.enabled", true);
     }
 
     /**
-     * Register a module by its name
+     * API-only route registration with prefix/version/middleware from config.
      */
-    protected function registerModule(string $name): void
+    protected function registerRoutes(string $module, string $basePath, string $nsBase): void
     {
-        $enabled = config("modules.specific.{$name}.enabled", true);
-        if ($enabled) {
-            $this->registerRoutes($name);
-            $this->registerHelpers($name);
-            $this->registerFilters($name);
-            $this->registerMigrations($name);
-            $this->registerFactories($name);
-            $this->registerObservers($name);
-            $this->registerPolicies($name);
-        }
-    }
-
-    /**
-     * Register the routes for a module by its name
-     */
-    protected function registerRoutes(string $module): void
-    {
-        if (! $this->app->routesAreCached()) {
-            $data = $this->getRoutingConfig($module);
-            try {
-                $this->registerRoute($module, $data['path'], $data['namespace']);
-            } catch (Throwable $e) {
-                Log::warning("Failed to register route for module '{$module}': ".$e->getMessage());
-            }
-        }
-    }
-
-    /**
-     * Collect the needed data to register the routes
-     *
-     * @return array<string, mixed>
-     */
-    protected function getRoutingConfig(string $module): array
-    {
-        $path = config("modules.specific.{$module}.structure.routes", config('modules.default.structure.routes'));
-
-        // Update the controllers path to include 'Http'
-        $cp = config(
-            "modules.specific.{$module}.structure.controllers",
-            config('modules.default.structure.controllers', 'Http/Controllers')
-        );
-
-        $namespace = $this->app->getNamespace().mb_trim(
-            Config::get('modules.default.directory')."\\{$module}\\Http\\".implode('\\', explode('/', $cp)),
-            '\\'
-        );
-
-        return compact('path', 'namespace');
-    }
-
-    /**
-     * Registers a single route
-     */
-    protected function registerRoute(string $module, string $path, string $namespace): void
-    {
-        $filePath = app_path(
-            Config::get('modules.default.directory')."/{$module}/{$path}/api.php"
-        );
-
-        if ($this->files->exists($filePath)) {
-            Route::middleware('api')->namespace($namespace)->group($filePath);
-        }
-    }
-
-    /**
-     * Register the helpers file for a module by its name
-     */
-    protected function registerHelpers(string $module): void
-    {
-        try {
-            if ($file = $this->prepareComponent($module, 'helpers', 'helpers.php')) {
-                include_once $file;
-            }
-        } catch (Throwable $e) {
-            Log::warning("Helpers file missing or failed to load for module '{$module}': ".$e->getMessage());
-        }
-    }
-
-    /**
-     * Prepare component registration
-     */
-    protected function prepareComponent(string $module, string $component, string $file = ''): false|string
-    {
-        $path = config(
-            "modules.specific.{$module}.structure.{$component}",
-            config("modules.default.structure.{$component}")
-        );
-
-        $resource = mb_rtrim(
-            str_replace('//', '/', app_path(Config::get('modules.default.directory')."/{$module}/{$path}/{$file}")),
-            '/'
-        );
-
-        if ($file && ! $this->files->exists($resource)) {
-            return false;
+        if ($this->app->routesAreCached()) {
+            return;
         }
 
-        if (! $file && ! $this->files->isDirectory($resource)) {
-            return false;
+        $structure = config('modules.default.structure', []);
+        $routesDir = $structure['routes'] ?? 'routes';
+        $routeFile = "{$basePath}/{$module}/{$routesDir}/api.php";
+
+        if (! is_file($routeFile)) {
+            return;
         }
 
-        return $resource;
-    }
+        $opt = config('modules.default.routing_options.api', [
+            'prefix' => 'api',
+            'version' => 'v1',
+            'middleware' => ['api'],
+        ]);
 
-    protected function registerFilters(string $module): void
-    {
-        try {
-            if ($filters = $this->prepareComponent($module, 'filters')) {
-                $this->loadFiltersFrom($filters, $module);
-            }
-        } catch (Throwable $e) {
-            Log::warning("Filters missing or failed to load for module '{$module}': ".$e->getMessage());
-        }
-    }
+        // Build controller namespace from config structure (no extra "Http" duplication)
+        $controllersRel = $structure['controllers'] ?? 'Http/Controllers';
+        $controllersNS = str_replace('/', '\\', $controllersRel);
 
-    /**
-     * Register a translation file namespace.
-     */
-    protected function loadFiltersFrom(string $path, string $namespace): void
-    {
-        $this->callAfterResolving('filters', function ($filter) use ($path, $namespace): void {
-            $filter->addNamespace($namespace, $path);
+        $nsControllers = "{$nsBase}\\{$module}\\{$controllersNS}";
+
+        Route::group(array_filter([
+            'prefix' => trim(($opt['prefix'] ?? 'api').'/'.($opt['version'] ?? ''), '/'),
+            'middleware' => $opt['middleware'] ?? ['api'],
+            'namespace' => $nsControllers, // Optional if you use FQCN in routes; keep for convenience
+        ]), static function () use ($routeFile) {
+            require $routeFile;
         });
     }
 
     /**
-     * Publish modules configuration
+     * Include module helpers if present.
      */
-    protected function registerPublishConfig(): void
+    protected function registerHelpers(string $module, string $basePath): void
     {
-        $publishPath = $this->app->configPath('modules.php');
-        $this->publishes([$publishPath], 'config');
-    }
-
-    protected function registerFactories(string $module): void
-    {
-        // If you want to scope factories per module, you can extend this logic
-        try {
-            Factory::guessFactoryNamesUsing([self::class, 'factoryNameResolver']);
-        } catch (Throwable $e) {
-            Log::warning("Failed to register factories for module '{$module}': ".$e->getMessage());
+        $structure = config('modules.default.structure', []);
+        $helpersDir = $structure['support'] ?? ($structure['helpers'] ?? '');
+        if (! $helpersDir) {
+            return;
         }
-    }
 
-    protected function registerObservers(string $module): void
-    {
-        $observerClass = "App\\Modules\\{$module}\\Observers\\{$module}Observer";
-        $modelClass = "App\\Modules\\{$module}\\Models\\{$module}";
-        if (class_exists($observerClass) && class_exists($modelClass)) {
-            $modelClass::observe($observerClass);
-        }
-    }
-
-    protected function registerPolicies(string $module): void
-    {
-        $policyClass = "App\\Modules\\{$module}\\Policies\\{$module}Policy";
-        $modelClass = "App\\Modules\\{$module}\\Models\\{$module}";
-        if (class_exists($policyClass) && class_exists($modelClass)) {
-            Gate::policy($modelClass, $policyClass);
+        $helpersFile = "{$basePath}/{$module}/{$helpersDir}/helpers.php";
+        if (is_file($helpersFile)) {
+            try {
+                include_once $helpersFile;
+            } catch (Throwable $e) {
+                Log::warning("Helpers failed to load for module '{$module}': ".$e->getMessage());
+            }
         }
     }
 
     /**
-     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $model
-     *
-     * @phpstan-return class-string<Factory>
-     *
-     * @phpstan-ignore-next-line
+     * Register module migrations (safe if path doesn't exist).
      */
-    private static function factoryNameResolver(string $model): string
+    protected function registerMigrations(string $module, string $basePath): void
     {
-        // Assumes $module is available in closure scope; if not, adjust accordingly
-        // For static, you may need to pass $module as a parameter or refactor
-        // Here, we just return the default format for PHPStan compliance
-        return 'App\\Modules\\'.'Module'.'\\database\\factories\\'.class_basename($model).'Factory';
+        $structure = config('modules.default.structure', []);
+        $migrRel = $structure['migrations'] ?? 'database/migrations';
+        $migrPath = "{$basePath}/{$module}/{$migrRel}";
+
+        if (is_dir($migrPath)) {
+            $this->loadMigrationsFrom($migrPath);
+        }
     }
 
-    private function registerMigrations(string $name): void
+    /**
+     * Factory resolver: App\Modules\X\Models\Post -> App\Modules\X\database\factories\PostFactory
+     */
+    protected function registerFactoriesResolver(string $basePath, string $nsBase): void
     {
-        $migrationPath = app_path(Config::get('modules.default.directory')."/{$name}/database/migrations");
-        $this->loadMigrationsFrom($migrationPath);
+        Factory::guessFactoryNamesUsing(static function (string $modelFqcn): string {
+            // Replace "\Models\" with "\database\factories\" (PSR-4 aligned)
+            $factoryFqcn = str_replace(
+                ['\\Models\\', '\\Model\\'],
+                '\\database\\factories\\',
+                $modelFqcn
+            );
+
+            return $factoryFqcn.'Factory';
+        });
+    }
+
+    /**
+     * Naive observer auto-wire (optional – consider config or attributes for production).
+     */
+    protected function registerObservers(string $module, string $nsBase): void
+    {
+        $structure = config('modules.default.structure', []);
+        $observersRel = $structure['observers'] ?? 'Observers';
+        $modelsRel = $structure['models'] ?? 'Models';
+
+        $observersNs = "{$nsBase}\\{$module}\\".str_replace('/', '\\', $observersRel);
+        $modelsNs = "{$nsBase}\\{$module}\\".str_replace('/', '\\', $modelsRel);
+
+        $basePath = rtrim((string) config('modules.default.base_path', base_path('Modules')), '/');
+        $observersDir = "{$basePath}/{$module}/{$observersRel}";
+
+        if (! is_dir($observersDir)) {
+            return;
+        }
+
+        /** @var Filesystem $fs */
+        $fs = $this->files ?? new Filesystem();
+
+        foreach ($fs->files($observersDir) as $file) {
+            $name = $file->getFilename();               // e.g. PostObserver.php
+            if (! str_ends_with($name, 'Observer.php')) {
+                continue;
+            }
+
+            $observerClass = pathinfo($name, PATHINFO_FILENAME); // PostObserver
+            $modelClass = mb_substr($observerClass, 0, -8);      // Post
+
+            $observerFqcn = "{$observersNs}\\{$observerClass}";
+            $modelFqcn = "{$modelsNs}\\{$modelClass}";
+
+            if (class_exists($observerFqcn) && class_exists($modelFqcn)) {
+                /** @var class-string<Model> $modelFqcn */
+                $modelFqcn::observe($observerFqcn);
+            }
+        }
+    }
+
+    /**
+     * Naive policy registration – prefer per-module config or auto-discovery.
+     */
+    protected function registerPolicies(string $module, string $nsBase): void
+    {
+        $policy = "{$nsBase}\\{$module}\\Policies\\{$module}Policy";
+        $model = "{$nsBase}\\{$module}\\Models\\{$module}";
+
+        if (class_exists($policy) && class_exists($model)) {
+            Gate::policy($model, $policy);
+        }
     }
 }

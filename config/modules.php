@@ -2,108 +2,53 @@
 
 declare(strict_types=1);
 
+// config/modules.php
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default Configuration
-    |--------------------------------------------------------------------------
-    |
-    |
-    |
-    */
-
     'default' => [
-
-        /*
-        |--------------------------------------------------------------------------
-        | Directory
-        |--------------------------------------------------------------------------
-        |
-        | Default directory 'Modules'
-        |
-        */
-
-        'directory' => 'Modules',
-
-        /*
-        |--------------------------------------------------------------------------
-        | Type Of Routing
-        |--------------------------------------------------------------------------
-        |
-        | If you need / don't need different route files for web and api
-        | you can change the array entries like you need them.
-        |
-        | Supported: "web", "api", "simple"
-        |
-        */
+        'base_path' => base_path(env('MODULE_DIRECTORY', 'Modules')),
+        'namespace' => env('MODULE_NAMESPACE', 'App\\Modules'),
 
         'routing' => ['api'],
 
-        /*
-        |--------------------------------------------------------------------------
-        | Module Structure
-        |--------------------------------------------------------------------------
-        |
-        | In case your desired module structure differs
-        | from the default structure defined here
-        | feel free to change it the way you like it,
-        |
-        */
+        'routing_options' => [
+            'api' => [
+                'prefix' => 'api',
+                'version' => env('API_VERSION', 'v1'), // api/v1/...
+                'middleware' => ['api', 'throttle:api', 'auth:sanctum'], // или passport/jwt
+                'files' => ['api.php'],
+            ],
+        ],
 
         'structure' => [
-            'controllers' => 'Controllers',
+            'controllers' => 'Http/Controllers',
             'resources' => 'Http/Resources',
             'requests' => 'Http/Requests',
             'models' => 'Models',
             'dto' => 'Http/DTOs',
             'actions' => 'Http/Actions',
-            'mails' => 'Mail',
-            'notifications' => 'Notifications',
+            'queries' => 'Http/Queries',
+            'policies' => 'Policies',
             'events' => 'Events',
             'listeners' => 'Listeners',
-            'observers' => 'Observers',
             'jobs' => 'Jobs',
-            'translations' => 'Resources/lang',
             'routes' => 'routes',
             'migrations' => 'database/migrations',
-            'seeds' => 'database/seeds',
+            'seeders' => 'database/seeders',
             'factories' => 'database/factories',
-            'helpers' => '',
-            'filters' => 'Filters',
-            'traits' => 'Traits',
+            'config' => 'config',
+            'support' => 'Support',
+            'tests' => 'Tests',
+        ],
+
+        'scaffold' => [
+            'use_dto' => true,
+            'use_actions' => true,
+            'use_queries' => true,
+            'use_policies' => true,
+            'stubs_path' => base_path('stubs/module'),
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Module Specific Configuration
-    |--------------------------------------------------------------------------
-    |
-    | In the "specific" config you can disable individual modules
-    | and override every "default" config from above
-    | The array key needs to be the module name.
-    |
-    */
-
     'specific' => [
-
-        /*
-        |--------------------------------------------------------------------------
-        | Example Module
-        |--------------------------------------------------------------------------
-        |
-        |
-        | 'ExampleModule' => [
-        |     'enabled' => false,
-        |     'routing' => [ 'simple' ],
-        |     'structure' => [
-        |         'controllers' => 'Controllers',
-        |         'views' => 'Views',
-        |         'translations' => 'Translations',
-        |     ],
-        | ],
-        */
-
     ],
 ];
