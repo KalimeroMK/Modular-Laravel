@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 class SyncRelations
 {
     /**
-     * @param array<string, mixed> $relations
+     * @param  array<string, mixed>  $relations
      */
     public static function execute(Model $model, array $relations): void
     {
@@ -25,10 +25,11 @@ class SyncRelations
             }
 
             $relationInstance = $model->{$relation}();
-            
+
             // BelongsToMany and MorphToMany: sync()
             if (($relationInstance instanceof BelongsToMany || $relationInstance instanceof MorphToMany) && is_array($value)) {
                 $relationInstance->sync($value);
+
                 continue;
             }
 
@@ -46,7 +47,7 @@ class SyncRelations
             if ($relationInstance instanceof MorphTo) {
                 $morphType = $relationInstance->getMorphType();
                 $foreignKey = $relationInstance->getForeignKeyName();
-                
+
                 if (is_null($value)) {
                     // Clear the relationship
                     if ($model->{$morphType} !== null || $model->{$foreignKey} !== null) {
@@ -65,7 +66,7 @@ class SyncRelations
                     // Handle model instance
                     $newType = $value->getMorphClass();
                     $newId = $value->getKey();
-                    
+
                     if ($model->{$morphType} !== $newType || $model->{$foreignKey} !== $newId) {
                         $model->{$morphType} = $newType;
                         $model->{$foreignKey} = $newId;

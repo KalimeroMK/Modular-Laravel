@@ -13,6 +13,6 @@ class DeleteRoleAction
 
     public function execute(Role $role): void
     {
-        $this->repository->delete((int)$role->id);
+        $this->repository->delete((int) $role->id);
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Unit\Console\Commands;
 
 use App\Console\Commands\MakeModuleCommand;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class MakeModuleCommandTest extends TestCase
 {
@@ -19,7 +20,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_builds_standard_relationships(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
         $method->setAccessible(true);
 
@@ -33,7 +34,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_builds_morph_to_relationship(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
         $method->setAccessible(true);
 
@@ -45,7 +46,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_builds_morph_many_relationship(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
         $method->setAccessible(true);
 
@@ -57,7 +58,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_builds_morph_one_relationship(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
         $method->setAccessible(true);
 
@@ -69,7 +70,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_builds_morph_to_many_relationship(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
         $method->setAccessible(true);
 
@@ -81,7 +82,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_builds_morph_many_with_default_morph_name(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
         $method->setAccessible(true);
 
@@ -94,7 +95,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_builds_mixed_relationships(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
         $method->setAccessible(true);
 
@@ -120,7 +121,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_handles_empty_relations(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
         $method->setAccessible(true);
 
@@ -131,7 +132,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_handles_invalid_relation_format(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
         $method->setAccessible(true);
 
@@ -145,7 +146,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_falls_back_to_standard_relationship_for_unknown_morph_type(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
         $method->setAccessible(true);
 
@@ -157,7 +158,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_parses_fields_correctly(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('parseFields');
         $method->setAccessible(true);
 
@@ -166,7 +167,7 @@ class MakeModuleCommandTest extends TestCase
         $expected = [
             ['name' => 'name', 'type' => 'string'],
             ['name' => 'age', 'type' => 'int'],
-            ['name' => 'active', 'type' => 'bool']
+            ['name' => 'active', 'type' => 'bool'],
         ];
 
         $this->assertEquals($expected, $result);
@@ -174,7 +175,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_handles_empty_model_fields(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('parseFields');
         $method->setAccessible(true);
 
@@ -185,7 +186,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_builds_relationships_with_proper_formatting(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
         $method->setAccessible(true);
 
@@ -200,7 +201,7 @@ class MakeModuleCommandTest extends TestCase
 
     public function test_handles_complex_polymorphic_scenario(): void
     {
-        $reflection = new \ReflectionClass($this->command);
+        $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
         $method->setAccessible(true);
 
@@ -210,9 +211,9 @@ class MakeModuleCommandTest extends TestCase
         // Verify all polymorphic relationships are built correctly
         $lines = explode("\n", $result);
         $methodCount = 0;
-        
+
         foreach ($lines as $line) {
-            if (strpos($line, 'public function') !== false) {
+            if (mb_strpos($line, 'public function') !== false) {
                 $methodCount++;
             }
         }
@@ -225,4 +226,4 @@ class MakeModuleCommandTest extends TestCase
         $this->assertStringContainsString('morphToMany(Tag::class, \'taggable\')', $result);
         $this->assertStringContainsString('morphOne(Avatar::class, \'imageable\')', $result);
     }
-} 
+}

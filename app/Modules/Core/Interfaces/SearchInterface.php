@@ -7,7 +7,7 @@ namespace App\Modules\Core\Interfaces;
 interface SearchInterface
 {
     /**
-     * @param array<string, mixed> $request
+     * @param  array<string, mixed>  $request
      */
     public function search(array $request): mixed;
 }

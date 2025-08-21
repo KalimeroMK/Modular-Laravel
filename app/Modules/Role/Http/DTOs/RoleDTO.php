@@ -30,7 +30,7 @@ readonly class RoleDTO
     }
 
     /**
-     * @param array{id?: int, name?: string, permissions?: array<int, string>} $data
+     * @param  array{id?: int, name?: string, permissions?: array<int, string>}  $data
      */
     public static function fromArray(array $data): self
     {

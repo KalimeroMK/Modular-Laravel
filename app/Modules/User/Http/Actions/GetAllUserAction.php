@@ -13,12 +13,13 @@ class GetAllUserAction
     public function __construct(protected UserInterface $repository) {}
 
     /**
-     * @return Collection<int, \App\Modules\User\Models\User>
+     * @return Collection<int, User>
      */
     public function execute(): Collection
     {
         /** @var Collection<int, User> $result */
         $result = $this->repository->all();
+
         return $result;
     }
 }

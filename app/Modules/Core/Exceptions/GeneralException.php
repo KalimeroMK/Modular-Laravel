@@ -40,10 +40,9 @@ class GeneralException extends Exception
     /**
      * GeneralException constructor.
      *
-     * @param Exception|null $exception
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
-    public function __construct(Exception|null $exception = null, array $data = [])
+    public function __construct(?Exception $exception = null, array $data = [])
     {
         $this->setException($exception);
         $this->setData($data);
@@ -56,18 +55,12 @@ class GeneralException extends Exception
         return $this->message;
     }
 
-    /**
-     * @return Exception|null
-     */
-    public function getException(): Exception|null
+    public function getException(): ?Exception
     {
         return $this->exception;
     }
 
-    /**
-     * @param Exception|null $exception
-     */
-    public function setException(Exception|null $exception): void
+    public function setException(?Exception $exception): void
     {
         $this->exception = $exception;
     }
@@ -83,7 +76,7 @@ class GeneralException extends Exception
     /**
      * Set the extra data to send with the response.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return $this
      */
     public function setData(array $data): self
@@ -103,9 +96,6 @@ class GeneralException extends Exception
         $this->message = $message;
     }
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     */
     public function render(Request $request): JsonResponse
     {
         $this->isLog() ? $this->renderLog() : null;

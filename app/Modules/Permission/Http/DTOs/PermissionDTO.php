@@ -30,7 +30,7 @@ readonly class PermissionDTO
     }
 
     /**
-     * @param array{id?: int, name?: string, guard_name?: string, created_at?: string} $data
+     * @param  array{id?: int, name?: string, guard_name?: string, created_at?: string}  $data
      */
     public static function fromArray(array $data): self
     {

@@ -12,7 +12,8 @@ class DTOGenerator
     public function __construct(protected Filesystem $files) {}
 
     /**
-     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
+     *
      * @throws FileNotFoundException
      */
     public function generate(string $moduleName, array $fields): void

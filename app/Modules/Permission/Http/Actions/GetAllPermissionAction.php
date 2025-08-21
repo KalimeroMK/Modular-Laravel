@@ -13,12 +13,13 @@ class GetAllPermissionAction
     public function __construct(protected PermissionInterface $repository) {}
 
     /**
-     * @return \Illuminate\Support\Collection<int, \App\Modules\Permission\Models\Permission>
+     * @return Collection<int, Permission>
      */
     public function execute(): Collection
     {
         /** @var Collection<int, Permission> $result */
         $result = $this->repository->all();
+
         return $result;
     }
 }

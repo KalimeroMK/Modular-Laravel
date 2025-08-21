@@ -13,12 +13,13 @@ class GetAllRoleAction
     public function __construct(protected RoleInterface $repository) {}
 
     /**
-     * @return \Illuminate\Support\Collection<int, \App\Modules\Role\Models\Role>
+     * @return Collection<int, Role>
      */
     public function execute(): Collection
     {
         /** @var Collection<int, Role> $result */
         $result = $this->repository->all();
+
         return $result;
     }
 }

@@ -15,7 +15,7 @@ class FieldParser
         foreach (explode(',', $fieldsOption) as $field) {
             $parts = explode(':', $field);
             $name = $parts[0];
-            
+
             if (isset($parts[1]) && $parts[1] === 'foreign') {
                 $fields[] = [
                     'name' => $name,
@@ -30,15 +30,15 @@ class FieldParser
             if (isset($parts[1]) && $parts[1] === 'morphable') {
                 // Handle morphable fields - generate both type and id fields
                 $morphableName = $parts[2] ?? $name;
-                
+
                 $fields[] = [
-                    'name' => $morphableName . '_type',
+                    'name' => $morphableName.'_type',
                     'type' => 'string',
                     'morphable_name' => $morphableName,
                 ];
-                
+
                 $fields[] = [
-                    'name' => $morphableName . '_id',
+                    'name' => $morphableName.'_id',
                     'type' => 'int',
                     'morphable_name' => $morphableName,
                 ];

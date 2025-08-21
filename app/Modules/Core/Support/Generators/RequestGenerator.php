@@ -12,13 +12,14 @@ class RequestGenerator
     public function __construct(protected Filesystem $files) {}
 
     /**
-     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
+     *
      * @throws FileNotFoundException
      */
     public function generate(string $moduleName, array $fields): void
     {
         foreach (['Create', 'Update'] as $type) {
-            $className = $type . $moduleName . 'Request';
+            $className = $type.$moduleName.'Request';
             $path = app_path("Modules/{$moduleName}/Http/Requests/{$className}.php");
             $stubPath = base_path("stubs/module/Http/Requests/{$type}Request.stub");
 
@@ -27,11 +28,11 @@ class RequestGenerator
             }
 
             $rules = implode("\n", array_filter(array_map(function ($field) {
-                if (!isset($field['name']) || !isset($field['type']) || $field['name'] === 'id') {
+                if (! isset($field['name']) || ! isset($field['type']) || $field['name'] === 'id') {
                     return null;
                 }
 
-                if ($field['type'] === 'foreignId' && (!isset($field['references']) || !isset($field['on']))) {
+                if ($field['type'] === 'foreignId' && (! isset($field['references']) || ! isset($field['on']))) {
                     return null;
                 }
 
@@ -43,7 +44,7 @@ class RequestGenerator
                     'float', 'double', 'decimal' => 'numeric',
                     'bool', 'boolean' => 'boolean',
                     'array', 'json' => 'array',
-                    'foreign' => 'integer|exists:' . ($field['on'] ?? 'users') . ',' . ($field['references'] ?? 'id'),
+                    'foreign' => 'integer|exists:'.($field['on'] ?? 'users').','.($field['references'] ?? 'id'),
                     default => 'string'
                 };
 

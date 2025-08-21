@@ -13,9 +13,9 @@ class StubFileGenerator
     public function __construct(protected Filesystem $files) {}
 
     /**
-     * @param string $moduleName
-     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
-     * @param array<string, mixed> $options
+     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
+     * @param  array<string, mixed>  $options
+     *
      * @throws FileNotFoundException
      */
     public function generate(string $moduleName, array $fields, array $options): void
@@ -79,7 +79,7 @@ class StubFileGenerator
     }
 
     /**
-     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
      */
     protected function buildFactoryFields(array $fields): string
     {
@@ -109,7 +109,7 @@ class StubFileGenerator
     }
 
     /**
-     * @param array<int, array{name: string, type: string, references?: string, on?: string, morphable_name?: string}> $fields
+     * @param  array<int, array{name: string, type: string, references?: string, on?: string, morphable_name?: string}>  $fields
      */
     protected function buildMigrationFields(array $fields): string
     {
@@ -127,7 +127,7 @@ class StubFileGenerator
             } elseif (isset($field['morphable_name'])) {
                 // Handle morphable fields - generate morphs() instead of individual type/id columns
                 $morphableName = $field['morphable_name'];
-                if (!in_array($morphableName, $addedMorphs)) {
+                if (! in_array($morphableName, $addedMorphs)) {
                     $lines[] = "            \$table->morphs('{$morphableName}');";
                     $addedMorphs[] = $morphableName;
                 }
@@ -166,7 +166,7 @@ class StubFileGenerator
     }
 
     /**
-     * @param array<int, array{name: string, type: string}> $fields
+     * @param  array<int, array{name: string, type: string}>  $fields
      */
     protected function buildResourceFields(array $fields): string
     {
@@ -181,7 +181,7 @@ class StubFileGenerator
     }
 
     /**
-     * @param array<int, array{name: string, type: string}> $fields
+     * @param  array<int, array{name: string, type: string}>  $fields
      */
     protected function buildCasts(array $fields): string
     {
@@ -205,7 +205,7 @@ class StubFileGenerator
     }
 
     /**
-     * @param array<int, array{name: string, type: string, morphable_name?: string}> $fields
+     * @param  array<int, array{name: string, type: string, morphable_name?: string}>  $fields
      */
     protected function buildFillableFields(array $fields): string
     {
@@ -214,7 +214,7 @@ class StubFileGenerator
     }
 
     /**
-     * @param array<int, array{name: string, type: string}> $fields
+     * @param  array<int, array{name: string, type: string}>  $fields
      */
     protected function buildPhpDoc(array $fields): string
     {

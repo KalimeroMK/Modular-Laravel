@@ -15,7 +15,7 @@ class RegisterAction
     public function __construct(protected UserRepository $repository) {}
 
     /**
-     * @return array{user: \App\Modules\User\Models\User, token: string}
+     * @return array{user: User, token: string}
      */
     public function execute(RegisterDTO $dto): array
     {
@@ -25,7 +25,7 @@ class RegisterAction
             'password' => Hash::make($dto->password),
         ]);
 
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             throw ValidationException::withMessages(['email' => __('auth.registration_failed')]);
         }
 

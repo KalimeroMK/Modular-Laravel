@@ -29,11 +29,6 @@ class YamlModuleParserTest extends TestCase
         parent::tearDown();
     }
 
-    private function createYamlFile(array $data): void
-    {
-        file_put_contents($this->tempFile, Yaml::dump($data));
-    }
-
     public function test_parses_basic_module_structure(): void
     {
         $data = [
@@ -41,13 +36,13 @@ class YamlModuleParserTest extends TestCase
                 'User' => [
                     'fields' => [
                         'name' => 'string',
-                        'email' => 'string'
+                        'email' => 'string',
                     ],
                     'relations' => [
-                        'belongsTo' => 'Role'
-                    ]
-                ]
-            ]
+                        'belongsTo' => 'Role',
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -66,10 +61,10 @@ class YamlModuleParserTest extends TestCase
                 'Comment' => [
                     'fields' => ['content' => 'text'],
                     'relations' => [
-                        'morphTo' => ['name' => 'commentable']
-                    ]
-                ]
-            ]
+                        'morphTo' => ['name' => 'commentable'],
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -87,11 +82,11 @@ class YamlModuleParserTest extends TestCase
                     'fields' => ['name' => 'string'],
                     'relations' => [
                         'morphMany' => [
-                            ['model' => 'Comment', 'morph_name' => 'commentable']
-                        ]
-                    ]
-                ]
-            ]
+                            ['model' => 'Comment', 'morph_name' => 'commentable'],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -109,11 +104,11 @@ class YamlModuleParserTest extends TestCase
                     'fields' => ['name' => 'string'],
                     'relations' => [
                         'morphToMany' => [
-                            ['model' => 'Tag', 'morph_name' => 'taggable']
-                        ]
-                    ]
-                ]
-            ]
+                            ['model' => 'Tag', 'morph_name' => 'taggable'],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -131,14 +126,14 @@ class YamlModuleParserTest extends TestCase
                     'fields' => ['title' => 'string', 'content' => 'text'],
                     'relations' => [
                         'morphMany' => [
-                            ['model' => 'Comment', 'morph_name' => 'commentable']
+                            ['model' => 'Comment', 'morph_name' => 'commentable'],
                         ],
                         'morphToMany' => [
-                            ['model' => 'Tag', 'morph_name' => 'taggable']
-                        ]
-                    ]
-                ]
-            ]
+                            ['model' => 'Tag', 'morph_name' => 'taggable'],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -147,7 +142,7 @@ class YamlModuleParserTest extends TestCase
 
         $expected = [
             'Comment:morphMany:Comment:commentable',
-            'Tag:morphToMany:Tag:taggable'
+            'Tag:morphToMany:Tag:taggable',
         ];
         $this->assertEquals($expected, $result['Post']['relations']);
     }
@@ -159,10 +154,10 @@ class YamlModuleParserTest extends TestCase
                 'User' => [
                     'fields' => ['name' => 'string'],
                     'relations' => [
-                        'belongsTo' => 'Role'
-                    ]
-                ]
-            ]
+                        'belongsTo' => 'Role',
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -179,10 +174,10 @@ class YamlModuleParserTest extends TestCase
                 'Product' => [
                     'fields' => ['name' => 'string'],
                     'relations' => [
-                        'belongsToMany' => ['Category', 'Tag']
-                    ]
-                ]
-            ]
+                        'belongsToMany' => ['Category', 'Tag'],
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -203,12 +198,12 @@ class YamlModuleParserTest extends TestCase
                         'belongsTo' => 'User',
                         'belongsToMany' => ['Category'],
                         'morphMany' => [
-                            ['model' => 'Comment', 'morph_name' => 'commentable']
+                            ['model' => 'Comment', 'morph_name' => 'commentable'],
                         ],
-                        'morphTo' => ['name' => 'parent']
-                    ]
-                ]
-            ]
+                        'morphTo' => ['name' => 'parent'],
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -219,7 +214,7 @@ class YamlModuleParserTest extends TestCase
             'belongsTo:User',
             'Category:belongsToMany',
             'Comment:morphMany:Comment:commentable',
-            'parent:morphTo'
+            'parent:morphTo',
         ];
         $this->assertEquals($expected, $result['Article']['relations']);
     }
@@ -232,11 +227,11 @@ class YamlModuleParserTest extends TestCase
                     'fields' => ['name' => 'string'],
                     'relations' => [
                         'morphOne' => [
-                            ['model' => 'Avatar', 'morph_name' => 'imageable']
-                        ]
-                    ]
-                ]
-            ]
+                            ['model' => 'Avatar', 'morph_name' => 'imageable'],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -254,11 +249,11 @@ class YamlModuleParserTest extends TestCase
                     'fields' => ['name' => 'string'],
                     'relations' => [
                         'morphMany' => [
-                            ['model' => 'Comment']
-                        ]
-                    ]
-                ]
-            ]
+                            ['model' => 'Comment'],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -276,11 +271,11 @@ class YamlModuleParserTest extends TestCase
                     'fields' => ['name' => 'string'],
                     'relations' => [
                         'morphMany' => [
-                            ['model' => 'Comment', 'name' => 'commentable']
-                        ]
-                    ]
-                ]
-            ]
+                            ['model' => 'Comment', 'name' => 'commentable'],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -299,9 +294,9 @@ class YamlModuleParserTest extends TestCase
                     'relations' => ['belongsTo' => 'Role'],
                     'exceptions' => true,
                     'observers' => true,
-                    'policies' => false
-                ]
-            ]
+                    'policies' => false,
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -332,9 +327,9 @@ class YamlModuleParserTest extends TestCase
             'modules' => [
                 'Simple' => [
                     'fields' => ['name' => 'string'],
-                    'relations' => []
-                ]
-            ]
+                    'relations' => [],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -349,9 +344,9 @@ class YamlModuleParserTest extends TestCase
         $data = [
             'modules' => [
                 'Simple' => [
-                    'fields' => ['name' => 'string']
-                ]
-            ]
+                    'fields' => ['name' => 'string'],
+                ],
+            ],
         ];
 
         $this->createYamlFile($data);
@@ -360,4 +355,9 @@ class YamlModuleParserTest extends TestCase
 
         $this->assertEquals([], $result['Simple']['relations']);
     }
-} 
+
+    private function createYamlFile(array $data): void
+    {
+        file_put_contents($this->tempFile, Yaml::dump($data));
+    }
+}

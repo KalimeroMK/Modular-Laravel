@@ -11,7 +11,7 @@ use ReflectionException;
 class Helper
 {
     /**
-     * @param class-string|object $class
+     * @param  class-string|object  $class
      */
     public static function getResourceName($class): string
     {
@@ -23,8 +23,8 @@ class Helper
     }
 
     /**
-     * @param array<string, mixed> $request
-     * @param string $key
+     * @param  array<string, mixed>  $request
+     * @param  string  $key
      */
     public static function checkIfNotNull($request, $key): bool
     {
@@ -32,8 +32,8 @@ class Helper
     }
 
     /**
-     * @param array<string, mixed> $request
-     * @param string $key
+     * @param  array<string, mixed>  $request
+     * @param  string  $key
      */
     public static function checkIfTrue($request, $key): bool
     {

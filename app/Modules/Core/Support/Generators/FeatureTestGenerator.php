@@ -12,7 +12,7 @@ class FeatureTestGenerator
     public function __construct(protected Filesystem $files) {}
 
     /**
-     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
      */
     public function generate(string $moduleName, array $fields, array $options = []): void
     {
@@ -46,7 +46,7 @@ class FeatureTestGenerator
     }
 
     /**
-     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
      */
     protected function buildTestData(array $fields, bool $forUpdate = false): string
     {
@@ -59,7 +59,7 @@ class FeatureTestGenerator
 
             $fieldName = $field['name'];
             $prefix = $forUpdate ? 'Updated' : 'Test';
-            
+
             $value = match ($field['type']) {
                 'string', 'text', 'char' => "'{$prefix} {$fieldName}'",
                 'float', 'decimal', 'double' => $forUpdate ? '99.99' : '123.45',
@@ -77,7 +77,7 @@ class FeatureTestGenerator
             if (Str::contains($fieldName, 'email')) {
                 $value = $forUpdate ? "'updated@example.com'" : "'test@example.com'";
             } elseif (Str::contains($fieldName, 'name')) {
-                $value = "'{$prefix} " . Str::title(str_replace('_', ' ', $fieldName)) . "'";
+                $value = "'{$prefix} ".Str::title(str_replace('_', ' ', $fieldName))."'";
             } elseif (Str::contains($fieldName, 'password')) {
                 $value = "'password123'";
             } elseif ($fieldName === 'guard_name') {
@@ -92,7 +92,7 @@ class FeatureTestGenerator
     }
 
     /**
-     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
+     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
      */
     protected function buildRelatedFactories(array $fields): string
     {
@@ -110,7 +110,7 @@ class FeatureTestGenerator
             return '[]';
         }
 
-        return "[\n" . implode("\n", $lines) . "\n        ]";
+        return "[\n".implode("\n", $lines)."\n        ]";
     }
 
     protected function getModelNameFromForeign(array $field): string

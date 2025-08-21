@@ -20,6 +20,7 @@ class CreateUserAction
             'email' => $dto->email,
             'password' => bcrypt($dto->password),
         ]);
+
         return $user;
     }
 }

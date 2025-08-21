@@ -6,8 +6,8 @@ namespace App\Console\Commands;
 
 use App\Modules\Core\Support\Generators\ModuleGenerator;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 use Throwable;
 
 class MakeModuleCommand extends Command
@@ -24,8 +24,6 @@ class MakeModuleCommand extends Command
 
     /**
      * Handle the command execution
-     * 
-     * @return int
      */
     public function handle(): int
     {
@@ -51,9 +49,11 @@ class MakeModuleCommand extends Command
             $generator->generate($name, $fields, $options);
             Artisan::call('optimize:clear');
             $this->info("✅ Module '{$name}' generated successfully.");
+
             return 0;
         } catch (Throwable $e) {
             $this->error("❌ Error generating module: {$e->getMessage()}");
+
             return 1;
         }
     }
@@ -61,7 +61,6 @@ class MakeModuleCommand extends Command
     /**
      * Parse model fields from string format to structured array
      *
-     * @param string $model
      * @return array<int, array{name: string, type: string}>
      */
     protected function parseFields(string $model): array
@@ -73,6 +72,7 @@ class MakeModuleCommand extends Command
         /** @var array<int, array{name: string, type: string}> $result */
         $result = array_map(function ($field) {
             [$name, $type] = explode(':', $field);
+
             return ['name' => trim($name), 'type' => trim($type)];
         }, explode(',', $model));
 
@@ -88,11 +88,13 @@ class MakeModuleCommand extends Command
         $lines = [];
         foreach (explode(',', $relations) as $rel) {
             $parts = explode(':', $rel);
-            if (count($parts) < 2) continue;
+            if (count($parts) < 2) {
+                continue;
+            }
             $relName = trim($parts[0]);
             $relType = trim($parts[1]);
             $relModel = $parts[2] ?? ucfirst($relName);
-            
+
             // Handle polymorphic relationships
             if (in_array($relType, ['morphTo', 'morphMany', 'morphOne', 'morphToMany'])) {
                 $lines[] = $this->buildPolymorphicRelationship($relName, $relType, $relModel, $parts);
@@ -107,30 +109,29 @@ class MakeModuleCommand extends Command
     /**
      * Build polymorphic relationship method
      *
-     * @param string $relName
-     * @param string $relType
-     * @param string $relModel
-     * @param array<int, string> $parts
-     * @return string
+     * @param  array<int, string>  $parts
      */
     protected function buildPolymorphicRelationship(string $relName, string $relType, string $relModel, array $parts): string
     {
         switch ($relType) {
             case 'morphTo':
                 return "    public function {$relName}()\n    {\n        return \$this->morphTo();\n    }\n";
-            
+
             case 'morphMany':
                 $morphName = $parts[3] ?? $relName;
+
                 return "    public function {$relName}()\n    {\n        return \$this->morphMany({$relModel}::class, '{$morphName}');\n    }\n";
-            
+
             case 'morphOne':
                 $morphName = $parts[3] ?? $relName;
+
                 return "    public function {$relName}()\n    {\n        return \$this->morphOne({$relModel}::class, '{$morphName}');\n    }\n";
-            
+
             case 'morphToMany':
                 $morphName = $parts[3] ?? $relName;
+
                 return "    public function {$relName}()\n    {\n        return \$this->morphToMany({$relModel}::class, '{$morphName}');\n    }\n";
-            
+
             default:
                 // Fallback to standard relationship
                 return "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }\n";

@@ -215,19 +215,6 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * @param class-string<\Illuminate\Database\Eloquent\Model> $model
-     * @phpstan-return class-string<\Illuminate\Database\Eloquent\Factories\Factory>
-     * @phpstan-ignore-next-line
-     */
-    private static function factoryNameResolver(string $model): string
-    {
-        // Assumes $module is available in closure scope; if not, adjust accordingly
-        // For static, you may need to pass $module as a parameter or refactor
-        // Here, we just return the default format for PHPStan compliance
-        return 'App\\Modules\\'.'Module'.'\\database\\factories\\'.class_basename($model).'Factory';
-    }
-
     protected function registerObservers(string $module): void
     {
         $observerClass = "App\\Modules\\{$module}\\Observers\\{$module}Observer";
@@ -244,6 +231,21 @@ class ModularServiceProvider extends ServiceProvider
         if (class_exists($policyClass) && class_exists($modelClass)) {
             Gate::policy($modelClass, $policyClass);
         }
+    }
+
+    /**
+     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $model
+     *
+     * @phpstan-return class-string<Factory>
+     *
+     * @phpstan-ignore-next-line
+     */
+    private static function factoryNameResolver(string $model): string
+    {
+        // Assumes $module is available in closure scope; if not, adjust accordingly
+        // For static, you may need to pass $module as a parameter or refactor
+        // Here, we just return the default format for PHPStan compliance
+        return 'App\\Modules\\'.'Module'.'\\database\\factories\\'.class_basename($model).'Factory';
     }
 
     private function registerMigrations(string $name): void

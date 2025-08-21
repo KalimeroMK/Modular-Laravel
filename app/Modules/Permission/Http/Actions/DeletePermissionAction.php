@@ -13,6 +13,6 @@ class DeletePermissionAction
 
     public function execute(Permission $permission): void
     {
-        $this->repository->delete((int)$permission->id);
+        $this->repository->delete((int) $permission->id);
     }
 }

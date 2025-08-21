@@ -20,6 +20,7 @@ use Illuminate\Http\JsonResponse;
 class PermissionController
 {
     use SwaggerTrait;
+
     /**
      * @OA\Get(
      *     path="/api/v1/permissions",
@@ -27,16 +28,21 @@ class PermissionController
      *     description="Get list of permissions",
      *     tags={"Permissions"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Permissions retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
@@ -53,28 +59,37 @@ class PermissionController
      *     description="Get specific permission information",
      *     tags={"Permissions"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="Permission ID",
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Permission retrieved successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Permission not found",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
@@ -91,29 +106,39 @@ class PermissionController
      *     description="Create a new permission",
      *     tags={"Permissions"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"name"},
+     *
      *             @OA\Property(property="name", type="string", example="create-users"),
      *             @OA\Property(property="guard_name", type="string", example="web")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Permission created successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
@@ -132,40 +157,54 @@ class PermissionController
      *     description="Update permission information",
      *     tags={"Permissions"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="Permission ID",
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="name", type="string", example="create-users"),
      *             @OA\Property(property="guard_name", type="string", example="web")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Permission updated successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Permission not found",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
@@ -174,7 +213,7 @@ class PermissionController
     {
         return response()->json([
             'data' => new PermissionResource(
-                $action->execute(PermissionDTO::fromRequest($request, (int)$permission->id, $permission))
+                $action->execute(PermissionDTO::fromRequest($request, (int) $permission->id, $permission))
             ),
         ]);
     }
@@ -186,28 +225,37 @@ class PermissionController
      *     description="Delete a permission",
      *     tags={"Permissions"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="Permission ID",
+     *
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Permission deleted successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Permission deleted")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Permission not found",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )

@@ -18,7 +18,7 @@ class CreatePermissionRequest extends FormRequest
 
     /**
      * @return array<string, string>
-     * Get the validation rules that apply to the request.
+     *                               Get the validation rules that apply to the request.
      */
     public function rules(): array
     {

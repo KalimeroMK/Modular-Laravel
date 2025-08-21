@@ -23,8 +23,9 @@ class ModuleGenerator
     ) {}
 
     /**
-     * @param array<int, array{name: string, type: string, references?: string, on?: string}> $fields
-     * @param array<string, mixed> $options
+     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
+     * @param  array<string, mixed>  $options
+     *
      * @throws FileNotFoundException
      */
     public function generate(string $moduleName, array $fields, array $options): void

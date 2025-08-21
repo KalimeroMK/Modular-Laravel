@@ -24,7 +24,7 @@ class FieldParserTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals([
             ['name' => 'name', 'type' => 'string'],
-            ['name' => 'email', 'type' => 'string']
+            ['name' => 'email', 'type' => 'string'],
         ], $result);
     }
 
@@ -36,7 +36,7 @@ class FieldParserTest extends TestCase
             ['name' => 'age', 'type' => 'int'],
             ['name' => 'price', 'type' => 'float'],
             ['name' => 'active', 'type' => 'bool'],
-            ['name' => 'data', 'type' => 'array']
+            ['name' => 'data', 'type' => 'array'],
         ], $result);
     }
 
@@ -49,8 +49,8 @@ class FieldParserTest extends TestCase
                 'name' => 'user_id',
                 'type' => 'foreign',
                 'references' => 'id',
-                'on' => 'users'
-            ]
+                'on' => 'users',
+            ],
         ], $result);
     }
 
@@ -63,8 +63,8 @@ class FieldParserTest extends TestCase
                 'name' => 'user_id',
                 'type' => 'foreign',
                 'references' => 'id',
-                'on' => 'users'
-            ]
+                'on' => 'users',
+            ],
         ], $result);
     }
 
@@ -77,13 +77,13 @@ class FieldParserTest extends TestCase
             [
                 'name' => 'owner_type',
                 'type' => 'string',
-                'morphable_name' => 'owner'
+                'morphable_name' => 'owner',
             ],
             [
                 'name' => 'owner_id',
                 'type' => 'int',
-                'morphable_name' => 'owner'
-            ]
+                'morphable_name' => 'owner',
+            ],
         ], $result);
     }
 
@@ -96,13 +96,13 @@ class FieldParserTest extends TestCase
             [
                 'name' => 'commentable_type',
                 'type' => 'string',
-                'morphable_name' => 'commentable'
+                'morphable_name' => 'commentable',
             ],
             [
                 'name' => 'commentable_id',
                 'type' => 'int',
-                'morphable_name' => 'commentable'
-            ]
+                'morphable_name' => 'commentable',
+            ],
         ], $result);
     }
 
@@ -111,31 +111,31 @@ class FieldParserTest extends TestCase
         $result = $this->parser->parse('name:string,user_id:foreign:users,owner:morphable,active:bool');
 
         $this->assertCount(5, $result);
-        
+
         // String field
         $this->assertEquals(['name' => 'name', 'type' => 'string'], $result[0]);
-        
+
         // Foreign key field
         $this->assertEquals([
             'name' => 'user_id',
             'type' => 'foreign',
             'references' => 'id',
-            'on' => 'users'
+            'on' => 'users',
         ], $result[1]);
-        
+
         // Morphable fields (type and id)
         $this->assertEquals([
             'name' => 'owner_type',
             'type' => 'string',
-            'morphable_name' => 'owner'
+            'morphable_name' => 'owner',
         ], $result[2]);
-        
+
         $this->assertEquals([
             'name' => 'owner_id',
             'type' => 'int',
-            'morphable_name' => 'owner'
+            'morphable_name' => 'owner',
         ], $result[3]);
-        
+
         // Boolean field
         $this->assertEquals(['name' => 'active', 'type' => 'bool'], $result[4]);
     }
@@ -146,7 +146,7 @@ class FieldParserTest extends TestCase
 
         $this->assertCount(1, $result);
         $this->assertEquals([
-            ['name' => '', 'type' => 'string']
+            ['name' => '', 'type' => 'string'],
         ], $result);
     }
 
@@ -155,7 +155,7 @@ class FieldParserTest extends TestCase
         $result = $this->parser->parse('title');
 
         $this->assertEquals([
-            ['name' => 'title', 'type' => 'string']
+            ['name' => 'title', 'type' => 'string'],
         ], $result);
     }
 
@@ -200,17 +200,17 @@ class FieldParserTest extends TestCase
         $result = $this->parser->parse('owner:morphable,commentable:morphable:target');
 
         $this->assertCount(4, $result);
-        
+
         // First morphable
         $this->assertEquals('owner_type', $result[0]['name']);
         $this->assertEquals('owner', $result[0]['morphable_name']);
         $this->assertEquals('owner_id', $result[1]['name']);
         $this->assertEquals('owner', $result[1]['morphable_name']);
-        
+
         // Second morphable with custom name
         $this->assertEquals('target_type', $result[2]['name']);
         $this->assertEquals('target', $result[2]['morphable_name']);
         $this->assertEquals('target_id', $result[3]['name']);
         $this->assertEquals('target', $result[3]['morphable_name']);
     }
-} 
+}
