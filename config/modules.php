@@ -5,7 +5,7 @@ declare(strict_types=1);
 // config/modules.php
 return [
     'default' => [
-        'base_path' => base_path(env('MODULE_DIRECTORY', 'Modules')),
+        'base_path' => base_path(env('MODULE_DIRECTORY', 'app/Modules')),
         'namespace' => env('MODULE_NAMESPACE', 'App\\Modules'),
 
         'routing' => ['api'],

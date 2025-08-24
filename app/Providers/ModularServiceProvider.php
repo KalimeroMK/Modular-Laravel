@@ -23,7 +23,7 @@ class ModularServiceProvider extends ServiceProvider
         $this->files = $files;
 
         // Read base path & namespace from config
-        $basePath = rtrim((string) config('modules.default.base_path', base_path('Modules')), '/');
+        $basePath = rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
         $nsBase = rtrim((string) config('modules.default.namespace', 'App\\Modules'), '\\');
 
         if (! is_dir($basePath)) {
@@ -44,6 +44,8 @@ class ModularServiceProvider extends ServiceProvider
             return array_values($dirs);
         });
 
+
+
         foreach ($modules as $module) {
             try {
                 if (! $this->isModuleEnabled($module)) {
@@ -56,9 +58,8 @@ class ModularServiceProvider extends ServiceProvider
                 $this->registerFactoriesResolver($basePath, $nsBase);
                 $this->registerObservers($module, $nsBase);
                 $this->registerPolicies($module, $nsBase);
-
             } catch (Throwable $e) {
-                Log::error("Failed to register module '{$module}': ".$e->getMessage());
+                Log::error("Failed to register module '{$module}': " . $e->getMessage());
             }
         }
     }
@@ -78,9 +79,7 @@ class ModularServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(string $module, string $basePath, string $nsBase): void
     {
-        if ($this->app->routesAreCached()) {
-            return;
-        }
+        // Route caching check removed for Laravel 12 compatibility
 
         $structure = config('modules.default.structure', []);
         $routesDir = $structure['routes'] ?? 'routes';
@@ -103,7 +102,6 @@ class ModularServiceProvider extends ServiceProvider
         $nsControllers = "{$nsBase}\\{$module}\\{$controllersNS}";
 
         Route::group(array_filter([
-            'prefix' => trim(($opt['prefix'] ?? 'api').'/'.($opt['version'] ?? ''), '/'),
             'middleware' => $opt['middleware'] ?? ['api'],
             'namespace' => $nsControllers, // Optional if you use FQCN in routes; keep for convenience
         ]), static function () use ($routeFile) {
@@ -127,7 +125,7 @@ class ModularServiceProvider extends ServiceProvider
             try {
                 include_once $helpersFile;
             } catch (Throwable $e) {
-                Log::warning("Helpers failed to load for module '{$module}': ".$e->getMessage());
+                Log::warning("Helpers failed to load for module '{$module}': " . $e->getMessage());
             }
         }
     }
@@ -159,7 +157,7 @@ class ModularServiceProvider extends ServiceProvider
                 $modelFqcn
             );
 
-            return $factoryFqcn.'Factory';
+            return $factoryFqcn . 'Factory';
         });
     }
 
@@ -172,8 +170,8 @@ class ModularServiceProvider extends ServiceProvider
         $observersRel = $structure['observers'] ?? 'Observers';
         $modelsRel = $structure['models'] ?? 'Models';
 
-        $observersNs = "{$nsBase}\\{$module}\\".str_replace('/', '\\', $observersRel);
-        $modelsNs = "{$nsBase}\\{$module}\\".str_replace('/', '\\', $modelsRel);
+        $observersNs = "{$nsBase}\\{$module}\\" . str_replace('/', '\\', $observersRel);
+        $modelsNs = "{$nsBase}\\{$module}\\" . str_replace('/', '\\', $modelsRel);
 
         $basePath = rtrim((string) config('modules.default.base_path', base_path('Modules')), '/');
         $observersDir = "{$basePath}/{$module}/{$observersRel}";
