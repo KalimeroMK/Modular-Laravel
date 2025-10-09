@@ -423,6 +423,238 @@
                 }
             }
         },
+        "/api/v1/auth/2fa/status": {
+            "get": {
+                "tags": [
+                    "Two-Factor Authentication"
+                ],
+                "summary": "Get 2FA status",
+                "description": "Get the current two-factor authentication status for the authenticated user",
+                "operationId": "4b70b439f324fa6384b6cb10a0842458",
+                "responses": {
+                    "200": {
+                        "description": "2FA status retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/2fa/setup": {
+            "post": {
+                "tags": [
+                    "Two-Factor Authentication"
+                ],
+                "summary": "Setup 2FA",
+                "description": "Generate secret key and QR code for two-factor authentication setup",
+                "operationId": "b088c58956256fd8a1d3983b2ea3c530",
+                "responses": {
+                    "200": {
+                        "description": "2FA setup data generated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "secret_key": {
+                                            "type": "string",
+                                            "example": "JBSWY3DPEHPK3PXP"
+                                        },
+                                        "qr_code_url": {
+                                            "type": "string",
+                                            "example": "https://api.qrserver.com/v1/create-qr-code/?data=otpauth://totp/..."
+                                        },
+                                        "recovery_codes": {
+                                            "type": "string",
+                                            "example": "code1,code2,code3"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "2FA already enabled"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/2fa/verify": {
+            "post": {
+                "tags": [
+                    "Two-Factor Authentication"
+                ],
+                "summary": "Verify 2FA code",
+                "description": "Verify a two-factor authentication code or recovery code",
+                "operationId": "91b812329c43b5d3f418f29301c5d0c6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "code"
+                                ],
+                                "properties": {
+                                    "code": {
+                                        "description": "6-digit TOTP code",
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "recovery_code": {
+                                        "description": "10-character recovery code",
+                                        "type": "string",
+                                        "example": "abcd1234ef"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "2FA code verified successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "verified": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid code"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/2fa/disable": {
+            "delete": {
+                "tags": [
+                    "Two-Factor Authentication"
+                ],
+                "summary": "Disable 2FA",
+                "description": "Disable two-factor authentication for the authenticated user",
+                "operationId": "bf89130266463ae056d52916ad12810a",
+                "responses": {
+                    "200": {
+                        "description": "2FA disabled successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Two-factor authentication disabled successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "2FA not enabled"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/2fa/recovery-codes": {
+            "post": {
+                "tags": [
+                    "Two-Factor Authentication"
+                ],
+                "summary": "Generate new recovery codes",
+                "description": "Generate new recovery codes for two-factor authentication",
+                "operationId": "c260fb7b83040faba54223fc159c15b6",
+                "responses": {
+                    "200": {
+                        "description": "New recovery codes generated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "codes": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "example": [
+                                                "code1",
+                                                "code2",
+                                                "code3"
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "2FA not enabled"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/v1/permissions": {
             "get": {
                 "tags": [
@@ -1562,6 +1794,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Two-Factor Authentication",
+            "description": "2FA management endpoints"
+        },
         {
             "name": "Authentication",
             "description": "Authentication endpoints"
