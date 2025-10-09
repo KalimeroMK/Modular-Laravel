@@ -25,4 +25,17 @@ readonly class CreateUserDTO
             emailVerifiedAt: $data['email_verified_at'] ?? null,
         );
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => $this->password,
+            'email_verified_at' => $this->emailVerifiedAt,
+        ];
+    }
 }

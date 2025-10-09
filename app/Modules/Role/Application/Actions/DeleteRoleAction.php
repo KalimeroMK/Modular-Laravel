@@ -15,6 +15,6 @@ class DeleteRoleAction
 
     public function execute(Role $role): bool
     {
-        return $this->roleRepository->delete($role->id);
+        return $this->roleRepository->delete((int) $role->id);
     }
 }

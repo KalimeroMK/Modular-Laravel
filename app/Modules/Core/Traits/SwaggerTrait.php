@@ -92,6 +92,8 @@ trait SwaggerTrait
 {
     /**
      * Get common success response structure
+     *
+     * @return array<string, mixed>
      */
     protected function getSuccessResponseStructure(): array
     {
@@ -104,6 +106,8 @@ trait SwaggerTrait
 
     /**
      * Get common error response structure
+     *
+     * @return array<string, mixed>
      */
     protected function getErrorResponseStructure(): array
     {
@@ -116,6 +120,8 @@ trait SwaggerTrait
 
     /**
      * Get common validation error response structure
+     *
+     * @return array<string, mixed>
      */
     protected function getValidationErrorResponseStructure(): array
     {
@@ -128,6 +134,8 @@ trait SwaggerTrait
 
     /**
      * Get common pagination response structure
+     *
+     * @return array<string, mixed>
      */
     protected function getPaginationResponseStructure(): array
     {

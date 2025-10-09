@@ -12,5 +12,8 @@ interface UserRepositoryInterface extends RepositoryInterface
 {
     public function findByEmail(string $email): ?User;
 
+    /**
+     * @return LengthAwarePaginator<int, User>
+     */
     public function paginate(int $perPage = 15): LengthAwarePaginator;
 }

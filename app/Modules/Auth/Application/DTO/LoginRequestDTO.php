@@ -21,4 +21,15 @@ readonly class LoginRequestDTO
             password: $data['password']
         );
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'email' => $this->email,
+            'password' => $this->password,
+        ];
+    }
 }

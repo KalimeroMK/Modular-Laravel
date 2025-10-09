@@ -26,7 +26,6 @@ class RepositoryServiceProvider extends ServiceProvider
         AuthRepositoryInterface::class => AuthRepository::class,
         RoleRepositoryInterface::class => RoleRepository::class,
         PermissionRepositoryInterface::class => PermissionRepository::class,
-        \App\Modules\TestStub\Interfaces\TestStubInterface::class => \App\Modules\TestStub\Repositories\TestStubRepository::class,
     ];
 
     /**

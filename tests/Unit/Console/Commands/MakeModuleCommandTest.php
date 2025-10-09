@@ -40,7 +40,7 @@ class MakeModuleCommandTest extends TestCase
 
         $result = $method->invoke($this->command, 'owner', 'morphTo', 'Owner', ['owner', 'morphTo']);
 
-        $expected = "    public function owner()\n    {\n        return \$this->morphTo();\n    }\n";
+        $expected = "    public function owner()\n    {\n        return \$this->morphTo();\n    }";
         $this->assertEquals($expected, $result);
     }
 
@@ -52,7 +52,7 @@ class MakeModuleCommandTest extends TestCase
 
         $result = $method->invoke($this->command, 'comments', 'morphMany', 'Comment', ['comments', 'morphMany', 'Comment', 'commentable']);
 
-        $expected = "    public function comments()\n    {\n        return \$this->morphMany(Comment::class, 'commentable');\n    }\n";
+        $expected = "    public function comments()\n    {\n        return \$this->morphMany(Comment::class, 'commentable');\n    }";
         $this->assertEquals($expected, $result);
     }
 
@@ -64,7 +64,7 @@ class MakeModuleCommandTest extends TestCase
 
         $result = $method->invoke($this->command, 'avatar', 'morphOne', 'Avatar', ['avatar', 'morphOne', 'Avatar', 'imageable']);
 
-        $expected = "    public function avatar()\n    {\n        return \$this->morphOne(Avatar::class, 'imageable');\n    }\n";
+        $expected = "    public function avatar()\n    {\n        return \$this->morphOne(Avatar::class, 'imageable');\n    }";
         $this->assertEquals($expected, $result);
     }
 
@@ -76,7 +76,7 @@ class MakeModuleCommandTest extends TestCase
 
         $result = $method->invoke($this->command, 'tags', 'morphToMany', 'Tag', ['tags', 'morphToMany', 'Tag', 'taggable']);
 
-        $expected = "    public function tags()\n    {\n        return \$this->morphToMany(Tag::class, 'taggable');\n    }\n";
+        $expected = "    public function tags()\n    {\n        return \$this->morphToMany(Tag::class, 'taggable');\n    }";
         $this->assertEquals($expected, $result);
     }
 
@@ -89,7 +89,7 @@ class MakeModuleCommandTest extends TestCase
         // When no morph name is provided, it should use the relation name
         $result = $method->invoke($this->command, 'comments', 'morphMany', 'Comment', ['comments', 'morphMany', 'Comment']);
 
-        $expected = "    public function comments()\n    {\n        return \$this->morphMany(Comment::class, 'comments');\n    }\n";
+        $expected = "    public function comments()\n    {\n        return \$this->morphMany(Comment::class, 'comments');\n    }";
         $this->assertEquals($expected, $result);
     }
 
@@ -152,7 +152,7 @@ class MakeModuleCommandTest extends TestCase
 
         $result = $method->invoke($this->command, 'test', 'unknownType', 'TestModel', ['test', 'unknownType', 'TestModel']);
 
-        $expected = "    public function test()\n    {\n        return \$this->unknownType(TestModel::class);\n    }\n";
+        $expected = "    public function test()\n    {\n        return \$this->unknownType(TestModel::class);\n    }";
         $this->assertEquals($expected, $result);
     }
 

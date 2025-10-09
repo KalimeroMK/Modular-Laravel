@@ -43,11 +43,11 @@ class SwaggerDocumentationTest extends TestCase
         $json = json_decode($jsonContent, true);
 
         // Check if auth endpoints are documented
-        $this->assertArrayHasKey('/api/v1/register', $json['paths']);
-        $this->assertArrayHasKey('/api/v1/login', $json['paths']);
-        $this->assertArrayHasKey('/api/v1/logout', $json['paths']);
-        $this->assertArrayHasKey('/api/v1/me', $json['paths']);
-        $this->assertArrayHasKey('/api/v1/forgot-password', $json['paths']);
+        $this->assertArrayHasKey('/api/v1/auth/register', $json['paths']);
+        $this->assertArrayHasKey('/api/v1/auth/login', $json['paths']);
+        $this->assertArrayHasKey('/api/v1/auth/logout', $json['paths']);
+        $this->assertArrayHasKey('/api/v1/auth/me', $json['paths']);
+        $this->assertArrayHasKey('/api/v1/auth/forgot-password', $json['paths']);
         $this->assertArrayHasKey('/api/v1/reset-password', $json['paths']);
 
         // Verify the Authentication tag exists

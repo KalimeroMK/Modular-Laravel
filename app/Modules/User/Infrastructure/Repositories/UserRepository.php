@@ -23,8 +23,14 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         return $result;
     }
 
+    /**
+     * @return LengthAwarePaginator<int, User>
+     */
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
-        return $this->query()->paginate($perPage);
+        /** @var LengthAwarePaginator<int, User> $result */
+        $result = $this->query()->paginate($perPage);
+
+        return $result;
     }
 }

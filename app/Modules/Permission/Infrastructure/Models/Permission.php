@@ -28,7 +28,7 @@ class Permission extends BasePermission
     }
 
     /**
-     * @return BelongsToMany<Role, Permission, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'>
+     * @phpstan-ignore-next-line
      */
     public function roles(): BelongsToMany
     {

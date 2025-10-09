@@ -15,6 +15,6 @@ class DeletePermissionAction
 
     public function execute(Permission $permission): bool
     {
-        return $this->permissionRepository->delete($permission->id);
+        return $this->permissionRepository->delete((int) $permission->id);
     }
 }

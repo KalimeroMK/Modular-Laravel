@@ -23,4 +23,16 @@ readonly class RegisterUserDTO
             password: $data['password']
         );
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => $this->password,
+        ];
+    }
 }

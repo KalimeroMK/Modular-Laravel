@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Modules\Permission\Models\Permission;
+use App\Modules\Permission\Infrastructure\Models\Permission;
 
 return [
 
@@ -28,7 +28,7 @@ return [
          * `Spatie\Permission\Contracts\Role` contract.
          */
 
-        'role' => App\Modules\Role\Models\Role::class,
+        'role' => App\Modules\Role\Infrastructure\Models\Role::class,
 
     ],
 

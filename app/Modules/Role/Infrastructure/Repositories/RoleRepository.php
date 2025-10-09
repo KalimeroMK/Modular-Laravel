@@ -23,8 +23,14 @@ class RoleRepository extends EloquentRepository implements RoleRepositoryInterfa
         return $result;
     }
 
+    /**
+     * @return LengthAwarePaginator<int, Role>
+     */
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
-        return $this->query()->paginate($perPage);
+        /** @var LengthAwarePaginator<int, Role> $result */
+        $result = $this->query()->paginate($perPage);
+
+        return $result;
     }
 }

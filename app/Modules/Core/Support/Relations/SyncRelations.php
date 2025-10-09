@@ -27,7 +27,14 @@ class SyncRelations
             $relationInstance = $model->{$relation}();
 
             // BelongsToMany and MorphToMany: sync()
-            if (($relationInstance instanceof BelongsToMany || $relationInstance instanceof MorphToMany) && is_array($value)) {
+            if ($relationInstance instanceof BelongsToMany && is_array($value)) {
+                $relationInstance->sync($value);
+
+                continue;
+            }
+
+            // MorphToMany: sync()
+            if ($relationInstance instanceof MorphToMany && is_array($value)) {
                 $relationInstance->sync($value);
 
                 continue;

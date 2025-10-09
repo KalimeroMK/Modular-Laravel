@@ -12,5 +12,8 @@ interface PermissionRepositoryInterface extends RepositoryInterface
 {
     public function findByName(string $name): ?Permission;
 
+    /**
+     * @return LengthAwarePaginator<int, Permission>
+     */
     public function paginate(int $perPage = 15): LengthAwarePaginator;
 }

@@ -13,6 +13,9 @@ class GetAllPermissionsAction
         protected PermissionRepositoryInterface $permissionRepository,
     ) {}
 
+    /**
+     * @return LengthAwarePaginator<int, \Spatie\Permission\Models\Permission>
+     */
     public function execute(int $perPage = 15): LengthAwarePaginator
     {
         return $this->permissionRepository->paginate($perPage);

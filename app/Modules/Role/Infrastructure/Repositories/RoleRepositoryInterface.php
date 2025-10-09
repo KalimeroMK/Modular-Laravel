@@ -12,5 +12,8 @@ interface RoleRepositoryInterface extends RepositoryInterface
 {
     public function findByName(string $name): ?Role;
 
+    /**
+     * @return LengthAwarePaginator<int, Role>
+     */
     public function paginate(int $perPage = 15): LengthAwarePaginator;
 }

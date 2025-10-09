@@ -28,7 +28,7 @@ class RequestGenerator
             }
 
             $rules = implode("\n", array_filter(array_map(function ($field) {
-                if (! isset($field['name']) || ! isset($field['type']) || $field['name'] === 'id') {
+                if ($field['name'] === 'id') {
                     return null;
                 }
 

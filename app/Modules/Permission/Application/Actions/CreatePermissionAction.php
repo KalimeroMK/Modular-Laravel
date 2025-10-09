@@ -22,6 +22,7 @@ class CreatePermissionAction
             'guard_name' => $dto->guardName,
         ];
 
+        /** @var \Spatie\Permission\Models\Permission $permission */
         $permission = $this->permissionRepository->create($permissionData);
 
         if ($permission === null) {

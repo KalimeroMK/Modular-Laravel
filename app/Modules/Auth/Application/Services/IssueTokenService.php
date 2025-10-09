@@ -26,7 +26,7 @@ class IssueTokenService implements IssueTokenServiceInterface
         /** @var PersonalAccessToken|null $token */
         $token = $user->currentAccessToken();
 
-        if ($token !== null) {
+        if ($token !== null && $token instanceof PersonalAccessToken) {
             $token->delete();
         }
 

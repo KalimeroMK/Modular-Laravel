@@ -17,7 +17,7 @@ class UpdateUserAction
         protected UserRepositoryInterface $userRepository,
     ) {}
 
-    public function execute(User $user, UpdateUserDTO $dto): UserResponseDTO
+    public function execute(int $id, UpdateUserDTO $dto): UserResponseDTO
     {
         $updateData = $dto->toArray();
 
@@ -26,7 +26,8 @@ class UpdateUserAction
             $updateData['password'] = Hash::make($updateData['password']);
         }
 
-        $updatedUser = $this->userRepository->update($user->id, $updateData);
+        /** @var User $updatedUser */
+        $updatedUser = $this->userRepository->update($id, $updateData);
 
         if ($updatedUser === null) {
             throw new Exception('Failed to update user');

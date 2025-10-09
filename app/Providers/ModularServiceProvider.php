@@ -152,7 +152,10 @@ class ModularServiceProvider extends ServiceProvider
                 $modelFqcn
             );
 
-            return $factoryFqcn.'Factory';
+            /** @var class-string<Factory<Model>> $factoryClass */
+            $factoryClass = $factoryFqcn.'Factory';
+
+            return $factoryClass;
         });
     }
 

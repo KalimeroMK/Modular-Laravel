@@ -13,6 +13,7 @@ class FeatureTestGenerator
 
     /**
      * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
+     * @param  array<string, mixed>  $options
      */
     public function generate(string $moduleName, array $fields, array $options = []): void
     {
@@ -113,6 +114,9 @@ class FeatureTestGenerator
         return "[\n".implode("\n", $lines)."\n        ]";
     }
 
+    /**
+     * @param  array{name: string, type: string, references?: string, on?: string}  $field
+     */
     protected function getModelNameFromForeign(array $field): string
     {
         if (isset($field['on'])) {

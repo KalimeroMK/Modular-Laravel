@@ -44,6 +44,9 @@ class User extends Authenticatable
     /**
      * Ensure Laravel can find the correct factory for this model.
      */
+    /**
+     * @return Factory<User>
+     */
     protected static function newFactory(): Factory|UserFactory
     {
         return UserFactory::new();

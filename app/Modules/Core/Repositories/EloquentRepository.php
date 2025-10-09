@@ -90,7 +90,12 @@ abstract class EloquentRepository
             return null;
         }
 
-        $model = $this->model->newQuery()->withTrashed()->find($id);
+        $query = $this->model->newQuery();
+        if (method_exists($query, 'withTrashed')) {
+            $model = $query->withTrashed()->find($id);
+        } else {
+            $model = $query->find($id);
+        }
 
         if ($model) {
             $model->restore();
@@ -101,7 +106,12 @@ abstract class EloquentRepository
 
     final public function findWithTrashed(int $id): ?Model
     {
-        return $this->model->newQuery()->withTrashed()->find($id);
+        $query = $this->model->newQuery();
+        if (method_exists($query, 'withTrashed')) {
+            return $query->withTrashed()->find($id);
+        }
+
+        return $query->find($id);
     }
 
     /**

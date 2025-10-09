@@ -23,8 +23,14 @@ class PermissionRepository extends EloquentRepository implements PermissionRepos
         return $result;
     }
 
+    /**
+     * @return LengthAwarePaginator<int, Permission>
+     */
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
-        return $this->query()->paginate($perPage);
+        /** @var LengthAwarePaginator<int, Permission> $result */
+        $result = $this->query()->paginate($perPage);
+
+        return $result;
     }
 }

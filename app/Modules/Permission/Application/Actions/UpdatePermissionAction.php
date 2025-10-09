@@ -16,11 +16,12 @@ class UpdatePermissionAction
         protected PermissionRepositoryInterface $permissionRepository,
     ) {}
 
-    public function execute(Permission $permission, UpdatePermissionDTO $dto): PermissionResponseDTO
+    public function execute(int $id, UpdatePermissionDTO $dto): PermissionResponseDTO
     {
         $updateData = $dto->toArray();
 
-        $updatedPermission = $this->permissionRepository->update($permission->id, $updateData);
+        /** @var Permission $updatedPermission */
+        $updatedPermission = $this->permissionRepository->update($id, $updateData);
 
         if ($updatedPermission === null) {
             throw new Exception('Failed to update permission');
