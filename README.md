@@ -21,9 +21,9 @@ cd modular-laravel
 ./docker-setup.sh
 
 # Access the application
-# Web: http://localhost
-# API Docs: http://localhost/api/documentation
-# Database: localhost:3301 (homestead/secret)
+# Web: http://localhost:8080
+# API Docs: http://localhost:8080/api/documentation
+# Database: localhost:3306 (homestead/secret)
 ```
 
 ### Docker Commands
@@ -104,6 +104,11 @@ make migrate         # Run migrations
 make seed            # Run seeders
 make setup           # Quick local setup
 make clean           # Clean cache
+
+# Database optimization
+php artisan db:optimize                    # Analyze database performance
+php artisan db:optimize --monitor          # Monitor queries in real-time
+php artisan db:optimize --connection-info  # Get connection information
 ```
 
 ## 🎯 Goals
@@ -113,6 +118,10 @@ make clean           # Clean cache
 -   ✅ Scalable and maintainable code
 -   ✅ Clear separation of concerns through modules
 -   ✅ No web UI or Blade support – API only
+-   ✅ Production-ready security with 2FA
+-   ✅ Optimized database performance
+-   ✅ Clean Architecture implementation
+-   ✅ Comprehensive test coverage
 
 ## 🔧 Features
 
@@ -127,6 +136,10 @@ make clean           # Clean cache
 -   **Auto-discovery**: Routes, migrations, factories, observers, and policies
 -   **Repository pattern**: Interface-to-implementation binding out-of-the-box
 -   **Fully configurable**: `config/modules.php` for structure and behaviors
+-   **Two-Factor Authentication**: Complete 2FA support with Google Authenticator
+-   **Database Optimization**: Performance indexes, query caching, and monitoring
+-   **Clean Architecture**: Application/Infrastructure layer separation
+-   **Comprehensive Testing**: Unit, Feature, Integration, and Performance tests
 
 ## ✅ Supported Field Types
 
@@ -442,6 +455,115 @@ This will:
 -   Fill in `fillable`, `casts`, `migrations`, `factories`, and `resources`
 -   Avoids manual repetition by letting you define multiple modules at once
 
+## 🔐 Two-Factor Authentication (2FA)
+
+The starter kit includes comprehensive Two-Factor Authentication support using Google Authenticator (TOTP).
+
+### 🚀 2FA Features
+
+- **TOTP Support** - Time-based One-Time Password using Google Authenticator
+- **QR Code Generation** - Automatic QR code for easy setup
+- **Recovery Codes** - 8 single-use recovery codes for account recovery
+- **Secure Storage** - Encrypted secret keys and recovery codes
+- **API Endpoints** - Complete REST API for 2FA management
+
+### 📋 2FA API Endpoints
+
+| Method | Endpoint | Description | Rate Limit |
+|--------|----------|-------------|------------|
+| `GET` | `/api/v1/auth/2fa/status` | Get 2FA status | 120/min |
+| `POST` | `/api/v1/auth/2fa/setup` | Generate secret & QR code | 3/hour |
+| `POST` | `/api/v1/auth/2fa/verify` | Verify code & enable 2FA | 10/min |
+| `DELETE` | `/api/v1/auth/2fa/disable` | Disable 2FA | 3/hour |
+| `POST` | `/api/v1/auth/2fa/recovery-codes` | Generate new recovery codes | 3/hour |
+
+### 💡 Usage Examples
+
+#### Setup 2FA
+```bash
+# Get 2FA setup data
+curl -X POST http://localhost:8080/api/v1/auth/2fa/setup \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+#### Verify 2FA Code
+```bash
+# Verify with TOTP code
+curl -X POST http://localhost:8080/api/v1/auth/2fa/verify \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"code": "123456"}'
+
+# Verify with recovery code
+curl -X POST http://localhost:8080/api/v1/auth/2fa/verify \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"recovery_code": "abcd1234ef"}'
+```
+
+## 🗄️ Database Optimization
+
+The starter kit includes comprehensive database optimization features for production-ready performance.
+
+### ⚡ Database Optimization Features
+
+- **Performance Indexes** - Automatically added to all database tables
+- **Query Caching** - Intelligent caching with TTL support
+- **Query Monitoring** - Real-time query performance tracking
+- **Slow Query Detection** - Automatic identification of performance bottlenecks
+- **Batch Operations** - Optimized bulk insert/update operations
+- **Cursor Pagination** - Efficient pagination for large datasets
+- **Database Analysis** - Table size and performance analysis
+
+### 🛠️ Database Optimization Commands
+
+```bash
+# Analyze database tables and performance
+php artisan db:optimize
+
+# Monitor queries in real-time (30 seconds)
+php artisan db:optimize --monitor --duration=30
+
+# Get database connection information
+php artisan db:optimize --connection-info
+
+# Analyze specific table
+php artisan db:optimize --table=users
+```
+
+### 📊 Database Indexes Added
+
+**Users Table:**
+- `email_verified_at` - Email verification queries
+- `created_at` - User creation date queries
+- `updated_at` - User update date queries
+
+**Sessions Table:**
+- `ip_address` - IP-based session queries
+- `user_id + last_activity` - User session activity queries
+
+**Personal Access Tokens:**
+- `last_used_at` - Token usage queries
+- `expires_at` - Token expiration queries
+- `last_used_at + expires_at` - Token cleanup queries
+
+**Permission Tables:**
+- `guard_name` - Guard-based permission queries
+- `created_at` - Permission creation queries
+- `updated_at` - Permission update queries
+
+**2FA Columns:**
+- `two_factor_confirmed_at` - 2FA status queries
+
+### 🔧 Query Optimization Features
+
+- **Conditional Eager Loading** - Prevents N+1 query problems
+- **Cache Pattern Invalidation** - Automatic cache cleanup
+- **Query Performance Monitoring** - Track slow queries
+- **Database Connection Optimization** - Optimized connection settings
+- **Batch Insert/Update** - Efficient bulk operations
+
 ## 🧩 Planned Features
 
 -   [x] Event and Listener support
@@ -453,16 +575,26 @@ This will:
 -   [x] Feature test generation
 -   [x] Migration and Factory generators
 -   [x] Add Yaml support for module generation
+-   [x] Two-Factor Authentication (2FA) support
+-   [x] Database optimization and performance monitoring
 -   [ ] Interactive CLI wizard (make:module step-by-step)
 
 ## ✅ Requirements
 
 -   PHP 8.3+
+-   Laravel 12+
+-   MySQL 8.0+ / PostgreSQL 13+ / SQLite 3.35+
+-   Composer 2.0+
+-   Docker & Docker Compose (for Docker setup)
 
 ## 💡 Notes
 
 -   API-only – no Blade views or web routes.
 -   Ideal for headless frontends (React, Vue, etc.)
+-   Production-ready with comprehensive security and performance optimizations
+-   Clean Architecture ensures maintainable and testable code
+-   Database optimization provides enterprise-level performance
+-   Two-Factor Authentication enhances security for sensitive applications
 
 ## 🤝 Contribution
 
@@ -514,3 +646,9 @@ This starter kit includes full support for Docker. You can spin up the app, data
 -   **User**: `homestead`
 -   **Password**: `secret`
 -   **Database**: `homestead`
+
+7. **Access the application**:
+
+-   **Web**: `http://localhost:8080`
+-   **API Documentation**: `http://localhost:8080/api/documentation`
+-   **Health Check**: `http://localhost:8080/api/health`
