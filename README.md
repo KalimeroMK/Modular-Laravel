@@ -174,6 +174,44 @@ php artisan db:optimize --connection-info  # Get connection information
 | `macAddress`         | VARCHAR(17)     | MAC address                |
 | `binary`             | BLOB            | Binary large object        |
 
+## 🏗️ Clean Architecture Structure
+
+This starter kit follows **Clean Architecture** principles with clear separation between Application and Infrastructure layers:
+
+### 📁 Module Structure
+
+Each module is organized into two main layers:
+
+#### 🎯 Application Layer (`Application/`)
+Contains business logic and use cases:
+- **Actions/** - Business use cases and operations
+- **DTOs/** - Data Transfer Objects for API communication
+- **Services/** - Business services and interfaces
+- **Interfaces/** - Contracts for external dependencies
+
+#### 🔧 Infrastructure Layer (`Infrastructure/`)
+Contains external concerns and implementations:
+- **Models/** - Eloquent models and database entities
+- **Repositories/** - Data access implementations
+- **Http/** - Web layer (Controllers, Requests, Resources)
+- **Providers/** - Service providers for dependency injection
+- **Routes/** - API route definitions
+
+### 🔄 Dependency Flow
+
+```
+Controllers → Actions → Services → Repositories → Models
+     ↓           ↓         ↓           ↓
+   HTTP      Business   Business    Database
+  Layer      Logic      Services    Access
+```
+
+- **Controllers** handle HTTP requests and delegate to Actions
+- **Actions** contain business logic and orchestrate Services
+- **Services** implement business rules and use Repositories
+- **Repositories** abstract data access and work with Models
+- **Models** represent database entities and relationships
+
 ## 🔄 Automatic Relationship Sync
 
 You can use the `SyncRelations::execute()` helper to automatically sync both `belongsToMany` and `belongsTo` relationships using your DTO:
@@ -215,20 +253,24 @@ php artisan make:module Product \
 
 ```
 app/Modules/Example/
-├── Models/
-├── Repositories/
-├── Interfaces/
-├── Http/
-│   ├── Controllers/
+├── Application/
 │   ├── Actions/
-│   ├── Requests/
-│   ├── Resources/
-│   └── DTOs/
+│   ├── DTOs/
+│   ├── Services/
+│   └── Interfaces/
+├── Infrastructure/
+│   ├── Models/
+│   ├── Repositories/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   ├── Requests/
+│   │   └── Resources/
+│   ├── Providers/
+│   └── Routes/
+│       └── api.php
 ├── Exceptions/
 ├── Observers/
 ├── Policies/
-├── routes/
-│   └── api.php
 └── database/
     ├── migrations/
     └── factories/
@@ -461,25 +503,26 @@ The starter kit includes comprehensive Two-Factor Authentication support using G
 
 ### 🚀 2FA Features
 
-- **TOTP Support** - Time-based One-Time Password using Google Authenticator
-- **QR Code Generation** - Automatic QR code for easy setup
-- **Recovery Codes** - 8 single-use recovery codes for account recovery
-- **Secure Storage** - Encrypted secret keys and recovery codes
-- **API Endpoints** - Complete REST API for 2FA management
+-   **TOTP Support** - Time-based One-Time Password using Google Authenticator
+-   **QR Code Generation** - Automatic QR code for easy setup
+-   **Recovery Codes** - 8 single-use recovery codes for account recovery
+-   **Secure Storage** - Encrypted secret keys and recovery codes
+-   **API Endpoints** - Complete REST API for 2FA management
 
 ### 📋 2FA API Endpoints
 
-| Method | Endpoint | Description | Rate Limit |
-|--------|----------|-------------|------------|
-| `GET` | `/api/v1/auth/2fa/status` | Get 2FA status | 120/min |
-| `POST` | `/api/v1/auth/2fa/setup` | Generate secret & QR code | 3/hour |
-| `POST` | `/api/v1/auth/2fa/verify` | Verify code & enable 2FA | 10/min |
-| `DELETE` | `/api/v1/auth/2fa/disable` | Disable 2FA | 3/hour |
-| `POST` | `/api/v1/auth/2fa/recovery-codes` | Generate new recovery codes | 3/hour |
+| Method   | Endpoint                          | Description                 | Rate Limit |
+| -------- | --------------------------------- | --------------------------- | ---------- |
+| `GET`    | `/api/v1/auth/2fa/status`         | Get 2FA status              | 120/min    |
+| `POST`   | `/api/v1/auth/2fa/setup`          | Generate secret & QR code   | 3/hour     |
+| `POST`   | `/api/v1/auth/2fa/verify`         | Verify code & enable 2FA    | 10/min     |
+| `DELETE` | `/api/v1/auth/2fa/disable`        | Disable 2FA                 | 3/hour     |
+| `POST`   | `/api/v1/auth/2fa/recovery-codes` | Generate new recovery codes | 3/hour     |
 
 ### 💡 Usage Examples
 
 #### Setup 2FA
+
 ```bash
 # Get 2FA setup data
 curl -X POST http://localhost:8080/api/v1/auth/2fa/setup \
@@ -488,6 +531,7 @@ curl -X POST http://localhost:8080/api/v1/auth/2fa/setup \
 ```
 
 #### Verify 2FA Code
+
 ```bash
 # Verify with TOTP code
 curl -X POST http://localhost:8080/api/v1/auth/2fa/verify \
@@ -508,13 +552,13 @@ The starter kit includes comprehensive database optimization features for produc
 
 ### ⚡ Database Optimization Features
 
-- **Performance Indexes** - Automatically added to all database tables
-- **Query Caching** - Intelligent caching with TTL support
-- **Query Monitoring** - Real-time query performance tracking
-- **Slow Query Detection** - Automatic identification of performance bottlenecks
-- **Batch Operations** - Optimized bulk insert/update operations
-- **Cursor Pagination** - Efficient pagination for large datasets
-- **Database Analysis** - Table size and performance analysis
+-   **Performance Indexes** - Automatically added to all database tables
+-   **Query Caching** - Intelligent caching with TTL support
+-   **Query Monitoring** - Real-time query performance tracking
+-   **Slow Query Detection** - Automatic identification of performance bottlenecks
+-   **Batch Operations** - Optimized bulk insert/update operations
+-   **Cursor Pagination** - Efficient pagination for large datasets
+-   **Database Analysis** - Table size and performance analysis
 
 ### 🛠️ Database Optimization Commands
 
@@ -535,34 +579,39 @@ php artisan db:optimize --table=users
 ### 📊 Database Indexes Added
 
 **Users Table:**
-- `email_verified_at` - Email verification queries
-- `created_at` - User creation date queries
-- `updated_at` - User update date queries
+
+-   `email_verified_at` - Email verification queries
+-   `created_at` - User creation date queries
+-   `updated_at` - User update date queries
 
 **Sessions Table:**
-- `ip_address` - IP-based session queries
-- `user_id + last_activity` - User session activity queries
+
+-   `ip_address` - IP-based session queries
+-   `user_id + last_activity` - User session activity queries
 
 **Personal Access Tokens:**
-- `last_used_at` - Token usage queries
-- `expires_at` - Token expiration queries
-- `last_used_at + expires_at` - Token cleanup queries
+
+-   `last_used_at` - Token usage queries
+-   `expires_at` - Token expiration queries
+-   `last_used_at + expires_at` - Token cleanup queries
 
 **Permission Tables:**
-- `guard_name` - Guard-based permission queries
-- `created_at` - Permission creation queries
-- `updated_at` - Permission update queries
+
+-   `guard_name` - Guard-based permission queries
+-   `created_at` - Permission creation queries
+-   `updated_at` - Permission update queries
 
 **2FA Columns:**
-- `two_factor_confirmed_at` - 2FA status queries
+
+-   `two_factor_confirmed_at` - 2FA status queries
 
 ### 🔧 Query Optimization Features
 
-- **Conditional Eager Loading** - Prevents N+1 query problems
-- **Cache Pattern Invalidation** - Automatic cache cleanup
-- **Query Performance Monitoring** - Track slow queries
-- **Database Connection Optimization** - Optimized connection settings
-- **Batch Insert/Update** - Efficient bulk operations
+-   **Conditional Eager Loading** - Prevents N+1 query problems
+-   **Cache Pattern Invalidation** - Automatic cache cleanup
+-   **Query Performance Monitoring** - Track slow queries
+-   **Database Connection Optimization** - Optimized connection settings
+-   **Batch Insert/Update** - Efficient bulk operations
 
 ## 🧩 Planned Features
 
