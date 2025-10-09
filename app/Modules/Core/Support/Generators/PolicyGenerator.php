@@ -17,7 +17,7 @@ class PolicyGenerator
     public function generate(string $moduleName): void
     {
         $className = $moduleName.'Policy';
-        $path = app_path("Modules/{$moduleName}/Policies/{$className}.php");
+        $path = app_path("Modules/{$moduleName}/Infrastructure/Policies/{$className}.php");
         $stubPath = base_path('stubs/module/Policies/ModelPolicy.stub');
 
         if (! $this->files->exists($stubPath)) {

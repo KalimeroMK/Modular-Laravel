@@ -18,7 +18,7 @@ class DTOGenerator
      */
     public function generate(string $moduleName, array $fields): void
     {
-        $path = app_path("Modules/{$moduleName}/Http/DTOs/{$moduleName}DTO.php");
+        $path = app_path("Modules/{$moduleName}/Application/DTO/{$moduleName}DTO.php");
         $stubPath = base_path('stubs/module/Http/DTOs/DTO.stub');
 
         if (! $this->files->exists($stubPath)) {

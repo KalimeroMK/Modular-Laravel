@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-use App\Modules\{{module}}\Http\Controllers\{{module}}Controller;
+use App\Modules\{{module}}\Infrastructure\Http\Controllers\{{module}}Controller;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('api/v1')->middleware(['auth:sanctum'])->group(function (): void {
+Route::prefix('api/v1/{{table}}')->middleware(['auth:sanctum'])->group(function (): void {
     // {{module}} resource routes with Laravel default rate limiting
-    Route::get('{{table}}', [{{module}}Controller::class, 'index'])
+    Route::get('/', [{{module}}Controller::class, 'index'])
         ->middleware('throttle:120,1'); // 120 requests per minute
     
-    Route::post('{{table}}', [{{module}}Controller::class, 'store'])
+    Route::post('/', [{{module}}Controller::class, 'store'])
         ->middleware('throttle:20,60'); // 20 requests per hour
     
-    Route::get('{{table}}/{{{moduleVar}}}', [{{module}}Controller::class, 'show'])
+    Route::get('/{id}', [{{module}}Controller::class, 'show'])
         ->middleware('throttle:120,1'); // 120 requests per minute
     
-    Route::put('{{table}}/{{{moduleVar}}}', [{{module}}Controller::class, 'update'])
+    Route::put('/{id}', [{{module}}Controller::class, 'update'])
         ->middleware('throttle:20,60'); // 20 requests per hour
     
-    Route::delete('{{table}}/{{{moduleVar}}}', [{{module}}Controller::class, 'destroy'])
+    Route::delete('/{id}', [{{module}}Controller::class, 'destroy'])
         ->middleware('throttle:5,60'); // 5 requests per hour
 });

@@ -19,7 +19,7 @@ class TestModel extends Model
 
     public function user()
     {
-        return $this->belongsTo(\App\Modules\User\Models\User::class);
+        return $this->belongsTo(\App\Modules\User\Infrastructure\Models\User::class);
     }
 
     public function tags()

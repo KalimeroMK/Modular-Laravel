@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Modules\Auth\Interfaces\AuthInterface;
-use App\Modules\Auth\Repositories\AuthRepository;
-use App\Modules\Permission\Interfaces\PermissionInterface;
-use App\Modules\Permission\Repositories\PermissionRepository;
-use App\Modules\Role\Interfaces\RoleInterface;
-use App\Modules\Role\Repositories\RoleRepository;
-use App\Modules\User\Interfaces\UserInterface;
-use App\Modules\User\Repositories\UserRepository;
+use App\Modules\Auth\Infrastructure\Repositories\AuthRepository;
+use App\Modules\Auth\Infrastructure\Repositories\AuthRepositoryInterface;
+use App\Modules\Permission\Infrastructure\Repositories\PermissionRepository;
+use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
+use App\Modules\Role\Infrastructure\Repositories\RoleRepository;
+use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
+use App\Modules\User\Infrastructure\Repositories\UserRepository;
+use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
 use ReflectionNamedType;
@@ -22,10 +22,11 @@ class RepositoryServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected array $repositories = [
-        UserInterface::class => UserRepository::class,
-        AuthInterface::class => AuthRepository::class,
-        RoleInterface::class => RoleRepository::class,
-        PermissionInterface::class => PermissionRepository::class,
+        UserRepositoryInterface::class => UserRepository::class,
+        AuthRepositoryInterface::class => AuthRepository::class,
+        RoleRepositoryInterface::class => RoleRepository::class,
+        PermissionRepositoryInterface::class => PermissionRepository::class,
+        \App\Modules\TestStub\Interfaces\TestStubInterface::class => \App\Modules\TestStub\Repositories\TestStubRepository::class,
     ];
 
     /**

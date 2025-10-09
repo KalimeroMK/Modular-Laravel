@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Modules\{{module}}\Interfaces;
+declare(strict_types=1);
+
+namespace App\Modules\{{module}}\Infrastructure\Repositories;
 
 use App\Modules\Core\Interfaces\RepositoryInterface;
 
-interface {{module}}Interface extends RepositoryInterface
+interface {{module}}RepositoryInterface extends RepositoryInterface
 {
     // Add module-specific method signatures if needed
 }

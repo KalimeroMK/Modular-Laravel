@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Database\Factories;
 
-use App\Modules\Permission\Models\Permission;
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

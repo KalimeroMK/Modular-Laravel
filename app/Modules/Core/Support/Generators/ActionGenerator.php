@@ -17,7 +17,7 @@ class ActionGenerator
     public function generate(string $moduleName): void
     {
         $types = ['Create', 'Update', 'Delete', 'GetAll', 'GetById'];
-        $basePath = app_path("Modules/{$moduleName}/Http/Actions");
+        $basePath = app_path("Modules/{$moduleName}/Application/Actions");
 
         foreach ($types as $type) {
             $className = $type.$moduleName.'Action';

@@ -30,13 +30,13 @@ class StubFileGenerator
         ];
 
         $stubMap = [
-            'Interfaces/{{module}}Interface.php' => 'stubs/module/Interface.stub',
-            'Repositories/{{module}}Repository.php' => 'stubs/module/Repository.stub',
-            'Models/{{module}}.php' => 'stubs/module/Model.stub',
+            'Infrastructure/Repositories/{{module}}RepositoryInterface.php' => 'stubs/module/Interface.stub',
+            'Infrastructure/Repositories/{{module}}Repository.php' => 'stubs/module/Repository.stub',
+            'Infrastructure/Models/{{module}}.php' => 'stubs/module/Model.stub',
             'Database/Factories/{{module}}Factory.php' => 'stubs/module/Factory.stub',
-            'routes/api.php' => 'stubs/module/routes/api.stub',
-            'Http/Controllers/{{module}}Controller.php' => 'stubs/module/Http/Controllers/Controller.stub',
-            'Http/Resources/{{module}}Resource.php' => 'stubs/module/Http/Resource/Resource.stub',
+            'Infrastructure/Routes/{{module_lower}}.php' => 'stubs/module/routes/api.stub',
+            'Infrastructure/Http/Controllers/{{module}}Controller.php' => 'stubs/module/Http/Controllers/Controller.stub',
+            'Infrastructure/Http/Resources/{{module}}Resource.php' => 'stubs/module/Http/Resource/Resource.stub',
             'Database/migrations/{{timestamp}}_create_{{table}}_table.php' => 'stubs/module/Migration.stub',
         ];
 
@@ -67,7 +67,14 @@ class StubFileGenerator
                 $currentReplacements['{{fillable}}'] = $this->buildFillableFields($fields);
                 $currentReplacements['{{casts}}'] = $this->buildCasts($fields);
                 $currentReplacements['{{phpdoc_block}}'] = $this->buildPhpDoc($fields);
-                $currentReplacements['{{relationships}}'] = $options['relationships'] ?? '';
+
+                // Parse relationships and imports
+                $relationships = $options['relationships'] ?? '';
+                $relationshipMethods = $this->extractRelationshipMethods($relationships);
+                $relationshipImports = $this->extractRelationshipImports($relationships);
+
+                $currentReplacements['{{relationships}}'] = $relationshipMethods;
+                $currentReplacements['{{relationship_imports}}'] = $relationshipImports;
             }
 
             $content = $this->files->get($stubFullPath);
@@ -239,5 +246,77 @@ class StubFileGenerator
         $lines[] = ' */';
 
         return implode("\n", $lines);
+    }
+
+    /**
+     * Extract relationship methods from relationships string
+     */
+    protected function extractRelationshipMethods(string $relationships): string
+    {
+        if (empty($relationships)) {
+            return '';
+        }
+
+        $lines = explode("\n", $relationships);
+        $methods = [];
+        $currentMethod = '';
+        $inMethod = false;
+        $braceCount = 0;
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            // Skip import statements
+            if (str_starts_with($line, 'use ')) {
+                continue;
+            }
+
+            // Start of a method
+            if (str_contains($line, 'public function')) {
+                if ($inMethod && $currentMethod) {
+                    $methods[] = $currentMethod;
+                }
+                $currentMethod = $line;
+                $inMethod = true;
+                $braceCount = mb_substr_count($line, '{') - mb_substr_count($line, '}');
+            } elseif ($inMethod) {
+                $currentMethod .= "\n".$line;
+                $braceCount += mb_substr_count($line, '{') - mb_substr_count($line, '}');
+
+                // Method is complete when braces are balanced
+                if ($braceCount <= 0) {
+                    $methods[] = $currentMethod;
+                    $currentMethod = '';
+                    $inMethod = false;
+                    $braceCount = 0;
+                }
+            }
+        }
+
+        // Add the last method if it exists
+        if ($inMethod && $currentMethod) {
+            $methods[] = $currentMethod;
+        }
+
+        return implode("\n\n", $methods);
+    }
+
+    /**
+     * Extract relationship imports from relationships string
+     */
+    protected function extractRelationshipImports(string $relationships): string
+    {
+        if (empty($relationships)) {
+            return '';
+        }
+
+        $imports = [];
+        foreach (explode("\n", $relationships) as $line) {
+            if (str_starts_with($line, 'use ')) {
+                $imports[] = $line;
+            }
+        }
+
+        return implode("\n", $imports);
     }
 }

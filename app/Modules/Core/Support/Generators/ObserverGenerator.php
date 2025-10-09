@@ -17,7 +17,7 @@ class ObserverGenerator
     public function generate(string $moduleName): void
     {
         $className = $moduleName.'Observer';
-        $path = app_path("Modules/{$moduleName}/Observers/{$className}.php");
+        $path = app_path("Modules/{$moduleName}/Infrastructure/Observers/{$className}.php");
         $stubPath = base_path('stubs/module/Observers/ModelObserver.stub');
 
         if (! $this->files->exists($stubPath)) {

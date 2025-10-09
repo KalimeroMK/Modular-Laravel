@@ -44,8 +44,6 @@ class ModularServiceProvider extends ServiceProvider
             return array_values($dirs);
         });
 
-
-
         foreach ($modules as $module) {
             try {
                 if (! $this->isModuleEnabled($module)) {
@@ -59,15 +57,12 @@ class ModularServiceProvider extends ServiceProvider
                 $this->registerObservers($module, $nsBase);
                 $this->registerPolicies($module, $nsBase);
             } catch (Throwable $e) {
-                Log::error("Failed to register module '{$module}': " . $e->getMessage());
+                Log::error("Failed to register module '{$module}': ".$e->getMessage());
             }
         }
     }
 
-    public function register(): void
-    {
-        // No-op for app provider. If this becomes a package, wire publishes here.
-    }
+    public function register(): void {}
 
     protected function isModuleEnabled(string $module): bool
     {
@@ -125,7 +120,7 @@ class ModularServiceProvider extends ServiceProvider
             try {
                 include_once $helpersFile;
             } catch (Throwable $e) {
-                Log::warning("Helpers failed to load for module '{$module}': " . $e->getMessage());
+                Log::warning("Helpers failed to load for module '{$module}': ".$e->getMessage());
             }
         }
     }
@@ -145,19 +140,19 @@ class ModularServiceProvider extends ServiceProvider
     }
 
     /**
-     * Factory resolver: App\Modules\X\Models\Post -> App\Modules\X\database\factories\PostFactory
+     * Factory resolver: App\Modules\X\Infrastructure\Models\Post -> App\Modules\X\Database\Factories\PostFactory
      */
     protected function registerFactoriesResolver(string $basePath, string $nsBase): void
     {
         Factory::guessFactoryNamesUsing(static function (string $modelFqcn): string {
-            // Replace "\Models\" with "\database\factories\" (PSR-4 aligned)
+            // Replace "\Infrastructure\Models\" with "\Database\Factories\" (PSR-4 aligned)
             $factoryFqcn = str_replace(
-                ['\\Models\\', '\\Model\\'],
-                '\\database\\factories\\',
+                ['\\Infrastructure\\Models\\', '\\Models\\', '\\Model\\'],
+                '\\Database\\Factories\\',
                 $modelFqcn
             );
 
-            return $factoryFqcn . 'Factory';
+            return $factoryFqcn.'Factory';
         });
     }
 
@@ -168,19 +163,18 @@ class ModularServiceProvider extends ServiceProvider
     {
         $structure = config('modules.default.structure', []);
         $observersRel = $structure['observers'] ?? 'Observers';
-        $modelsRel = $structure['models'] ?? 'Models';
+        $modelsRel = $structure['models'] ?? 'Infrastructure/Models';
 
-        $observersNs = "{$nsBase}\\{$module}\\" . str_replace('/', '\\', $observersRel);
-        $modelsNs = "{$nsBase}\\{$module}\\" . str_replace('/', '\\', $modelsRel);
+        $observersNs = "{$nsBase}\\{$module}\\".str_replace('/', '\\', $observersRel);
+        $modelsNs = "{$nsBase}\\{$module}\\".str_replace('/', '\\', $modelsRel);
 
-        $basePath = rtrim((string) config('modules.default.base_path', base_path('Modules')), '/');
+        $basePath = rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
         $observersDir = "{$basePath}/{$module}/{$observersRel}";
 
         if (! is_dir($observersDir)) {
             return;
         }
 
-        /** @var Filesystem $fs */
         $fs = $this->files ?? new Filesystem();
 
         foreach ($fs->files($observersDir) as $file) {
@@ -207,8 +201,8 @@ class ModularServiceProvider extends ServiceProvider
      */
     protected function registerPolicies(string $module, string $nsBase): void
     {
-        $policy = "{$nsBase}\\{$module}\\Policies\\{$module}Policy";
-        $model = "{$nsBase}\\{$module}\\Models\\{$module}";
+        $policy = "{$nsBase}\\{$module}\\Infrastructure\\Policies\\{$module}Policy";
+        $model = "{$nsBase}\\{$module}\\Infrastructure\\Models\\{$module}";
 
         if (class_exists($policy) && class_exists($model)) {
             Gate::policy($model, $policy);

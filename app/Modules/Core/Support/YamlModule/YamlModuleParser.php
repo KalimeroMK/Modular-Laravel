@@ -31,30 +31,21 @@ class YamlModuleParser
 
         foreach ($data['modules'] as $name => $config) {
             $fields = [];
-            foreach ($config['fields'] ?? [] as $field => $type) {
-                $fields[] = "{$field}:{$type}";
+            foreach ($config['fields'] ?? [] as $field) {
+                if (is_string($field)) {
+                    $fields[] = $field;
+                } elseif (is_array($field)) {
+                    // Handle array format if needed
+                    foreach ($field as $fieldName => $fieldType) {
+                        $fields[] = "{$fieldName}:{$fieldType}";
+                    }
+                }
             }
 
             $relations = [];
-            foreach ($config['relations'] ?? [] as $type => $related) {
-                if (is_array($related)) {
-                    foreach ($related as $model) {
-                        if (is_array($model)) {
-                            // Handle polymorphic relations with structure like ['model' => 'Comment', 'morph_name' => 'commentable']
-                            $modelName = $model['model'] ?? '';
-                            $morphName = $model['morph_name'] ?? $model['name'] ?? '';
-                            if ($modelName && $morphName) {
-                                $relations[] = "{$modelName}:{$type}:{$modelName}:{$morphName}";
-                            } elseif ($modelName) {
-                                $relations[] = "{$modelName}:{$type}";
-                            }
-                        } else {
-                            // Simple model name as string
-                            $relations[] = "{$model}:{$type}";
-                        }
-                    }
-                } elseif (is_string($related)) {
-                    $relations[] = "{$type}:{$related}";
+            foreach ($config['relations'] ?? [] as $relation) {
+                if (is_string($relation)) {
+                    $relations[] = $relation;
                 }
             }
 

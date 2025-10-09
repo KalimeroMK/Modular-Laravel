@@ -1,19 +1,21 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\Actions;
+declare(strict_types=1);
 
-use App\Modules\{{module}}\Interfaces\{{class}}Interface;
-use App\Modules\{{module}}\Models\{{class}};
+namespace App\Modules\{{module}}\Application\Actions;
+
+use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
+use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 
 class GetAll{{class}}Action
 {
-    public function __construct(protected {{class}}Interface $repository) {}
+    public function __construct(protected {{class}}RepositoryInterface $repository) {}
 
     /**
-     * @return iterable<{{class}}>
+     * @return \Illuminate\Pagination\LengthAwarePaginator<{{class}}>
      */
-    public function execute(): iterable
+    public function execute(): \Illuminate\Pagination\LengthAwarePaginator
     {
-        return $this->repository->all();
+        return $this->repository->paginate();
     }
 }

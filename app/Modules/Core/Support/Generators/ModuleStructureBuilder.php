@@ -15,23 +15,27 @@ class ModuleStructureBuilder
         $basePath = app_path("Modules/{$moduleName}");
 
         $directories = [
-            'Http/DTOs',
-            'Http/Actions',
-            'Http/Controllers',
-            'Http/Requests',
-            'Http/Resources',
-            'Models',
-            'Repositories',
-            'Interfaces',
+            // Application Layer
+            'Application/Actions',
+            'Application/DTO',
+            'Application/Services',
+            'Application/Events',
+            'Application/Exceptions',
+            'Application/Listeners',
+
+            // Infrastructure Layer
+            'Infrastructure/Http/Controllers',
+            'Infrastructure/Http/Requests',
+            'Infrastructure/Http/Middleware',
+            'Infrastructure/Models',
+            'Infrastructure/Repositories',
+            'Infrastructure/Policies',
+            'Infrastructure/Providers',
+            'Infrastructure/Routes',
+
+            // Database Layer
             'Database/Migrations',
             'Database/Factories',
-            'routes',
-            'Config',
-            'Exceptions',
-            'Helpers',
-            'Traits',
-            'Observers',
-            'Policies',
         ];
 
         foreach ($directories as $dir) {

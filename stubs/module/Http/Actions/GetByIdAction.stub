@@ -1,17 +1,20 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\Actions;
+declare(strict_types=1);
 
-use App\Modules\{{module}}\Interfaces\{{class}}Interface;
-use App\Modules\{{module}}\Models\{{class}};
-use Illuminate\Database\Eloquent\Model;
+namespace App\Modules\{{module}}\Application\Actions;
 
-class GetById{{class}}Action
+use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
+use App\Modules\{{module}}\Infrastructure\Models\{{class}};
+
+class Get{{class}}ByIdAction
 {
-    public function __construct(protected {{class}}Interface $repository) {}
+    public function __construct(protected {{class}}RepositoryInterface $repository) {}
 
-    public function execute({{class}} ${{moduleVar}}): Model
+    public function execute(int $id): ?{{class}}
     {
-        return $this->repository->findOrFail((int)${{moduleVar}}->id);
+        /** @var {{class}}|null $result */
+        $result = $this->repository->find($id);
+        return $result;
     }
 }

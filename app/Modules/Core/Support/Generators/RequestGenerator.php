@@ -20,7 +20,7 @@ class RequestGenerator
     {
         foreach (['Create', 'Update'] as $type) {
             $className = $type.$moduleName.'Request';
-            $path = app_path("Modules/{$moduleName}/Http/Requests/{$className}.php");
+            $path = app_path("Modules/{$moduleName}/Infrastructure/Http/Requests/{$className}.php");
             $stubPath = base_path("stubs/module/Http/Requests/{$type}Request.stub");
 
             if (! $this->files->exists($stubPath)) {

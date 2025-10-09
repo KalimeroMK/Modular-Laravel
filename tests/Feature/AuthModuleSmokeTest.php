@@ -16,14 +16,14 @@ class AuthModuleSmokeTest extends TestCase
         $email = 'testuser_'.uniqid().'@example.com';
         $password = 'password123';
 
-        $register = $this->postJson('/api/v1/register', [
+        $register = $this->postJson('/api/v1/auth/register', [
             'name' => 'Test User',
             'email' => $email,
             'password' => $password,
             'password_confirmation' => $password,
         ]);
 
-        $register->assertStatus(200)->assertJsonStructure([
+        $register->assertStatus(201)->assertJsonStructure([
             'status',
             'data' => [
                 'user' => ['id', 'name', 'email'],
@@ -31,7 +31,7 @@ class AuthModuleSmokeTest extends TestCase
             ],
         ]);
 
-        $login = $this->postJson('/api/v1/login', [
+        $login = $this->postJson('/api/v1/auth/login', [
             'email' => $email,
             'password' => $password,
         ]);
@@ -47,26 +47,26 @@ class AuthModuleSmokeTest extends TestCase
 
     public function test_me_requires_auth(): void
     {
-        $this->getJson('/api/v1/me')->assertStatus(401);
+        $this->getJson('/api/v1/auth/me')->assertStatus(401);
     }
 
     public function test_logout_requires_auth(): void
     {
-        $this->postJson('/api/v1/logout')->assertStatus(401);
+        $this->postJson('/api/v1/auth/logout')->assertStatus(401);
     }
 
     public function test_can_logout(): void
     {
         $email = 'logoutuser_'.uniqid().'@example.com';
         $password = 'password123';
-        $register = $this->postJson('/api/v1/register', [
+        $register = $this->postJson('/api/v1/auth/register', [
             'name' => 'Logout User',
             'email' => $email,
             'password' => $password,
             'password_confirmation' => $password,
         ]);
         $token = $register->json('data.token');
-        $this->postJson('/api/v1/logout', [], ['Authorization' => 'Bearer '.$token])
+        $this->postJson('/api/v1/auth/logout', [], ['Authorization' => 'Bearer '.$token])
             ->assertStatus(200)
             ->assertJson(['status' => 'success']);
     }
@@ -75,14 +75,14 @@ class AuthModuleSmokeTest extends TestCase
     {
         $email = 'meuser_'.uniqid().'@example.com';
         $password = 'password123';
-        $register = $this->postJson('/api/v1/register', [
+        $register = $this->postJson('/api/v1/auth/register', [
             'name' => 'Me User',
             'email' => $email,
             'password' => $password,
             'password_confirmation' => $password,
         ]);
         $token = $register->json('data.token');
-        $me = $this->getJson('/api/v1/me', ['Authorization' => 'Bearer '.$token]);
+        $me = $this->getJson('/api/v1/auth/me', ['Authorization' => 'Bearer '.$token]);
         $me->assertStatus(200)
             ->assertJsonStructure([
                 'status',
@@ -94,13 +94,13 @@ class AuthModuleSmokeTest extends TestCase
     {
         $email = 'reset_'.uniqid().'@example.com';
         // Register user first
-        $this->postJson('/api/v1/register', [
+        $this->postJson('/api/v1/auth/register', [
             'name' => 'Reset User',
             'email' => $email,
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ]);
-        $response = $this->postJson('/api/v1/forgot-password', [
+        $response = $this->postJson('/api/v1/auth/forgot-password', [
             'email' => $email,
         ]);
         $response->assertStatus(200)
@@ -112,7 +112,7 @@ class AuthModuleSmokeTest extends TestCase
 
     public function test_reset_password_validation(): void
     {
-        $response = $this->postJson('api/v1/forgot-password', []);
+        $response = $this->postJson('api/v1/auth/forgot-password', []);
         $response->assertStatus(422);
     }
 }

@@ -86,6 +86,7 @@ class MakeModuleCommand extends Command
         }
 
         $lines = [];
+        $imports = [];
         foreach (explode(',', $relations) as $rel) {
             $parts = explode(':', $rel);
             if (count($parts) < 2) {
@@ -95,15 +96,21 @@ class MakeModuleCommand extends Command
             $relType = trim($parts[1]);
             $relModel = $parts[2] ?? ucfirst($relName);
 
+            // Add import for the related model
+            $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
+
             // Handle polymorphic relationships
             if (in_array($relType, ['morphTo', 'morphMany', 'morphOne', 'morphToMany'])) {
                 $lines[] = $this->buildPolymorphicRelationship($relName, $relType, $relModel, $parts);
             } else {
-                $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }\n";
+                $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
             }
         }
 
-        return implode("\n", $lines);
+        // Remove duplicate imports
+        $imports = array_unique($imports);
+
+        return implode("\n", $imports)."\n\n".implode("\n", $lines);
     }
 
     /**
@@ -115,26 +122,26 @@ class MakeModuleCommand extends Command
     {
         switch ($relType) {
             case 'morphTo':
-                return "    public function {$relName}()\n    {\n        return \$this->morphTo();\n    }\n";
+                return "    public function {$relName}()\n    {\n        return \$this->morphTo();\n    }";
 
             case 'morphMany':
                 $morphName = $parts[3] ?? $relName;
 
-                return "    public function {$relName}()\n    {\n        return \$this->morphMany({$relModel}::class, '{$morphName}');\n    }\n";
+                return "    public function {$relName}()\n    {\n        return \$this->morphMany({$relModel}::class, '{$morphName}');\n    }";
 
             case 'morphOne':
                 $morphName = $parts[3] ?? $relName;
 
-                return "    public function {$relName}()\n    {\n        return \$this->morphOne({$relModel}::class, '{$morphName}');\n    }\n";
+                return "    public function {$relName}()\n    {\n        return \$this->morphOne({$relModel}::class, '{$morphName}');\n    }";
 
             case 'morphToMany':
                 $morphName = $parts[3] ?? $relName;
 
-                return "    public function {$relName}()\n    {\n        return \$this->morphToMany({$relModel}::class, '{$morphName}');\n    }\n";
+                return "    public function {$relName}()\n    {\n        return \$this->morphToMany({$relModel}::class, '{$morphName}');\n    }";
 
             default:
                 // Fallback to standard relationship
-                return "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }\n";
+                return "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
         }
     }
 }

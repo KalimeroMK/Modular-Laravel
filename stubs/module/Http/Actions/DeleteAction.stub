@@ -1,16 +1,18 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\Actions;
+declare(strict_types=1);
 
-use App\Modules\{{module}}\Interfaces\{{class}}Interface;
-use App\Modules\{{module}}\Models\{{class}};
+namespace App\Modules\{{module}}\Application\Actions;
+
+use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
+use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 
 class Delete{{class}}Action
 {
-    public function __construct(protected {{class}}Interface $repository) {}
+    public function __construct(protected {{class}}RepositoryInterface $repository) {}
 
-    public function execute({{class}} $model): bool
+    public function execute(int $id): bool
     {
-        return $this->repository->delete($model->id);
+        return $this->repository->delete($id);
     }
 }

@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 {{phpdoc_block}}
 
-namespace App\Modules\{{module}}\Models;
+namespace App\Modules\{{module}}\Infrastructure\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+{{relationship_imports}}
 
 class {{module}} extends Model
 {
@@ -21,6 +24,9 @@ class {{module}} extends Model
         {{fillable}}
     ];
 
+    /**
+     * @return \App\Modules\{{module}}\Database\Factories\{{module}}Factory
+     */
     public static function newFactory(): \App\Modules\{{module}}\Database\Factories\{{module}}Factory
     {
         return \App\Modules\{{module}}\Database\Factories\{{module}}Factory::new();

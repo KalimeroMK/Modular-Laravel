@@ -17,7 +17,7 @@ class ExceptionGenerator
     public function generate(string $moduleName): void
     {
         $types = ['Store', 'Update', 'Delete', 'NotFound', 'Index'];
-        $basePath = app_path("Modules/{$moduleName}/Exceptions");
+        $basePath = app_path("Modules/{$moduleName}/Application/Exceptions");
         $stubPath = base_path('stubs/module/Http/Exceptions/Exception.stub');
 
         if (! $this->files->exists($stubPath)) {

@@ -74,13 +74,9 @@ abstract class EloquentRepository
     final public function update(int $id, array $data): ?Model
     {
         $model = $this->findOrFail($id);
-        if ($model) {
-            $model->fill($data)->save();
+        $model->fill($data)->save();
 
-            return $model->fresh();
-        }
-
-        return null;
+        return $model->fresh();
     }
 
     final public function delete(int $id): bool
@@ -94,7 +90,7 @@ abstract class EloquentRepository
             return null;
         }
 
-        $model = $this->model->withTrashed()->find($id);
+        $model = $this->model->newQuery()->withTrashed()->find($id);
 
         if ($model) {
             $model->restore();
@@ -105,7 +101,7 @@ abstract class EloquentRepository
 
     final public function findWithTrashed(int $id): ?Model
     {
-        return $this->model->withTrashed()->find($id);
+        return $this->model->newQuery()->withTrashed()->find($id);
     }
 
     /**

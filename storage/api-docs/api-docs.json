@@ -20,14 +20,14 @@
         }
     ],
     "paths": {
-        "/api/v1/login": {
+        "/api/v1/auth/login": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "User login",
                 "description": "Authenticate user and return access token",
-                "operationId": "f3349d2caaf5b63f81e2d08e910d8418",
+                "operationId": "fccb1608dc751bc3150111f041e6fb4e",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -106,14 +106,14 @@
                 }
             }
         },
-        "/api/v1/register": {
+        "/api/v1/auth/register": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "User registration",
                 "description": "Register a new user and return access token",
-                "operationId": "07ea03f5bcfecf31fde59b44f9274620",
+                "operationId": "35d1d92c86ea8d89a1e144aeda5b6488",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -193,14 +193,14 @@
                 }
             }
         },
-        "/api/v1/logout": {
+        "/api/v1/auth/logout": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "User logout",
                 "description": "Logout user and invalidate token",
-                "operationId": "4a5f0d236b9eae19984addcad6c735ef",
+                "operationId": "8684476e1d7d70475bfd1f0de9ec592e",
                 "responses": {
                     "200": {
                         "description": "Logout successful",
@@ -236,14 +236,14 @@
                 ]
             }
         },
-        "/api/v1/me": {
+        "/api/v1/auth/me": {
             "get": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Get current user",
                 "description": "Get authenticated user information",
-                "operationId": "5557db3a0c782d8ca5b277167d365725",
+                "operationId": "d54b962588c4da3acaa112768e775db8",
                 "responses": {
                     "200": {
                         "description": "User information retrieved",
@@ -282,14 +282,14 @@
                 ]
             }
         },
-        "/api/v1/forgot-password": {
+        "/api/v1/auth/forgot-password": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Send password reset link",
                 "description": "Send password reset link to user email",
-                "operationId": "c223136985730bf42c533c68ff92df2c",
+                "operationId": "eaa397707bf6e09c2fe572ba6b127845",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -344,14 +344,14 @@
                 }
             }
         },
-        "/api/v1/reset-password": {
+        "/api/v1/auth/reset-password": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Reset password",
                 "description": "Reset user password using token",
-                "operationId": "b9ca55d4265e3c2179373f425938e509",
+                "operationId": "0dbc21d5b02484941ac2dd8944207bfb",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -429,8 +429,8 @@
                     "Permissions"
                 ],
                 "summary": "List permissions",
-                "description": "Get list of permissions",
-                "operationId": "6b4276ccdeaf99016feb9c01153341ca",
+                "description": "Get paginated list of permissions",
+                "operationId": "42a5e825b25764fdcea5cc55f1354e4d",
                 "responses": {
                     "200": {
                         "description": "Permissions retrieved successfully",
@@ -443,6 +443,12 @@
                                             "items": {
                                                 "type": "object"
                                             }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -473,7 +479,7 @@
                 ],
                 "summary": "Create permission",
                 "description": "Create a new permission",
-                "operationId": "9aadedd42421548fa270001b9b177e1e",
+                "operationId": "07becf61ca80ae7de76815cc6db1808c",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -548,7 +554,7 @@
                 ],
                 "summary": "Get permission by ID",
                 "description": "Get specific permission information",
-                "operationId": "303df5a65ddc4ab19fcc7f177ccb9ccd",
+                "operationId": "3b6452fd83db9775ea545d28cfe5efc0",
                 "parameters": [
                     {
                         "name": "id",
@@ -610,7 +616,7 @@
                 ],
                 "summary": "Update permission",
                 "description": "Update permission information",
-                "operationId": "fefda0173c314181a7d0a16c318737af",
+                "operationId": "1f40463049f5151d98072a2100260443",
                 "parameters": [
                     {
                         "name": "id",
@@ -702,7 +708,7 @@
                 ],
                 "summary": "Delete permission",
                 "description": "Delete a permission",
-                "operationId": "b91e820c94fcc8e2d99f615c66eb8dec",
+                "operationId": "b41077494011a04c50ec713216d4d0d5",
                 "parameters": [
                     {
                         "name": "id",
@@ -766,8 +772,8 @@
                     "Roles"
                 ],
                 "summary": "List roles",
-                "description": "Get list of roles",
-                "operationId": "efc743d5580d56b5407059ffca92e5df",
+                "description": "Get paginated list of roles",
+                "operationId": "b710e0b5144d0d1fa85baf63eab8e9b7",
                 "responses": {
                     "200": {
                         "description": "Roles retrieved successfully",
@@ -780,6 +786,12 @@
                                             "items": {
                                                 "type": "object"
                                             }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -810,7 +822,7 @@
                 ],
                 "summary": "Create role",
                 "description": "Create a new role",
-                "operationId": "b3293488c0a72fe288c48cde4a105ffe",
+                "operationId": "7441180a80b28a1c55742c030b61edf6",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -885,7 +897,7 @@
                 ],
                 "summary": "Get role by ID",
                 "description": "Get specific role information",
-                "operationId": "35c926ccd3dd2d5684536cd34406dd3d",
+                "operationId": "f98f3ecd41f82ed2c3936cb47cbe0557",
                 "parameters": [
                     {
                         "name": "id",
@@ -947,7 +959,7 @@
                 ],
                 "summary": "Update role",
                 "description": "Update role information",
-                "operationId": "b5262fbf676aaa08fa2b656d86840837",
+                "operationId": "8ea3dbcb9e3a7a503ebd8bb77fdc2b58",
                 "parameters": [
                     {
                         "name": "id",
@@ -1039,7 +1051,7 @@
                 ],
                 "summary": "Delete role",
                 "description": "Delete a role",
-                "operationId": "1550f44627cf638bbb86b88fa63745e2",
+                "operationId": "4b773d4439f54038328486ce2546c30e",
                 "parameters": [
                     {
                         "name": "id",
@@ -1104,7 +1116,7 @@
                 ],
                 "summary": "List users",
                 "description": "Get paginated list of users",
-                "operationId": "08b3735f73d46c74e43946e9b29b3767",
+                "operationId": "13e2b877acbd9e41b82b36cd25d9ca8c",
                 "responses": {
                     "200": {
                         "description": "Users retrieved successfully",
@@ -1153,7 +1165,7 @@
                 ],
                 "summary": "Create user",
                 "description": "Create a new user",
-                "operationId": "9794c07620c5dee45cd466486f6b255d",
+                "operationId": "90def4129673bbd5fd57a8afe473934d",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1236,7 +1248,7 @@
                 ],
                 "summary": "Get user by ID",
                 "description": "Get specific user information",
-                "operationId": "4b8eed5f253806d939581707ed488cf1",
+                "operationId": "30c813ab99e181c193ca2ba8ac6d8a1a",
                 "parameters": [
                     {
                         "name": "id",
@@ -1298,7 +1310,7 @@
                 ],
                 "summary": "Update user",
                 "description": "Update user information",
-                "operationId": "38c06e2df03671f6d721d0997347bcdd",
+                "operationId": "68800b4109336c3c52ad4dafca436ebf",
                 "parameters": [
                     {
                         "name": "id",
@@ -1391,7 +1403,7 @@
                 ],
                 "summary": "Delete user",
                 "description": "Delete a user",
-                "operationId": "a8e6363cccb14ee0bb09ace8266c4684",
+                "operationId": "f5bcca75d5600d487c6456ec9b8c88aa",
                 "parameters": [
                     {
                         "name": "id",

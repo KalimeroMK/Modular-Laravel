@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\Actions;
+declare(strict_types=1);
 
-use App\Modules\{{module}}\Http\DTOs\{{module}}DTO;
-use App\Modules\{{module}}\Interfaces\{{class}}Interface;
-use App\Modules\{{module}}\Models\{{class}};
+namespace App\Modules\{{module}}\Application\Actions;
+
+use App\Modules\{{module}}\Application\DTO\{{module}}DTO;
+use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
+use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 
 class Create{{class}}Action
 {
-    public function __construct(protected {{class}}Interface $repository) {}
+    public function __construct(protected {{class}}RepositoryInterface $repository) {}
 
-    /**
-     * @return {{class}}|null
-     */
     public function execute({{module}}DTO $dto): ?{{class}}
     {
-        return $this->repository->create($dto->toArray());
+        /** @var {{class}}|null $result */
+        $result = $this->repository->create($dto->toArray());
+        return $result;
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\{{module}}\Policies;
+namespace App\Modules\{{module}}\Infrastructure\Policies;
 
-use App\Modules\{{module}}\Models\{{module}};
-use App\Models\User;
+use App\Modules\{{module}}\Infrastructure\Models\{{module}};
+use App\Modules\User\Infrastructure\Models\User;
 
 class {{module}}Policy
 {

@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Modules\{{module}}\Http\DTOs;
+declare(strict_types=1);
+
+namespace App\Modules\{{module}}\Application\DTO;
 
 use Illuminate\Http\Request;
 
@@ -18,6 +20,9 @@ readonly class {{module}}DTO
         );
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -25,6 +30,9 @@ readonly class {{module}}DTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [

@@ -148,6 +148,7 @@ class ModulesBuildFromYamlCommand extends Command
         }
 
         $lines = [];
+        $imports = [];
         foreach ($relations as $rel) {
             $parts = explode(':', $rel);
             if (count($parts) < 2) {
@@ -156,9 +157,16 @@ class ModulesBuildFromYamlCommand extends Command
             $relName = trim($parts[0]);
             $relType = trim($parts[1]);
             $relModel = $parts[2] ?? ucfirst($relName);
-            $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }\n";
+
+            // Add import for the related model
+            $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
+
+            $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
         }
 
-        return implode("\n", $lines);
+        // Remove duplicate imports
+        $imports = array_unique($imports);
+
+        return implode("\n", $imports)."\n\n".implode("\n", $lines);
     }
 }

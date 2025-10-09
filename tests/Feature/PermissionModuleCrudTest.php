@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use App\Modules\Permission\Models\Permission;
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

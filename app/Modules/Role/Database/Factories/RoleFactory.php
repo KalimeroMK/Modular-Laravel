@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Database\Factories;
 
-use App\Modules\Role\Models\Role;
+use App\Modules\Role\Infrastructure\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
