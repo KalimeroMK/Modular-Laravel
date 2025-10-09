@@ -50,4 +50,34 @@ interface RepositoryInterface
     public function restore(int $id): ?Model;
 
     public function findWithTrashed(int $id): ?Model;
+
+    /**
+     * Get paginated results with optional eager loading
+     * 
+     * @param  array<int, string>  $with
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function paginate(int $perPage = 15, array $with = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+
+    /**
+     * Get cached results for expensive queries
+     * 
+     * @param  array<int, string>  $with
+     * @param  int  $ttl Cache time in seconds
+     * @return Collection<int, Model>
+     */
+    public function allCached(array $with = [], int $ttl = 3600): Collection;
+
+    /**
+     * Get cached single record
+     * 
+     * @param  array<int, string>  $with
+     * @param  int  $ttl Cache time in seconds
+     */
+    public function findCached(int $id, array $with = [], int $ttl = 3600): ?Model;
+
+    /**
+     * Clear cache for this model
+     */
+    public function clearCache(): void;
 }
