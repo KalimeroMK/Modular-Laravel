@@ -18,6 +18,9 @@ class GetAllUsersAction
      */
     public function execute(int $perPage = 15): LengthAwarePaginator
     {
-        return $this->userRepository->paginate($perPage);
+        /** @var LengthAwarePaginator<int, \App\Modules\User\Infrastructure\Models\User> $result */
+        $result = $this->userRepository->paginate($perPage);
+
+        return $result;
     }
 }

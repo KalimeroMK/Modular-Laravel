@@ -6,8 +6,10 @@ namespace App\Modules\Role\Infrastructure\Repositories;
 
 use App\Modules\Core\Repositories\EloquentRepository;
 use App\Modules\Role\Infrastructure\Models\Role;
-use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * @extends EloquentRepository<Role>
+ */
 class RoleRepository extends EloquentRepository implements RoleRepositoryInterface
 {
     public function __construct(Role $model)
@@ -19,17 +21,6 @@ class RoleRepository extends EloquentRepository implements RoleRepositoryInterfa
     {
         /** @var Role|null $result */
         $result = $this->findBy('name', $name);
-
-        return $result;
-    }
-
-    /**
-     * @return LengthAwarePaginator<int, Role>
-     */
-    public function paginate(int $perPage = 15): LengthAwarePaginator
-    {
-        /** @var LengthAwarePaginator<int, Role> $result */
-        $result = $this->query()->paginate($perPage);
 
         return $result;
     }

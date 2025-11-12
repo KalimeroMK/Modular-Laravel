@@ -6,12 +6,29 @@ namespace App\Modules\{{module}}\Application\DTO;
 
 use Illuminate\Http\Request;
 
+/**
+ * Data Transfer Object for {{module}} operations.
+ * 
+ * This DTO is used to transfer {{moduleVar}} data between layers of the application.
+ */
 readonly class {{module}}DTO
 {
+    /**
+     * Create a new {{module}}DTO instance.
+     *
+     * @param {{constructor_args}}
+     */
     public function __construct(
         {{constructor_args}}
     ) {}
 
+    /**
+     * Create a {{module}}DTO from a validated request.
+     *
+     * @param Request $request The HTTP request containing validated data
+     * @param int|null $id Optional {{moduleVar}} ID for update operations
+     * @return self New {{module}}DTO instance
+     */
     public static function fromRequest(Request $request, ?int $id = null): self
     {
         $data = $request->validated();
@@ -21,7 +38,10 @@ readonly class {{module}}DTO
     }
 
     /**
-     * @param array<string, mixed> $data
+     * Create a {{module}}DTO from an array.
+     *
+     * @param array<string, mixed> $data Array containing {{moduleVar}} data
+     * @return self New {{module}}DTO instance
      */
     public static function fromArray(array $data): self
     {
@@ -31,7 +51,9 @@ readonly class {{module}}DTO
     }
 
     /**
-     * @return array<string, mixed>
+     * Convert the DTO to an array.
+     *
+     * @return array<string, mixed> Array representation of the DTO
      */
     public function toArray(): array
     {

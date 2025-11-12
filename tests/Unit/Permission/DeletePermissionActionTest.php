@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Permission;
 
 use App\Modules\Permission\Application\Actions\DeletePermissionAction;
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Mockery;
-use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 class DeletePermissionActionTest extends TestCase

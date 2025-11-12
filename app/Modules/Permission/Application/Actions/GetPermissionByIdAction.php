@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Application\Actions;
 
 use App\Modules\Permission\Application\DTO\PermissionResponseDTO;
-use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
-use Spatie\Permission\Models\Permission;
+use App\Modules\Permission\Infrastructure\Models\Permission;
 
 class GetPermissionByIdAction
 {

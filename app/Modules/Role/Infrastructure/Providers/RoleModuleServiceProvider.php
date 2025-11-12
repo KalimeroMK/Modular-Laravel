@@ -19,6 +19,11 @@ class RoleModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Register route model binding BEFORE loading routes
+        Route::bind('role', function ($value) {
+            return \App\Modules\Role\Infrastructure\Models\Role::findOrFail($value);
+        });
+        
         // Load routes
         $this->loadRoutes();
     }

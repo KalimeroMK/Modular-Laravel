@@ -8,28 +8,50 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
+/**
+ * Base repository implementation using Eloquent.
+ *
+ * Provides common database operations for all repositories.
+ *
+ * @template TModel of Model
+ */
 abstract class EloquentRepository
 {
+    /**
+     * The model instance.
+     *
+     * @var TModel
+     */
     protected Model $model;
 
+    /**
+     * Create a new repository instance.
+     *
+     * @param  TModel  $model  The model instance
+     */
     public function __construct(Model $model)
     {
         $this->model = $model;
     }
 
     /**
-     * @param  array<int, string>  $with
-     * @return Collection<int, Model>
+     * Get all records.
+     *
+     * @param  array<int, string>  $with  Relationships to eager load
+     * @return Collection<int, TModel> Collection of models
      */
     final public function all(array $with = []): Collection
     {
         $query = $this->query();
-        
-        if (!empty($with)) {
+
+        if (! empty($with)) {
             $query->with($with);
         }
-        
-        return $query->get();
+
+        /** @var Collection<int, TModel> $result */
+        $result = $query->get();
+
+        return $result;
     }
 
     /**
@@ -38,11 +60,11 @@ abstract class EloquentRepository
     final public function find(int $id, array $with = []): ?Model
     {
         $query = $this->query();
-        
-        if (!empty($with)) {
+
+        if (! empty($with)) {
             $query->with($with);
         }
-        
+
         return $query->find($id);
     }
 
@@ -52,11 +74,11 @@ abstract class EloquentRepository
     final public function findOrFail(int $id, array $with = []): Model
     {
         $query = $this->query();
-        
-        if (!empty($with)) {
+
+        if (! empty($with)) {
             $query->with($with);
         }
-        
+
         return $query->findOrFail($id);
     }
 
@@ -66,11 +88,11 @@ abstract class EloquentRepository
     final public function findBy(string $column, mixed $value, array $with = []): ?Model
     {
         $query = $this->query()->where($column, $value);
-        
-        if (!empty($with)) {
+
+        if (! empty($with)) {
             $query->with($with);
         }
-        
+
         return $query->first();
     }
 
@@ -105,7 +127,12 @@ abstract class EloquentRepository
 
     final public function delete(int $id): bool
     {
-        return (bool) $this->model->destroy($id);
+        $model = $this->model->find($id);
+        if ($model === null) {
+            return false;
+        }
+        
+        return $model->delete();
     }
 
     final public function restore(int $id): ?Model
@@ -139,41 +166,36 @@ abstract class EloquentRepository
     }
 
     /**
-     * @return Builder<Model>
-     */
-    protected function query(): Builder
-    {
-        return $this->model->newQuery();
-    }
-
-    /**
-     * Get paginated results with optional eager loading
-     * 
+     * Get paginated results with optional eager loading.
+     *
      * @param  array<int, string>  $with
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, TModel>
      */
     final public function paginate(int $perPage = 15, array $with = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         $query = $this->query();
-        
-        if (!empty($with)) {
+
+        if (! empty($with)) {
             $query->with($with);
         }
-        
-        return $query->paginate($perPage);
+
+        /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, TModel> $result */
+        $result = $query->paginate($perPage);
+
+        return $result;
     }
 
     /**
      * Get cached results for expensive queries
-     * 
+     *
      * @param  array<int, string>  $with
-     * @param  int  $ttl Cache time in seconds
+     * @param  int  $ttl  Cache time in seconds
      * @return Collection<int, Model>
      */
     final public function allCached(array $with = [], int $ttl = 3600): Collection
     {
         $cacheKey = $this->getCacheKey('all', $with);
-        
+
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, function () use ($with) {
             return $this->all($with);
         });
@@ -181,14 +203,14 @@ abstract class EloquentRepository
 
     /**
      * Get cached single record
-     * 
+     *
      * @param  array<int, string>  $with
-     * @param  int  $ttl Cache time in seconds
+     * @param  int  $ttl  Cache time in seconds
      */
     final public function findCached(int $id, array $with = [], int $ttl = 3600): ?Model
     {
         $cacheKey = $this->getCacheKey('find', $with, $id);
-        
+
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, function () use ($id, $with) {
             return $this->find($id, $with);
         });
@@ -204,16 +226,24 @@ abstract class EloquentRepository
     }
 
     /**
+     * @return Builder<Model>
+     */
+    protected function query(): Builder
+    {
+        return $this->model->newQuery();
+    }
+
+    /**
      * Generate cache key for this model
-     * 
+     *
      * @param  array<int, string>  $with
      */
     protected function getCacheKey(string $method, array $with = [], ?int $id = null): string
     {
         $modelName = class_basename($this->model);
-        $withString = !empty($with) ? '_' . implode('_', $with) : '';
+        $withString = ! empty($with) ? '_'.implode('_', $with) : '';
         $idString = $id ? "_$id" : '';
-        
+
         return "repository_{$modelName}_{$method}{$withString}{$idString}";
     }
 }

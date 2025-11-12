@@ -48,7 +48,7 @@ class SwaggerDocumentationTest extends TestCase
         $this->assertArrayHasKey('/api/v1/auth/logout', $json['paths']);
         $this->assertArrayHasKey('/api/v1/auth/me', $json['paths']);
         $this->assertArrayHasKey('/api/v1/auth/forgot-password', $json['paths']);
-        $this->assertArrayHasKey('/api/v1/reset-password', $json['paths']);
+        $this->assertArrayHasKey('/api/v1/auth/reset-password', $json['paths']);
 
         // Verify the Authentication tag exists
         $tags = collect($json['tags'])->pluck('name')->toArray();

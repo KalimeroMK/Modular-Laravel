@@ -24,29 +24,33 @@ class UpdateRoleActionTest extends TestCase
     public function test_execute_successful_role_update(): void
     {
         // Arrange
-        $roleId = 1;
         $name = 'updated-admin';
         $guardName = 'web';
         
         $dto = new UpdateRoleDTO($name, $guardName);
         
         $role = new Role();
-        $role->id = $roleId;
-        $role->name = $name;
-        $role->guard_name = $guardName;
+        $role->id = 1;
+        $role->name = 'admin';
+        $role->guard_name = 'web';
+
+        $updatedRole = new Role();
+        $updatedRole->id = 1;
+        $updatedRole->name = $name;
+        $updatedRole->guard_name = $guardName;
 
         $roleRepository = Mockery::mock(RoleRepositoryInterface::class);
         $roleRepository->shouldReceive('update')
-            ->with($roleId, Mockery::on(function ($data) use ($name, $guardName) {
+            ->with(1, Mockery::on(function ($data) use ($name, $guardName) {
                 return $data['name'] === $name 
                     && $data['guard_name'] === $guardName;
             }))
-            ->andReturn($role);
+            ->andReturn($updatedRole);
 
         $action = new UpdateRoleAction($roleRepository);
 
         // Act
-        $result = $action->execute($roleId, $dto);
+        $result = $action->execute($role, $dto);
 
         // Assert
         $this->assertInstanceOf(RoleResponseDTO::class, $result);
@@ -57,11 +61,13 @@ class UpdateRoleActionTest extends TestCase
     public function test_execute_role_update_failure(): void
     {
         // Arrange
-        $roleId = 1;
         $name = 'updated-admin';
         $guardName = 'web';
         
         $dto = new UpdateRoleDTO($name, $guardName);
+
+        $role = new Role();
+        $role->id = 1;
 
         $roleRepository = Mockery::mock(RoleRepositoryInterface::class);
         $roleRepository->shouldReceive('update')
@@ -72,6 +78,6 @@ class UpdateRoleActionTest extends TestCase
         // Act & Assert
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to update role');
-        $action->execute($roleId, $dto);
+        $action->execute($role, $dto);
     }
 }

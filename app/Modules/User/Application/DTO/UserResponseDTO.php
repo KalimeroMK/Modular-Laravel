@@ -19,13 +19,18 @@ readonly class UserResponseDTO
 
     public static function fromUser(User $user): self
     {
+        // Ensure the model is fresh from database if id is null
+        if ($user->id === null) {
+            $user->refresh();
+        }
+
         return new self(
-            id: $user->id,
-            name: $user->name,
-            email: $user->email,
-            emailVerifiedAt: $user->email_verified_at instanceof \Carbon\Carbon ? $user->email_verified_at->toISOString() : $user->email_verified_at,
-            createdAt: $user->created_at instanceof \Carbon\Carbon ? $user->created_at->toISOString() : $user->created_at,
-            updatedAt: $user->updated_at instanceof \Carbon\Carbon ? $user->updated_at->toISOString() : $user->updated_at,
+            id: $user->id ?? 0,
+            name: $user->name ?? '',
+            email: $user->email ?? '',
+            emailVerifiedAt: $user->email_verified_at instanceof \Carbon\Carbon ? $user->email_verified_at->toISOString() : ($user->email_verified_at ? (string) $user->email_verified_at : null),
+            createdAt: $user->created_at instanceof \Carbon\Carbon ? $user->created_at->toISOString() : ($user->created_at ? (string) $user->created_at : null),
+            updatedAt: $user->updated_at instanceof \Carbon\Carbon ? $user->updated_at->toISOString() : ($user->updated_at ? (string) $user->updated_at : null),
         );
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Role\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\Role\Application\Actions\CreateRoleAction;
 use App\Modules\Role\Application\Actions\DeleteRoleAction;
@@ -62,7 +63,7 @@ class RoleController extends Controller
     {
         $roles = $this->getAllRolesAction->execute();
 
-        return response()->json(['data' => $roles->items()]);
+        return ApiResponse::paginated($roles, 'Roles retrieved successfully');
     }
 
     /**
@@ -111,7 +112,7 @@ class RoleController extends Controller
     {
         $roleDTO = $this->getRoleByIdAction->execute($role);
 
-        return response()->json(['data' => $roleDTO->toArray()]);
+        return ApiResponse::success($roleDTO->toArray(), 'Role retrieved successfully');
     }
 
     /**
@@ -163,7 +164,7 @@ class RoleController extends Controller
         $dto = CreateRoleDTO::fromArray($request->validated());
         $role = $this->createRoleAction->execute($dto);
 
-        return response()->json(['data' => $role->toArray()], 201);
+        return ApiResponse::created($role->toArray(), 'Role created successfully');
     }
 
     /**
@@ -230,7 +231,7 @@ class RoleController extends Controller
         $dto = UpdateRoleDTO::fromArray($request->validated());
         $updatedRole = $this->updateRoleAction->execute($role, $dto);
 
-        return response()->json(['data' => $updatedRole->toArray()]);
+        return ApiResponse::success($updatedRole->toArray(), 'Role updated successfully');
     }
 
     /**
@@ -279,6 +280,6 @@ class RoleController extends Controller
     {
         $this->deleteRoleAction->execute($role);
 
-        return response()->json(['message' => 'Role deleted']);
+        return ApiResponse::success(null, 'Role deleted successfully');
     }
 }

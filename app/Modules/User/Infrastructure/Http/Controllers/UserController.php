@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\User\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\User\Application\Actions\CreateUserAction;
 use App\Modules\User\Application\Actions\DeleteUserAction;
@@ -62,7 +63,7 @@ class UserController extends Controller
     {
         $users = $this->getAllUsersAction->execute();
 
-        return response()->json(['data' => $users->items()]);
+        return ApiResponse::paginated($users, 'Users retrieved successfully');
     }
 
     /**
@@ -111,7 +112,7 @@ class UserController extends Controller
     {
         $userDTO = $this->getUserByIdAction->execute($user);
 
-        return response()->json(['data' => $userDTO->toArray()]);
+        return ApiResponse::success($userDTO->toArray(), 'User retrieved successfully');
     }
 
     /**
@@ -164,7 +165,7 @@ class UserController extends Controller
         $dto = CreateUserDTO::fromArray($request->validated());
         $user = $this->createUserAction->execute($dto);
 
-        return response()->json(['data' => $user->toArray()], 201);
+        return ApiResponse::created($user->toArray(), 'User created successfully');
     }
 
     /**
@@ -231,7 +232,7 @@ class UserController extends Controller
         $dto = UpdateUserDTO::fromArray($request->validated());
         $updatedUser = $this->updateUserAction->execute($user, $dto);
 
-        return response()->json(['data' => $updatedUser->toArray()]);
+        return ApiResponse::success($updatedUser->toArray(), 'User updated successfully');
     }
 
     /**
@@ -280,6 +281,6 @@ class UserController extends Controller
     {
         $this->deleteUserAction->execute($user);
 
-        return response()->json(['message' => 'User deleted']);
+        return ApiResponse::success(null, 'User deleted successfully');
     }
 }

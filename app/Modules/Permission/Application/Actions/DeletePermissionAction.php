@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Application\Actions;
 
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
-use Spatie\Permission\Models\Permission;
 
 class DeletePermissionAction
 {
@@ -15,6 +15,6 @@ class DeletePermissionAction
 
     public function execute(Permission $permission): bool
     {
-        return $this->permissionRepository->delete((int) $permission->id);
+        return $this->permissionRepository->delete((int) $permission->getKey());
     }
 }

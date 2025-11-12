@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Application\Actions;
 
+use App\Modules\Core\Exceptions\UpdateException;
 use App\Modules\Role\Application\DTO\RoleResponseDTO;
 use App\Modules\Role\Application\DTO\UpdateRoleDTO;
 use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
-use Exception;
 
 class UpdateRoleAction
 {
@@ -21,10 +21,10 @@ class UpdateRoleAction
         $updateData = $dto->toArray();
 
         /** @var Role $updatedRole */
-        $updatedRole = $this->roleRepository->update($role->id, $updateData);
+        $updatedRole = $this->roleRepository->update((int) $role->getKey(), $updateData);
 
         if ($updatedRole === null) {
-            throw new Exception('Failed to update role');
+            throw new UpdateException('Failed to update role');
         }
 
         return RoleResponseDTO::fromRole($updatedRole);

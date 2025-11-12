@@ -56,6 +56,7 @@ class StubFileGenerator
 
             if (Str::endsWith($stubPath, 'Migration.stub')) {
                 $currentReplacements['{{migration_fields}}'] = $this->buildMigrationFields($fields);
+                $currentReplacements['{{migration_indexes}}'] = $this->buildMigrationIndexes($fields);
             }
 
             if (Str::endsWith($stubPath, 'Resource.stub')) {
@@ -67,6 +68,7 @@ class StubFileGenerator
                 $currentReplacements['{{fillable}}'] = $this->buildFillableFields($fields);
                 $currentReplacements['{{casts}}'] = $this->buildCasts($fields);
                 $currentReplacements['{{phpdoc_block}}'] = $this->buildPhpDoc($fields);
+                $currentReplacements['{{phpdoc_properties}}'] = $this->buildPhpDocProperties($fields);
 
                 // Parse relationships and imports
                 $relationships = $options['relationships'] ?? '';
@@ -173,6 +175,74 @@ class StubFileGenerator
     }
 
     /**
+     * Build migration indexes for performance optimization.
+     *
+     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
+     */
+    protected function buildMigrationIndexes(array $fields): string
+    {
+        $indexes = [];
+        $hasForeignKeys = false;
+        $indexableFields = [];
+
+        // Always index timestamps for common queries
+        $indexes[] = "            \$table->index('created_at');";
+        $indexes[] = "            \$table->index('updated_at');";
+
+        // Index foreign keys (they're already indexed by constrained, but add explicit index for clarity)
+        foreach ($fields as $field) {
+            if ($field['type'] === 'foreign') {
+                $hasForeignKeys = true;
+                $indexableFields[] = $field['name'];
+            }
+        }
+
+        // Index common query fields (status, is_active, etc.)
+        $commonIndexablePatterns = ['status', 'is_active', 'is_enabled', 'active', 'enabled', 'published', 'visible'];
+
+        foreach ($fields as $field) {
+            $name = $field['name'];
+            $type = $field['type'];
+
+            // Index boolean fields that are commonly queried
+            if (in_array($type, ['boolean', 'bool']) && in_array($name, $commonIndexablePatterns)) {
+                $indexes[] = "            \$table->index('{$name}');";
+            }
+
+            // Index status/enum fields
+            if ($type === 'enum' || in_array($name, ['status', 'type', 'state'])) {
+                $indexes[] = "            \$table->index('{$name}');";
+            }
+
+            // Index date/timestamp fields that might be queried
+            if (in_array($type, ['date', 'datetime', 'timestamp']) &&
+                ! in_array($name, ['created_at', 'updated_at'])) {
+                $indexes[] = "            \$table->index('{$name}');";
+            }
+        }
+
+        // Add composite index for foreign key + status if both exist
+        if ($hasForeignKeys && ! empty($indexableFields)) {
+            foreach ($indexableFields as $fkField) {
+                // Check if there's a status field
+                foreach ($fields as $field) {
+                    if (in_array($field['name'], ['status', 'is_active', 'active'])) {
+                        $indexes[] = "            \$table->index(['{$fkField}', '{$field['name']}']);";
+                        break;
+                    }
+                }
+            }
+        }
+
+        // If no specific indexes, return at least timestamps
+        if (count($indexes) <= 2) {
+            return implode("\n", $indexes);
+        }
+
+        return implode("\n", $indexes);
+    }
+
+    /**
      * @param  array<int, array{name: string, type: string}>  $fields
      */
     protected function buildResourceFields(array $fields): string
@@ -249,6 +319,34 @@ class StubFileGenerator
     }
 
     /**
+     * Build PHPDoc properties for model class.
+     *
+     * @param  array<int, array{name: string, type: string}>  $fields
+     */
+    protected function buildPhpDocProperties(array $fields): string
+    {
+        $lines = [];
+
+        foreach ($fields as $field) {
+            $type = match ($field['type']) {
+                'string', 'char', 'text', 'mediumText', 'longText', 'uuid', 'ipAddress', 'macAddress' => 'string',
+                'float', 'double', 'decimal' => 'float',
+                'int', 'integer', 'bigint', 'tinyInteger', 'smallInteger', 'mediumInteger', 'unsignedBigInteger' => 'int',
+                'bool', 'boolean' => 'bool',
+                'date', 'datetime', 'timestamp', 'time', 'year' => '\Illuminate\Support\Carbon|null',
+                'array', 'json' => 'array<string, mixed>',
+                default => 'mixed',
+            };
+
+            // Add nullable for optional fields
+            $nullable = in_array($field['type'], ['date', 'datetime', 'timestamp', 'time', 'year']) ? '|null' : '';
+            $lines[] = " * @property {$type}{$nullable} \${$field['name']}";
+        }
+
+        return implode("\n", $lines);
+    }
+
+    /**
      * Extract relationship methods from relationships string
      */
     protected function extractRelationshipMethods(string $relationships): string
@@ -264,7 +362,7 @@ class StubFileGenerator
         $braceCount = 0;
 
         foreach ($lines as $line) {
-            $line = trim($line);
+            $line = mb_trim($line);
 
             // Skip import statements
             if (str_starts_with($line, 'use ')) {

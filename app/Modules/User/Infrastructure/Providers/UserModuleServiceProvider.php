@@ -19,6 +19,11 @@ class UserModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Register route model binding BEFORE loading routes
+        Route::bind('user', function ($value) {
+            return \App\Modules\User\Infrastructure\Models\User::findOrFail($value);
+        });
+        
         // Load routes
         $this->loadRoutes();
     }

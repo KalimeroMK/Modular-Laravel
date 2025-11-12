@@ -15,6 +15,13 @@ class DeleteUserAction
 
     public function execute(User $user): bool
     {
-        return $this->userRepository->delete($user->id);
+        // Get the user ID - route model binding ensures the model exists
+        $userId = (int) $user->getKey();
+        
+        if ($userId === 0) {
+            return false;
+        }
+
+        return $this->userRepository->delete($userId);
     }
 }

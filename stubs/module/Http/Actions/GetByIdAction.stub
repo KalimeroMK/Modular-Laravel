@@ -7,10 +7,23 @@ namespace App\Modules\{{module}}\Application\Actions;
 use App\Modules\{{module}}\Application\DTO\{{module}}ResponseDTO;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 
+/**
+ * Action to get a {{moduleVar}} by ID.
+ * The model is already resolved via route model binding.
+ */
 class Get{{class}}ByIdAction
 {
+    /**
+     * Create a new action instance.
+     */
     public function __construct() {}
 
+    /**
+     * Execute the action to get a {{moduleVar}} by ID.
+     *
+     * @param {{class}} ${{moduleVar}} The {{moduleVar}} model (resolved via route model binding)
+     * @return {{module}}ResponseDTO|null {{moduleVar}} response DTO or null if not found
+     */
     public function execute({{class}} ${{moduleVar}}): ?{{module}}ResponseDTO
     {
         // Model is already resolved via route model binding, no need to query again

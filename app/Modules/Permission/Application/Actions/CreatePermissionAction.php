@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Application\Actions;
 
+use App\Modules\Core\Exceptions\CreateException;
 use App\Modules\Permission\Application\DTO\CreatePermissionDTO;
 use App\Modules\Permission\Application\DTO\PermissionResponseDTO;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
-use Exception;
 
 class CreatePermissionAction
 {
@@ -22,11 +22,11 @@ class CreatePermissionAction
             'guard_name' => $dto->guardName,
         ];
 
-        /** @var \Spatie\Permission\Models\Permission $permission */
+        /** @var \App\Modules\Permission\Infrastructure\Models\Permission $permission */
         $permission = $this->permissionRepository->create($permissionData);
 
         if ($permission === null) {
-            throw new Exception('Failed to create permission');
+            throw new CreateException('Failed to create permission');
         }
 
         return PermissionResponseDTO::fromPermission($permission);

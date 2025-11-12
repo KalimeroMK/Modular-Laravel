@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\Permission\Application\Actions\CreatePermissionAction;
 use App\Modules\Permission\Application\Actions\DeletePermissionAction;
@@ -16,7 +17,7 @@ use App\Modules\Permission\Application\DTO\UpdatePermissionDTO;
 use App\Modules\Permission\Infrastructure\Http\Requests\CreatePermissionRequest;
 use App\Modules\Permission\Infrastructure\Http\Requests\UpdatePermissionRequest;
 use Illuminate\Http\JsonResponse;
-use Spatie\Permission\Models\Permission;
+use App\Modules\Permission\Infrastructure\Models\Permission;
 
 class PermissionController extends Controller
 {
@@ -62,7 +63,7 @@ class PermissionController extends Controller
     {
         $permissions = $this->getAllPermissionsAction->execute();
 
-        return response()->json(['data' => $permissions->items()]);
+        return ApiResponse::paginated($permissions, 'Permissions retrieved successfully');
     }
 
     /**
@@ -111,7 +112,7 @@ class PermissionController extends Controller
     {
         $permissionDTO = $this->getPermissionByIdAction->execute($permission);
 
-        return response()->json(['data' => $permissionDTO->toArray()]);
+        return ApiResponse::success($permissionDTO->toArray(), 'Permission retrieved successfully');
     }
 
     /**
@@ -163,7 +164,7 @@ class PermissionController extends Controller
         $dto = CreatePermissionDTO::fromArray($request->validated());
         $permission = $this->createPermissionAction->execute($dto);
 
-        return response()->json(['data' => $permission->toArray()], 201);
+        return ApiResponse::created($permission->toArray(), 'Permission created successfully');
     }
 
     /**
@@ -230,7 +231,7 @@ class PermissionController extends Controller
         $dto = UpdatePermissionDTO::fromArray($request->validated());
         $updatedPermission = $this->updatePermissionAction->execute($permission, $dto);
 
-        return response()->json(['data' => $updatedPermission->toArray()]);
+        return ApiResponse::success($updatedPermission->toArray(), 'Permission updated successfully');
     }
 
     /**
@@ -279,6 +280,6 @@ class PermissionController extends Controller
     {
         $this->deletePermissionAction->execute($permission);
 
-        return response()->json(['message' => 'Permission deleted']);
+        return ApiResponse::success(null, 'Permission deleted successfully');
     }
 }

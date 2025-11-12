@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Application\Actions;
 
+use App\Modules\Core\Exceptions\CreateException;
 use App\Modules\Role\Application\DTO\CreateRoleDTO;
 use App\Modules\Role\Application\DTO\RoleResponseDTO;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
-use Exception;
 
 class CreateRoleAction
 {
@@ -26,7 +26,7 @@ class CreateRoleAction
         $role = $this->roleRepository->create($roleData);
 
         if ($role === null) {
-            throw new Exception('Failed to create role');
+            throw new CreateException('Failed to create role');
         }
 
         return RoleResponseDTO::fromRole($role);

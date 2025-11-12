@@ -4,18 +4,38 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
+use App\Modules\Core\Exceptions\CreateException;
 use App\Modules\{{module}}\Application\DTO\{{module}}DTO;
+use App\Modules\{{module}}\Application\DTO\{{module}}ResponseDTO;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 
+/**
+ * Action to create a new {{moduleVar}}.
+ */
 class Create{{class}}Action
 {
+    /**
+     * Create a new action instance.
+     */
     public function __construct(protected {{class}}RepositoryInterface $repository) {}
 
-    public function execute({{module}}DTO $dto): ?{{class}}
+    /**
+     * Execute the action to create a new {{moduleVar}}.
+     *
+     * @param {{module}}DTO $dto Data transfer object containing {{moduleVar}} data
+     * @return {{module}}ResponseDTO Created {{moduleVar}} response DTO
+     * @throws CreateException If {{moduleVar}} creation fails
+     */
+    public function execute({{module}}DTO $dto): {{module}}ResponseDTO
     {
         /** @var {{class}}|null $result */
         $result = $this->repository->create($dto->toArray());
-        return $result;
+        
+        if ($result === null) {
+            throw new CreateException('Failed to create {{moduleVar}}');
+        }
+        
+        return {{module}}ResponseDTO::from{{class}}($result);
     }
 }

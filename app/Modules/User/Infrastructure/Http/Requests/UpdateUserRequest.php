@@ -14,11 +14,34 @@ class UpdateUserRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        // Ensure route model binding is resolved before validation
+        $user = $this->route('user');
+        if ($user && !($user instanceof \App\Modules\User\Infrastructure\Models\User)) {
+            // If it's not a model instance, try to resolve it
+            $user = \App\Modules\User\Infrastructure\Models\User::findOrFail($user);
+            $this->route()->setParameter('user', $user);
+        }
+    }
+
+    /**
      * @return array<string, array<int, string>>
      */
     public function rules(): array
     {
-        $userId = $this->route('user')->id ?? 'NULL';
+        $user = $this->route('user');
+        
+        // Handle both model instance and ID
+        if ($user instanceof \App\Modules\User\Infrastructure\Models\User) {
+            $userId = $user->id;
+        } elseif (is_numeric($user)) {
+            $userId = $user;
+        } else {
+            $userId = 'NULL';
+        }
 
         return [
             'name' => ['sometimes', 'string', 'max:255'],

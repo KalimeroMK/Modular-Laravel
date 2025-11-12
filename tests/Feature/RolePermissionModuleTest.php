@@ -8,18 +8,26 @@ use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class RolePermissionModuleTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+    }
+
     public function test_role_can_be_created()
     {
         $response = $this->postJson('/api/v1/roles', [
             'name' => 'admin',
         ]);
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $this->assertDatabaseHas('roles', ['name' => 'admin']);
     }
 
@@ -28,7 +36,7 @@ class RolePermissionModuleTest extends TestCase
         $response = $this->postJson('/api/v1/permissions', [
             'name' => 'edit-posts',
         ]);
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $this->assertDatabaseHas('permissions', ['name' => 'edit-posts']);
     }
 

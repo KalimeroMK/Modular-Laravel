@@ -18,7 +18,8 @@ class MakeModuleCommand extends Command
         {--relations= : Eloquent relationships, e.g. user:belongsTo:User}
         {--exceptions : Generate exception classes}
         {--observers : Generate observer stubs}
-        {--policies : Generate policy stubs}';
+        {--policies : Generate policy stubs}
+        {--enum : Generate enum class}';
 
     protected $description = 'Create a new API module with predefined structure and files';
 
@@ -29,13 +30,14 @@ class MakeModuleCommand extends Command
     {
         $name = Str::studly($this->argument('name'));
 
-        /** @var array{model: string, relations: string, exceptions: bool, observers: bool, policies: bool, repositories: array<mixed>, table?: string, relationships?: string} $options */
+        /** @var array{model: string, relations: string, exceptions: bool, observers: bool, policies: bool, enum: bool, repositories: array<mixed>, table?: string, relationships?: string} $options */
         $options = [
             'model' => $this->option('model') ?? '',
             'relations' => $this->option('relations') ?? '',
             'exceptions' => $this->option('exceptions'),
             'observers' => $this->option('observers'),
             'policies' => $this->option('policies'),
+            'enum' => $this->option('enum'),
             'repositories' => [],
         ];
 
@@ -73,7 +75,7 @@ class MakeModuleCommand extends Command
         $result = array_map(function ($field) {
             [$name, $type] = explode(':', $field);
 
-            return ['name' => trim($name), 'type' => trim($type)];
+            return ['name' => mb_trim($name), 'type' => mb_trim($type)];
         }, explode(',', $model));
 
         return $result;
@@ -92,8 +94,8 @@ class MakeModuleCommand extends Command
             if (count($parts) < 2) {
                 continue;
             }
-            $relName = trim($parts[0]);
-            $relType = trim($parts[1]);
+            $relName = mb_trim($parts[0]);
+            $relType = mb_trim($parts[1]);
             $relModel = $parts[2] ?? ucfirst($relName);
 
             // Add import for the related model

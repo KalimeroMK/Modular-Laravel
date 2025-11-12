@@ -13,6 +13,9 @@ class GetStatusAction
         protected ServiceInterface $twoFactorService,
     ) {}
 
+    /**
+     * @return array{enabled: bool}
+     */
     public function execute(User $user): array
     {
         return [

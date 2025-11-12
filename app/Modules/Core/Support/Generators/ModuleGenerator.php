@@ -20,6 +20,7 @@ class ModuleGenerator
         protected FeatureTestGenerator $testGenerator,
         protected RepositoryBinder $repositoryBinder,
         protected FieldParser $fieldParser,
+        protected EnumGenerator $enumGenerator,
     ) {}
 
     /**
@@ -48,6 +49,10 @@ class ModuleGenerator
 
         if (! empty($options['policies'])) {
             $this->policyGenerator->generate($moduleName);
+        }
+
+        if (! empty($options['enum'])) {
+            $this->enumGenerator->generate($moduleName);
         }
 
         $this->testGenerator->generate($moduleName, $fields, $options);

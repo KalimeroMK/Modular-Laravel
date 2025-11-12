@@ -423,42 +423,6 @@
                 }
             }
         },
-        "/api/v1/auth/2fa/status": {
-            "get": {
-                "tags": [
-                    "Two-Factor Authentication"
-                ],
-                "summary": "Get 2FA status",
-                "description": "Get the current two-factor authentication status for the authenticated user",
-                "operationId": "4b70b439f324fa6384b6cb10a0842458",
-                "responses": {
-                    "200": {
-                        "description": "2FA status retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "enabled": {
-                                            "type": "boolean",
-                                            "example": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
         "/api/v1/auth/2fa/setup": {
             "post": {
                 "tags": [
@@ -494,6 +458,42 @@
                     },
                     "400": {
                         "description": "2FA already enabled"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/2fa/status": {
+            "get": {
+                "tags": [
+                    "Two-Factor Authentication"
+                ],
+                "summary": "Get 2FA status",
+                "description": "Get the current two-factor authentication status for the authenticated user",
+                "operationId": "4b70b439f324fa6384b6cb10a0842458",
+                "responses": {
+                    "200": {
+                        "description": "2FA status retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "401": {
                         "description": "Unauthorized"

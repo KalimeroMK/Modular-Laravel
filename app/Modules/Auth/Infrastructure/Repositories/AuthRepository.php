@@ -7,6 +7,9 @@ namespace App\Modules\Auth\Infrastructure\Repositories;
 use App\Modules\Core\Repositories\EloquentRepository;
 use App\Modules\User\Infrastructure\Models\User;
 
+/**
+ * @extends EloquentRepository<User>
+ */
 class AuthRepository extends EloquentRepository implements AuthRepositoryInterface
 {
     public function __construct(User $model)

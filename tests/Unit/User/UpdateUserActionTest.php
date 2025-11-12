@@ -25,7 +25,6 @@ class UpdateUserActionTest extends TestCase
     public function test_execute_successful_user_update(): void
     {
         // Arrange
-        $userId = 1;
         $name = 'Updated User';
         $email = 'updated@example.com';
         $password = 'newpassword123';
@@ -33,18 +32,23 @@ class UpdateUserActionTest extends TestCase
         $dto = new UpdateUserDTO($name, $email, $password);
         
         $user = new User();
-        $user->id = $userId;
-        $user->name = $name;
-        $user->email = $email;
+        $user->id = 1;
+        $user->name = 'Original User';
+        $user->email = 'original@example.com';
+
+        $updatedUser = new User();
+        $updatedUser->id = 1;
+        $updatedUser->name = $name;
+        $updatedUser->email = $email;
 
         $userRepository = Mockery::mock(UserRepositoryInterface::class);
         $userRepository->shouldReceive('update')
-            ->with($userId, Mockery::on(function ($data) use ($name, $email) {
+            ->with(1, Mockery::on(function ($data) use ($name, $email) {
                 return $data['name'] === $name 
                     && $data['email'] === $email 
                     && isset($data['password']);
             }))
-            ->andReturn($user);
+            ->andReturn($updatedUser);
 
         Hash::shouldReceive('make')
             ->with($password)
@@ -53,7 +57,7 @@ class UpdateUserActionTest extends TestCase
         $action = new UpdateUserAction($userRepository);
 
         // Act
-        $result = $action->execute($userId, $dto);
+        $result = $action->execute($user, $dto);
 
         // Assert
         $this->assertInstanceOf(UserResponseDTO::class, $result);
@@ -64,12 +68,14 @@ class UpdateUserActionTest extends TestCase
     public function test_execute_user_update_failure(): void
     {
         // Arrange
-        $userId = 1;
         $name = 'Updated User';
         $email = 'updated@example.com';
         $password = 'newpassword123';
         
         $dto = new UpdateUserDTO($name, $email, $password);
+
+        $user = new User();
+        $user->id = 1;
 
         $userRepository = Mockery::mock(UserRepositoryInterface::class);
         $userRepository->shouldReceive('update')
@@ -84,6 +90,6 @@ class UpdateUserActionTest extends TestCase
         // Act & Assert
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to update user');
-        $action->execute($userId, $dto);
+        $action->execute($user, $dto);
     }
 }

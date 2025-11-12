@@ -4,18 +4,39 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
+use App\Modules\Core\Exceptions\UpdateException;
 use App\Modules\{{module}}\Application\DTO\{{module}}DTO;
+use App\Modules\{{module}}\Application\DTO\{{module}}ResponseDTO;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 
+/**
+ * Action to update an existing {{moduleVar}}.
+ */
 class Update{{class}}Action
 {
+    /**
+     * Create a new action instance.
+     */
     public function __construct(protected {{class}}RepositoryInterface $repository) {}
 
-    public function execute({{class}} ${{moduleVar}}, {{module}}DTO $dto): ?{{class}}
+    /**
+     * Execute the action to update a {{moduleVar}}.
+     *
+     * @param {{class}} ${{moduleVar}} The {{moduleVar}} model to update (resolved via route model binding)
+     * @param {{module}}DTO $dto Data transfer object containing updated {{moduleVar}} data
+     * @return {{module}}ResponseDTO Updated {{moduleVar}} response DTO
+     * @throws UpdateException If {{moduleVar}} update fails
+     */
+    public function execute({{class}} ${{moduleVar}}, {{module}}DTO $dto): {{module}}ResponseDTO
     {
         /** @var {{class}}|null $result */
-        $result = $this->repository->update(${{moduleVar}}->id, $dto->toArray());
-        return $result;
+        $result = $this->repository->update((int) ${{moduleVar}}->id, $dto->toArray());
+        
+        if ($result === null) {
+            throw new UpdateException('Failed to update {{moduleVar}}');
+        }
+        
+        return {{module}}ResponseDTO::from{{class}}($result);
     }
 }

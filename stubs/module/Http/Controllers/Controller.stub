@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Infrastructure\Http\Controllers;
 
+use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\{{module}}\Infrastructure\Models\{{module}};
 use App\Modules\{{module}}\Infrastructure\Http\Requests\Create{{module}}Request;
@@ -30,17 +31,38 @@ class {{module}}Controller extends Controller
      * - DELETE operations: 5 requests per hour
      */
     /**
+     * Get a paginated list of {{moduleVar}}s.
+     *
+     * @param GetAll{{module}}Action $action Action to retrieve all {{moduleVar}}s
+     * @return JsonResponse Paginated list of {{moduleVar}}s
+     * 
      * @OA\Get(
      *     path="/api/v1/{{moduleVar}}s",
      *     summary="List {{moduleVar}}s",
-     *     description="Get list of {{moduleVar}}s",
+     *     description="Get paginated list of {{moduleVar}}s",
      *     tags={"{{module}}s"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Items per page",
+     *         @OA\Schema(type="integer", example=15)
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="{{module}}s retrieved successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="{{module}}s retrieved successfully"),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object")),
+     *             @OA\Property(property="meta", type="object"),
+     *             @OA\Property(property="links", type="object")
      *         )
      *     ),
      *     @OA\Response(
@@ -52,15 +74,23 @@ class {{module}}Controller extends Controller
      */
     public function index(GetAll{{module}}Action $action): JsonResponse
     {
-        ${{moduleVar}}s = $action->execute();
-        return response()->json(['data' => ${{moduleVar}}s->items()]);
+        $perPage = (int) request()->get('per_page', 15);
+        ${{moduleVar}}s = $action->execute($perPage);
+
+        return ApiResponse::paginated(${{moduleVar}}s, '{{module}}s retrieved successfully');
     }
 
     /**
+     * Get a specific {{moduleVar}} by ID.
+     *
+     * @param {{module}} ${{moduleVar}} The {{moduleVar}} model (resolved via route model binding)
+     * @param Get{{module}}ByIdAction $action Action to retrieve {{moduleVar}} by ID
+     * @return JsonResponse {{moduleVar}} details
+     * 
      * @OA\Get(
      *     path="/api/v1/{{moduleVar}}s/{id}",
      *     summary="Get {{moduleVar}} by ID",
-     *     description="Get specific {{moduleVar}} information",
+     *     description="Get specific {{moduleVar}} information by ID",
      *     tags={"{{module}}s"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
@@ -74,6 +104,8 @@ class {{module}}Controller extends Controller
      *         response=200,
      *         description="{{module}} retrieved successfully",
      *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="{{module}} retrieved successfully"),
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
@@ -92,10 +124,18 @@ class {{module}}Controller extends Controller
     public function show({{module}} ${{moduleVar}}, Get{{module}}ByIdAction $action): JsonResponse
     {
         ${{moduleVar}}DTO = $action->execute(${{moduleVar}});
-        return response()->json(['data' => ${{moduleVar}}DTO->toArray()]);
+
+        return ApiResponse::success(${{moduleVar}}DTO->toArray(), '{{module}} retrieved successfully');
     }
 
     /**
+     * Create a new {{moduleVar}}.
+     *
+     * @param Create{{module}}Request $request Validated request containing {{moduleVar}} data
+     * @param Create{{module}}Action $action Action to create {{moduleVar}}
+     * @return JsonResponse Created {{moduleVar}} details
+     * @throws \App\Modules\Core\Exceptions\CreateException If {{moduleVar}} creation fails
+     * 
      * @OA\Post(
      *     path="/api/v1/{{moduleVar}}s",
      *     summary="Create {{moduleVar}}",
@@ -113,6 +153,8 @@ class {{module}}Controller extends Controller
      *         response=201,
      *         description="{{module}} created successfully",
      *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="{{module}} created successfully"),
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
@@ -132,10 +174,18 @@ class {{module}}Controller extends Controller
     {
         $dto = {{module}}DTO::fromRequest($request);
         ${{moduleVar}} = $action->execute($dto);
-        return response()->json(['data' => ${{moduleVar}}], 201);
+        return ApiResponse::created(${{moduleVar}}->toArray(), '{{module}} created successfully');
     }
 
     /**
+     * Update an existing {{moduleVar}}.
+     *
+     * @param {{module}} ${{moduleVar}} The {{moduleVar}} model to update (resolved via route model binding)
+     * @param Update{{module}}Request $request Validated request containing updated {{moduleVar}} data
+     * @param Update{{module}}Action $action Action to update {{moduleVar}}
+     * @return JsonResponse Updated {{moduleVar}} details
+     * @throws \App\Modules\Core\Exceptions\UpdateException If {{moduleVar}} update fails
+     * 
      * @OA\Put(
      *     path="/api/v1/{{moduleVar}}s/{id}",
      *     summary="Update {{moduleVar}}",
@@ -159,6 +209,8 @@ class {{module}}Controller extends Controller
      *         response=200,
      *         description="{{module}} updated successfully",
      *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="{{module}} updated successfully"),
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
@@ -183,10 +235,17 @@ class {{module}}Controller extends Controller
     {
         $dto = {{module}}DTO::fromRequest($request);
         $updated{{module}} = $action->execute(${{moduleVar}}, $dto);
-        return response()->json(['data' => $updated{{module}}]);
+        return ApiResponse::success($updated{{module}}->toArray(), '{{module}} updated successfully');
     }
 
     /**
+     * Delete a {{moduleVar}}.
+     *
+     * @param {{module}} ${{moduleVar}} The {{moduleVar}} model to delete (resolved via route model binding)
+     * @param Delete{{module}}Action $action Action to delete {{moduleVar}}
+     * @return JsonResponse Success message
+     * @throws \App\Modules\Core\Exceptions\DeleteException If {{moduleVar}} deletion fails
+     * 
      * @OA\Delete(
      *     path="/api/v1/{{moduleVar}}s/{id}",
      *     summary="Delete {{moduleVar}}",
@@ -204,7 +263,8 @@ class {{module}}Controller extends Controller
      *         response=200,
      *         description="{{module}} deleted successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="{{module}} deleted successfully.")
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="{{module}} deleted successfully")
      *         )
      *     ),
      *     @OA\Response(
@@ -222,6 +282,6 @@ class {{module}}Controller extends Controller
     public function destroy({{module}} ${{moduleVar}}, Delete{{module}}Action $action): JsonResponse
     {
         $action->execute(${{moduleVar}});
-        return response()->json(['message' => '{{module}} deleted successfully.']);
+        return ApiResponse::success(null, '{{module}} deleted successfully');
     }
 }

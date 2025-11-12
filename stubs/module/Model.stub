@@ -10,21 +10,48 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 {{relationship_imports}}
 
+/**
+ * {{module}} Model.
+ * 
+ * Represents a {{moduleVar}} in the database.
+ * 
+ * @property int $id
+{{phpdoc_properties}}
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ */
 class {{module}} extends Model
 {
     use HasFactory;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = '{{table}}';
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
         {{casts}}
     ];
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         {{fillable}}
     ];
 
     /**
+     * Create a new factory instance for the model.
+     *
      * @return \App\Modules\{{module}}\Database\Factories\{{module}}Factory
      */
     public static function newFactory(): \App\Modules\{{module}}\Database\Factories\{{module}}Factory

@@ -7,10 +7,10 @@ namespace Tests\Unit\Permission;
 use App\Modules\Permission\Application\Actions\UpdatePermissionAction;
 use App\Modules\Permission\Application\DTO\PermissionResponseDTO;
 use App\Modules\Permission\Application\DTO\UpdatePermissionDTO;
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Exception;
 use Mockery;
-use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 class UpdatePermissionActionTest extends TestCase
@@ -24,29 +24,33 @@ class UpdatePermissionActionTest extends TestCase
     public function test_execute_successful_permission_update(): void
     {
         // Arrange
-        $permissionId = 1;
         $name = 'updated-manage-users';
         $guardName = 'web';
         
         $dto = new UpdatePermissionDTO($name, $guardName);
         
         $permission = new Permission();
-        $permission->id = $permissionId;
-        $permission->name = $name;
-        $permission->guard_name = $guardName;
+        $permission->id = 1;
+        $permission->name = 'manage-users';
+        $permission->guard_name = 'web';
+
+        $updatedPermission = new Permission();
+        $updatedPermission->id = 1;
+        $updatedPermission->name = $name;
+        $updatedPermission->guard_name = $guardName;
 
         $permissionRepository = Mockery::mock(PermissionRepositoryInterface::class);
         $permissionRepository->shouldReceive('update')
-            ->with($permissionId, Mockery::on(function ($data) use ($name, $guardName) {
+            ->with(1, Mockery::on(function ($data) use ($name, $guardName) {
                 return $data['name'] === $name 
                     && $data['guard_name'] === $guardName;
             }))
-            ->andReturn($permission);
+            ->andReturn($updatedPermission);
 
         $action = new UpdatePermissionAction($permissionRepository);
 
         // Act
-        $result = $action->execute($permissionId, $dto);
+        $result = $action->execute($permission, $dto);
 
         // Assert
         $this->assertInstanceOf(PermissionResponseDTO::class, $result);
@@ -57,11 +61,13 @@ class UpdatePermissionActionTest extends TestCase
     public function test_execute_permission_update_failure(): void
     {
         // Arrange
-        $permissionId = 1;
         $name = 'updated-manage-users';
         $guardName = 'web';
         
         $dto = new UpdatePermissionDTO($name, $guardName);
+
+        $permission = new Permission();
+        $permission->id = 1;
 
         $permissionRepository = Mockery::mock(PermissionRepositoryInterface::class);
         $permissionRepository->shouldReceive('update')
@@ -72,6 +78,6 @@ class UpdatePermissionActionTest extends TestCase
         // Act & Assert
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to update permission');
-        $action->execute($permissionId, $dto);
+        $action->execute($permission, $dto);
     }
 }

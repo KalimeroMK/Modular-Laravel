@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Application\Actions;
 
+use App\Modules\Core\Exceptions\CreateException;
 use App\Modules\User\Application\DTO\CreateUserDTO;
 use App\Modules\User\Application\DTO\UserResponseDTO;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
-use Exception;
 use Illuminate\Support\Facades\Hash;
 
 class CreateUserAction
@@ -29,7 +29,7 @@ class CreateUserAction
         $user = $this->userRepository->create($userData);
 
         if ($user === null) {
-            throw new Exception('Failed to create user');
+            throw new CreateException('Failed to create user');
         }
 
         return UserResponseDTO::fromUser($user);

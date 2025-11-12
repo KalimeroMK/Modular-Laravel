@@ -7,10 +7,10 @@ namespace Tests\Unit\Permission;
 use App\Modules\Permission\Application\Actions\CreatePermissionAction;
 use App\Modules\Permission\Application\DTO\CreatePermissionDTO;
 use App\Modules\Permission\Application\DTO\PermissionResponseDTO;
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Exception;
 use Mockery;
-use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 class CreatePermissionActionTest extends TestCase

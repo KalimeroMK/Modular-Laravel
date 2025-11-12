@@ -8,6 +8,9 @@ use App\Modules\Core\Repositories\EloquentRepository;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * @extends EloquentRepository<User>
+ */
 class UserRepository extends EloquentRepository implements UserRepositoryInterface
 {
     public function __construct(User $model)
@@ -36,7 +39,7 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
 
     /**
      * Get users with their roles and permissions
-     * 
+     *
      * @return LengthAwarePaginator<int, User>
      */
     public function paginateWithRoles(int $perPage = 15): LengthAwarePaginator
@@ -51,13 +54,13 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
 
     /**
      * Get cached users list
-     * 
+     *
      * @return LengthAwarePaginator<int, User>
      */
     public function paginateCached(int $perPage = 15, int $ttl = 1800): LengthAwarePaginator
     {
         $cacheKey = "users_paginated_{$perPage}";
-        
+
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, function () use ($perPage) {
             return $this->paginate($perPage);
         });

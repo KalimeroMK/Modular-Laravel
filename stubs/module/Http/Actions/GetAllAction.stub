@@ -7,15 +7,27 @@ namespace App\Modules\{{module}}\Application\Actions;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 
+/**
+ * Action to get all {{moduleVar}}s with pagination.
+ */
 class GetAll{{class}}Action
 {
+    /**
+     * Create a new action instance.
+     */
     public function __construct(protected {{class}}RepositoryInterface $repository) {}
 
     /**
-     * @return \Illuminate\Pagination\LengthAwarePaginator<{{class}}>
+     * Execute the action to get all {{moduleVar}}s.
+     *
+     * @param int $perPage Number of items per page (default: 15)
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, {{class}}> Paginated list of {{moduleVar}}s
      */
-    public function execute(): \Illuminate\Pagination\LengthAwarePaginator
+    public function execute(int $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return $this->repository->paginate();
+        /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, {{class}}> $result */
+        $result = $this->repository->paginate($perPage);
+
+        return $result;
     }
 }

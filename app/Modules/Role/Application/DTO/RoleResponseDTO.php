@@ -18,12 +18,17 @@ readonly class RoleResponseDTO
 
     public static function fromRole(Role $role): self
     {
+        // Ensure the model is fresh from database if attributes are null
+        if ($role->name === null) {
+            $role->refresh();
+        }
+
         return new self(
-            id: (int) $role->id,
-            name: $role->name,
+            id: (int) ($role->id ?? $role->getKey() ?? 0),
+            name: $role->name ?? '',
             guardName: $role->guard_name ?? 'web',
-            createdAt: $role->created_at instanceof \Carbon\Carbon ? $role->created_at->toISOString() : $role->created_at,
-            updatedAt: $role->updated_at instanceof \Carbon\Carbon ? $role->updated_at->toISOString() : $role->updated_at,
+            createdAt: $role->created_at instanceof \Carbon\Carbon ? $role->created_at->toISOString() : ($role->created_at ? (string) $role->created_at : null),
+            updatedAt: $role->updated_at instanceof \Carbon\Carbon ? $role->updated_at->toISOString() : ($role->updated_at ? (string) $role->updated_at : null),
         );
     }
 

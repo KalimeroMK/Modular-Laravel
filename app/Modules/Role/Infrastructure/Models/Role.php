@@ -23,4 +23,26 @@ class Role extends BaseRole
     {
         return RoleFactory::new();
     }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
+    /**
+     * Retrieve the model for bound value.
+     *
+     * @param  mixed  $value
+     * @param  string|null  $field
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $field = $field ?: $this->getRouteKeyName();
+        
+        return $this->newQuery()->where($field, $value)->firstOrFail();
+    }
 }

@@ -7,7 +7,6 @@ namespace Tests\Unit\User;
 use App\Modules\User\Application\Actions\GetUserByIdAction;
 use App\Modules\User\Application\DTO\UserResponseDTO;
 use App\Modules\User\Infrastructure\Models\User;
-use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Mockery;
 use Tests\TestCase;
 
@@ -22,45 +21,40 @@ class GetUserByIdActionTest extends TestCase
     public function test_execute_returns_user_when_found(): void
     {
         // Arrange
-        $userId = 1;
         $user = new User();
-        $user->id = $userId;
+        $user->id = 1;
         $user->name = 'Test User';
         $user->email = 'test@example.com';
 
-        $userRepository = Mockery::mock(UserRepositoryInterface::class);
-        $userRepository->shouldReceive('find')
-            ->with($userId)
-            ->andReturn($user);
-
-        $action = new GetUserByIdAction($userRepository);
+        $action = new GetUserByIdAction();
 
         // Act
-        $result = $action->execute($userId);
+        $result = $action->execute($user);
 
         // Assert
         $this->assertInstanceOf(UserResponseDTO::class, $result);
-        $this->assertEquals($userId, $result->id);
+        $this->assertEquals(1, $result->id);
         $this->assertEquals('Test User', $result->name);
         $this->assertEquals('test@example.com', $result->email);
     }
 
-    public function test_execute_returns_null_when_user_not_found(): void
+    public function test_execute_returns_user_dto(): void
     {
         // Arrange
-        $userId = 999;
+        $user = new User();
+        $user->id = 2;
+        $user->name = 'Another User';
+        $user->email = 'another@example.com';
 
-        $userRepository = Mockery::mock(UserRepositoryInterface::class);
-        $userRepository->shouldReceive('find')
-            ->with($userId)
-            ->andReturn(null);
-
-        $action = new GetUserByIdAction($userRepository);
+        $action = new GetUserByIdAction();
 
         // Act
-        $result = $action->execute($userId);
+        $result = $action->execute($user);
 
         // Assert
-        $this->assertNull($result);
+        $this->assertInstanceOf(UserResponseDTO::class, $result);
+        $this->assertEquals(2, $result->id);
+        $this->assertEquals('Another User', $result->name);
+        $this->assertEquals('another@example.com', $result->email);
     }
 }

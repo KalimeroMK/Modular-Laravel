@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             {{migration_fields}}
             $table->timestamps();
+            
+            // Performance indexes
+            {{migration_indexes}}
         });
     }
 

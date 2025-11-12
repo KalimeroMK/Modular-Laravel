@@ -14,11 +14,34 @@ class UpdatePermissionRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        // Ensure route model binding is resolved before validation
+        $permission = $this->route('permission');
+        if ($permission && !($permission instanceof \App\Modules\Permission\Infrastructure\Models\Permission)) {
+            // If it's not a model instance, try to resolve it
+            $permission = \App\Modules\Permission\Infrastructure\Models\Permission::findOrFail($permission);
+            $this->route()->setParameter('permission', $permission);
+        }
+    }
+
+    /**
      * @return array<string, array<int, string>>
      */
     public function rules(): array
     {
-        $permissionId = $this->route('permission')->id ?? 'NULL';
+        $permission = $this->route('permission');
+        
+        // Handle both model instance and ID
+        if ($permission instanceof \App\Modules\Permission\Infrastructure\Models\Permission) {
+            $permissionId = $permission->id;
+        } elseif (is_numeric($permission)) {
+            $permissionId = $permission;
+        } else {
+            $permissionId = 'NULL';
+        }
 
         return [
             'name' => ['sometimes', 'string', 'max:255', 'unique:permissions,name,'.$permissionId],

@@ -66,7 +66,7 @@ class Service implements ServiceInterface
 
     public function verifyTwoFactor(User $user, VerificationDTO $dto): bool
     {
-        if (!$user->two_factor_secret) {
+        if (! $user->two_factor_secret) {
             return false;
         }
 
@@ -78,7 +78,7 @@ class Service implements ServiceInterface
         }
 
         // Verify TOTP code
-        return $this->google2fa->verifyKey($secretKey, $dto->code);
+        return (bool) $this->google2fa->verifyKey($secretKey, $dto->code);
     }
 
     public function disableTwoFactor(User $user): bool
@@ -93,12 +93,12 @@ class Service implements ServiceInterface
 
     public function isTwoFactorEnabled(User $user): bool
     {
-        return !empty($user->two_factor_secret);
+        return ! empty($user->two_factor_secret);
     }
 
     public function verifyRecoveryCode(User $user, string $recoveryCode): bool
     {
-        if (!$user->two_factor_recovery_codes) {
+        if (! $user->two_factor_recovery_codes) {
             return false;
         }
 
