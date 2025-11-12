@@ -10,18 +10,11 @@ use Spatie\Permission\Models\Permission;
 
 class GetPermissionByIdAction
 {
-    public function __construct(
-        protected PermissionRepositoryInterface $permissionRepository,
-    ) {}
+    public function __construct() {}
 
-    public function execute(int $id): ?PermissionResponseDTO
+    public function execute(Permission $permission): ?PermissionResponseDTO
     {
-        $permission = $this->permissionRepository->find($id);
-        
-        if (!$permission) {
-            return null;
-        }
-        
+        // Model is already resolved via route model binding, no need to query again
         return PermissionResponseDTO::fromPermission($permission);
     }
 }

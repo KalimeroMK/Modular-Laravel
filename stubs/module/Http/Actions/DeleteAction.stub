@@ -11,8 +11,8 @@ class Delete{{class}}Action
 {
     public function __construct(protected {{class}}RepositoryInterface $repository) {}
 
-    public function execute(int $id): bool
+    public function execute({{class}} ${{moduleVar}}): bool
     {
-        return $this->repository->delete($id);
+        return $this->repository->delete(${{moduleVar}}->id);
     }
 }

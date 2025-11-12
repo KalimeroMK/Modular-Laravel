@@ -89,10 +89,10 @@ class {{module}}Controller extends Controller
      *     )
      * )
      */
-    public function show(int $id, Get{{module}}ByIdAction $action): JsonResponse
+    public function show({{module}} ${{moduleVar}}, Get{{module}}ByIdAction $action): JsonResponse
     {
-        ${{moduleVar}} = $action->execute($id);
-        return response()->json(['data' => ${{moduleVar}}]);
+        ${{moduleVar}}DTO = $action->execute(${{moduleVar}});
+        return response()->json(['data' => ${{moduleVar}}DTO->toArray()]);
     }
 
     /**
@@ -179,11 +179,11 @@ class {{module}}Controller extends Controller
      *     )
      * )
      */
-    public function update(Update{{module}}Request $request, int $id, Update{{module}}Action $action): JsonResponse
+    public function update({{module}} ${{moduleVar}}, Update{{module}}Request $request, Update{{module}}Action $action): JsonResponse
     {
         $dto = {{module}}DTO::fromRequest($request);
-        ${{moduleVar}} = $action->execute($dto, $id);
-        return response()->json(['data' => ${{moduleVar}}]);
+        $updated{{module}} = $action->execute(${{moduleVar}}, $dto);
+        return response()->json(['data' => $updated{{module}}]);
     }
 
     /**
@@ -219,9 +219,9 @@ class {{module}}Controller extends Controller
      *     )
      * )
      */
-    public function destroy(int $id, Delete{{module}}Action $action): JsonResponse
+    public function destroy({{module}} ${{moduleVar}}, Delete{{module}}Action $action): JsonResponse
     {
-        $action->execute($id);
+        $action->execute(${{moduleVar}});
         return response()->json(['message' => '{{module}} deleted successfully.']);
     }
 }

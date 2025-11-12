@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
-use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
+use App\Modules\{{module}}\Application\DTO\{{module}}ResponseDTO;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 
 class Get{{class}}ByIdAction
 {
-    public function __construct(protected {{class}}RepositoryInterface $repository) {}
+    public function __construct() {}
 
-    public function execute(int $id): ?{{class}}
+    public function execute({{class}} ${{moduleVar}}): ?{{module}}ResponseDTO
     {
-        /** @var {{class}}|null $result */
-        $result = $this->repository->find($id);
-        return $result;
+        // Model is already resolved via route model binding, no need to query again
+        return {{module}}ResponseDTO::from{{class}}(${{moduleVar}});
     }
 }

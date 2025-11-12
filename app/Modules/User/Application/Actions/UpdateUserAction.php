@@ -17,7 +17,7 @@ class UpdateUserAction
         protected UserRepositoryInterface $userRepository,
     ) {}
 
-    public function execute(int $id, UpdateUserDTO $dto): UserResponseDTO
+    public function execute(User $user, UpdateUserDTO $dto): UserResponseDTO
     {
         $updateData = $dto->toArray();
 
@@ -27,7 +27,7 @@ class UpdateUserAction
         }
 
         /** @var User $updatedUser */
-        $updatedUser = $this->userRepository->update($id, $updateData);
+        $updatedUser = $this->userRepository->update($user->id, $updateData);
 
         if ($updatedUser === null) {
             throw new Exception('Failed to update user');

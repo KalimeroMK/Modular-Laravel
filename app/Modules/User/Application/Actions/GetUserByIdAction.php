@@ -10,18 +10,11 @@ use App\Modules\User\Infrastructure\Models\User;
 
 class GetUserByIdAction
 {
-    public function __construct(
-        protected UserRepositoryInterface $userRepository,
-    ) {}
+    public function __construct() {}
 
-    public function execute(int $id): ?UserResponseDTO
+    public function execute(User $user): ?UserResponseDTO
     {
-        $user = $this->userRepository->find($id);
-        
-        if (!$user) {
-            return null;
-        }
-        
+        // Model is already resolved via route model binding, no need to query again
         return UserResponseDTO::fromUser($user);
     }
 }

@@ -12,10 +12,10 @@ class Update{{class}}Action
 {
     public function __construct(protected {{class}}RepositoryInterface $repository) {}
 
-    public function execute({{module}}DTO $dto, {{class}} $model): ?{{class}}
+    public function execute({{class}} ${{moduleVar}}, {{module}}DTO $dto): ?{{class}}
     {
         /** @var {{class}}|null $result */
-        $result = $this->repository->update($model->id, $dto->toArray());
+        $result = $this->repository->update(${{moduleVar}}->id, $dto->toArray());
         return $result;
     }
 }

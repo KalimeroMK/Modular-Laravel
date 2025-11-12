@@ -16,12 +16,12 @@ class UpdateRoleAction
         protected RoleRepositoryInterface $roleRepository,
     ) {}
 
-    public function execute(int $id, UpdateRoleDTO $dto): RoleResponseDTO
+    public function execute(Role $role, UpdateRoleDTO $dto): RoleResponseDTO
     {
         $updateData = $dto->toArray();
 
         /** @var Role $updatedRole */
-        $updatedRole = $this->roleRepository->update($id, $updateData);
+        $updatedRole = $this->roleRepository->update($role->id, $updateData);
 
         if ($updatedRole === null) {
             throw new Exception('Failed to update role');

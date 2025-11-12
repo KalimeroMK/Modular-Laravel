@@ -10,18 +10,11 @@ use App\Modules\Role\Infrastructure\Models\Role;
 
 class GetRoleByIdAction
 {
-    public function __construct(
-        protected RoleRepositoryInterface $roleRepository,
-    ) {}
+    public function __construct() {}
 
-    public function execute(int $id): ?RoleResponseDTO
+    public function execute(Role $role): ?RoleResponseDTO
     {
-        $role = $this->roleRepository->find($id);
-        
-        if (!$role) {
-            return null;
-        }
-        
+        // Model is already resolved via route model binding, no need to query again
         return RoleResponseDTO::fromRole($role);
     }
 }
