@@ -11,7 +11,7 @@ use App\Modules\{{module}}\Infrastructure\Models\{{class}};
  * Action to get a {{moduleVar}} by ID.
  * The model is already resolved via route model binding.
  */
-class Get{{class}}ByIdAction
+class GetById{{class}}Action
 {
     /**
      * Create a new action instance.
