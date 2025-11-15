@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Modules\{{module}};
 
-use App\Modules\{{module}}\Models\{{module}};
+use App\Modules\{{module}}\Infrastructure\Models\{{module}};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
