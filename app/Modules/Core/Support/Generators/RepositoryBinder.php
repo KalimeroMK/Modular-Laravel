@@ -14,27 +14,71 @@ class RepositoryBinder
     public function bind(string $moduleName): void
     {
         $providerPath = app_path('Providers/RepositoryServiceProvider.php');
-        $interface = "App\\Modules\\{$moduleName}\\Interfaces\\{$moduleName}Interface";
-        $repository = "App\\Modules\\{$moduleName}\\Repositories\\{$moduleName}Repository";
+        $interfaceClass = "App\\Modules\\{$moduleName}\\Infrastructure\\Repositories\\{$moduleName}RepositoryInterface";
+        $repositoryClass = "App\\Modules\\{$moduleName}\\Infrastructure\\Repositories\\{$moduleName}Repository";
+        $interfaceShort = "{$moduleName}RepositoryInterface";
+        $repositoryShort = "{$moduleName}Repository";
 
         if (! $this->files->exists($providerPath)) {
             return;
         }
 
         $content = $this->files->get($providerPath);
-        $pattern = '/protected\s+array\s+\$repositories\s*=\s*\[(.*?)\];/s';
 
-        if (preg_match($pattern, $content, $matches)) {
+        // Check if already registered
+        if (Str::contains($content, $interfaceShort) || Str::contains($content, $interfaceClass)) {
+            return;
+        }
+
+        // Add use statements after existing use statements
+        $usePattern = '/^(use\s+[^;]+;)$/m';
+        $lastUseLine = '';
+        $lastUsePosition = 0;
+
+        if (preg_match_all($usePattern, $content, $useMatches, PREG_OFFSET_CAPTURE)) {
+            $lastMatch = end($useMatches[0]);
+            $lastUseLine = $lastMatch[0];
+            $lastUsePosition = $lastMatch[1] + mb_strlen($lastMatch[0]);
+        }
+
+        $newUseStatements = "use {$interfaceClass};\nuse {$repositoryClass};\n";
+
+        // Check if already exists
+        if (Str::contains($content, "use {$interfaceClass};") || Str::contains($content, "use {$repositoryClass};")) {
+            // Use statements already exist, skip adding them
+        } else {
+            // Find position after last use statement
+            if ($lastUsePosition > 0) {
+                // Find end of line after last use
+                $nextLinePos = mb_strpos($content, "\n", $lastUsePosition);
+                if ($nextLinePos !== false) {
+                    $content = substr_replace($content, "\n".$newUseStatements, $nextLinePos, 0);
+                } else {
+                    $content = $content."\n".$newUseStatements;
+                }
+            } else {
+                // No use statements found, add before class
+                $classPos = mb_strpos($content, 'class RepositoryServiceProvider');
+                if ($classPos !== false) {
+                    $content = substr_replace($content, $newUseStatements."\n", $classPos, 0);
+                }
+            }
+        }
+
+        // Add to repositories array
+        $arrayPattern = '/protected\s+array\s+\$repositories\s*=\s*\[(.*?)\];/s';
+
+        if (preg_match($arrayPattern, $content, $matches)) {
             $existingEntries = mb_trim($matches[1]);
-            $newEntry = "        \\{$interface}::class => \\{$repository}::class,";
+            $newEntry = "        {$interfaceShort}::class => {$repositoryShort}::class,";
 
-            if (Str::contains($existingEntries, $newEntry)) {
+            if (Str::contains($existingEntries, $interfaceShort)) {
                 return;
             }
 
             $updatedEntries = $existingEntries ? "$existingEntries\n$newEntry" : $newEntry;
             $replacement = 'protected array $repositories = ['."\n".$updatedEntries."\n];";
-            $content = preg_replace($pattern, $replacement, $content);
+            $content = preg_replace($arrayPattern, $replacement, $content);
 
             $this->files->put($providerPath, (string) $content);
         }
