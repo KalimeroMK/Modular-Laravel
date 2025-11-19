@@ -6,8 +6,10 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Infrastructure\Models;
 
+use App\Modules\{{module}}\Database\Factories\{{module}}Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 {{relationship_imports}}
 
 /**
@@ -17,8 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property int $id
 {{phpdoc_properties}}
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class {{module}} extends Model
 {
@@ -52,11 +54,11 @@ class {{module}} extends Model
     /**
      * Create a new factory instance for the model.
      *
-     * @return \App\Modules\{{module}}\Database\Factories\{{module}}Factory
+     * @return {{module}}Factory
      */
-    public static function newFactory(): \App\Modules\{{module}}\Database\Factories\{{module}}Factory
+    public static function newFactory(): {{module}}Factory
     {
-        return \App\Modules\{{module}}\Database\Factories\{{module}}Factory::new();
+        return {{module}}Factory::new();
     }
 
     // RELATIONSHIPS

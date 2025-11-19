@@ -9,6 +9,7 @@ use App\Modules\{{module}}\Application\DTO\{{module}}DTO;
 use App\Modules\{{module}}\Application\DTO\{{module}}ResponseDTO;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
+{{event_imports}}
 
 /**
  * Action to update an existing {{moduleVar}}.
@@ -36,6 +37,8 @@ class Update{{class}}Action
         if ($result === null) {
             throw new UpdateException('Failed to update {{moduleVar}}');
         }
+        
+        {{event_dispatch_updated}}
         
         return {{module}}ResponseDTO::from{{class}}($result);
     }

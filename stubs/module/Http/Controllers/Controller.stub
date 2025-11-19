@@ -15,6 +15,9 @@ use App\Modules\{{module}}\Application\Actions\Update{{module}}Action;
 use App\Modules\{{module}}\Application\Actions\Delete{{module}}Action;
 use App\Modules\{{module}}\Application\Actions\GetAll{{module}}Action;
 use App\Modules\{{module}}\Application\Actions\Get{{module}}ByIdAction;
+use App\Modules\Core\Exceptions\CreateException;
+use App\Modules\Core\Exceptions\DeleteException;
+use App\Modules\Core\Exceptions\UpdateException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 
@@ -134,7 +137,7 @@ class {{module}}Controller extends Controller
      * @param Create{{module}}Request $request Validated request containing {{moduleVar}} data
      * @param Create{{module}}Action $action Action to create {{moduleVar}}
      * @return JsonResponse Created {{moduleVar}} details
-     * @throws \App\Modules\Core\Exceptions\CreateException If {{moduleVar}} creation fails
+     * @throws CreateException If {{moduleVar}} creation fails
      * 
      * @OA\Post(
      *     path="/api/v1/{{moduleVar}}s",
@@ -184,7 +187,7 @@ class {{module}}Controller extends Controller
      * @param Update{{module}}Request $request Validated request containing updated {{moduleVar}} data
      * @param Update{{module}}Action $action Action to update {{moduleVar}}
      * @return JsonResponse Updated {{moduleVar}} details
-     * @throws \App\Modules\Core\Exceptions\UpdateException If {{moduleVar}} update fails
+     * @throws UpdateException If {{moduleVar}} update fails
      * 
      * @OA\Put(
      *     path="/api/v1/{{moduleVar}}s/{id}",
@@ -244,7 +247,7 @@ class {{module}}Controller extends Controller
      * @param {{module}} ${{moduleVar}} The {{moduleVar}} model to delete (resolved via route model binding)
      * @param Delete{{module}}Action $action Action to delete {{moduleVar}}
      * @return JsonResponse Success message
-     * @throws \App\Modules\Core\Exceptions\DeleteException If {{moduleVar}} deletion fails
+     * @throws DeleteException If {{moduleVar}} deletion fails
      * 
      * @OA\Delete(
      *     path="/api/v1/{{moduleVar}}s/{id}",

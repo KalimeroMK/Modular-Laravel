@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
-use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
+use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
  * Action to get all {{moduleVar}}s with pagination.
@@ -21,11 +22,11 @@ class GetAll{{class}}Action
      * Execute the action to get all {{moduleVar}}s.
      *
      * @param int $perPage Number of items per page (default: 15)
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, {{class}}> Paginated list of {{moduleVar}}s
+     * @return LengthAwarePaginator<int, {{class}}> Paginated list of {{moduleVar}}s
      */
-    public function execute(int $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    public function execute(int $perPage = 15): LengthAwarePaginator
     {
-        /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, {{class}}> $result */
+        /** @var LengthAwarePaginator<int, {{class}}> $result */
         $result = $this->repository->paginate($perPage);
 
         return $result;

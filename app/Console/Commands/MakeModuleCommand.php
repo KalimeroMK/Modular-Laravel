@@ -19,6 +19,7 @@ class MakeModuleCommand extends Command
         {--exceptions : Generate exception classes}
         {--observers : Generate observer stubs}
         {--policies : Generate policy stubs}
+        {--events : Generate event and listener classes}
         {--enum : Generate enum class}';
 
     protected $description = 'Create a new API module with predefined structure and files';
@@ -30,13 +31,14 @@ class MakeModuleCommand extends Command
     {
         $name = Str::studly($this->argument('name'));
 
-        /** @var array{model: string, relations: string, exceptions: bool, observers: bool, policies: bool, enum: bool, repositories: array<mixed>, table?: string, relationships?: string} $options */
+        /** @var array{model: string, relations: string, exceptions: bool, observers: bool, policies: bool, events: bool, enum: bool, repositories: array<mixed>, table?: string, relationships?: string} $options */
         $options = [
             'model' => $this->option('model') ?? '',
             'relations' => $this->option('relations') ?? '',
             'exceptions' => $this->option('exceptions'),
             'observers' => $this->option('observers'),
             'policies' => $this->option('policies'),
+            'events' => $this->option('events'),
             'enum' => $this->option('enum'),
             'repositories' => [],
         ];

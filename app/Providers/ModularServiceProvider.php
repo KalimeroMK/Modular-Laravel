@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -23,8 +24,8 @@ class ModularServiceProvider extends ServiceProvider
         $this->files = $files;
 
         // Read base path & namespace from config
-        $basePath = rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
-        $nsBase = rtrim((string) config('modules.default.namespace', 'App\\Modules'), '\\');
+        $basePath = mb_rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
+        $nsBase = mb_rtrim((string) config('modules.default.namespace', 'App\\Modules'), '\\');
 
         if (! is_dir($basePath)) {
             Log::warning("Modules base path not found: {$basePath}");
@@ -56,6 +57,7 @@ class ModularServiceProvider extends ServiceProvider
                 $this->registerFactoriesResolver($basePath, $nsBase);
                 $this->registerObservers($module, $nsBase);
                 $this->registerPolicies($module, $nsBase);
+                $this->registerEvents($module, $nsBase);
             } catch (Throwable $e) {
                 Log::error("Failed to register module '{$module}': ".$e->getMessage());
             }
@@ -171,7 +173,7 @@ class ModularServiceProvider extends ServiceProvider
         $observersNs = "{$nsBase}\\{$module}\\".str_replace('/', '\\', $observersRel);
         $modelsNs = "{$nsBase}\\{$module}\\".str_replace('/', '\\', $modelsRel);
 
-        $basePath = rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
+        $basePath = mb_rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
         $observersDir = "{$basePath}/{$module}/{$observersRel}";
 
         if (! is_dir($observersDir)) {
@@ -209,6 +211,40 @@ class ModularServiceProvider extends ServiceProvider
 
         if (class_exists($policy) && class_exists($model)) {
             Gate::policy($model, $policy);
+        }
+    }
+
+    /**
+     * Auto-register Events and Listeners for modules.
+     */
+    protected function registerEvents(string $module, string $nsBase): void
+    {
+        $basePath = mb_rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
+        $eventsPath = "{$basePath}/{$module}/Application/Events";
+        $listenersPath = "{$basePath}/{$module}/Application/Listeners";
+
+        if (! is_dir($eventsPath) || ! is_dir($listenersPath)) {
+            return;
+        }
+
+        $fs = $this->files ?? new Filesystem();
+
+        // Get all event files
+        foreach ($fs->files($eventsPath) as $eventFile) {
+            $eventName = $eventFile->getFilenameWithoutExtension();
+            $eventClass = "{$nsBase}\\{$module}\\Application\\Events\\{$eventName}";
+
+            if (! class_exists($eventClass)) {
+                continue;
+            }
+
+            // Find corresponding listener
+            $listenerName = $eventName.'Listener';
+            $listenerClass = "{$nsBase}\\{$module}\\Application\\Listeners\\{$listenerName}";
+
+            if (class_exists($listenerClass)) {
+                Event::listen($eventClass, $listenerClass);
+            }
         }
     }
 }

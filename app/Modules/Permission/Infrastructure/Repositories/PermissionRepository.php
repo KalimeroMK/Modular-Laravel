@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Infrastructure\Repositories;
 
 use App\Modules\Core\Repositories\EloquentRepository;
-use Spatie\Permission\Models\Permission;
+use App\Modules\Permission\Infrastructure\Models\Permission;
 
 /**
  * @extends EloquentRepository<Permission>

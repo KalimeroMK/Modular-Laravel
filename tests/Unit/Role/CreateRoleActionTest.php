@@ -25,10 +25,10 @@ class CreateRoleActionTest extends TestCase
     {
         // Arrange
         $name = 'admin';
-        $guardName = 'web';
-        
+        $guardName = 'api';
+
         $dto = new CreateRoleDTO($name, $guardName);
-        
+
         $role = new Role();
         $role->id = 1;
         $role->name = $name;
@@ -37,7 +37,7 @@ class CreateRoleActionTest extends TestCase
         $roleRepository = Mockery::mock(RoleRepositoryInterface::class);
         $roleRepository->shouldReceive('create')
             ->with(Mockery::on(function ($data) use ($name, $guardName) {
-                return $data['name'] === $name 
+                return $data['name'] === $name
                     && $data['guard_name'] === $guardName;
             }))
             ->andReturn($role);
@@ -57,8 +57,8 @@ class CreateRoleActionTest extends TestCase
     {
         // Arrange
         $name = 'admin';
-        $guardName = 'web';
-        
+        $guardName = 'api';
+
         $dto = new CreateRoleDTO($name, $guardName);
 
         $roleRepository = Mockery::mock(RoleRepositoryInterface::class);

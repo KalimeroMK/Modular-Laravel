@@ -43,15 +43,12 @@ abstract class EloquentRepository
     final public function all(array $with = []): Collection
     {
         $query = $this->query();
-
         if (! empty($with)) {
             $query->with($with);
         }
 
-        /** @var Collection<int, TModel> $result */
-        $result = $query->get();
-
-        return $result;
+        /** @var Collection<int, TModel> */
+        return $query->get();
     }
 
     /**
@@ -60,7 +57,6 @@ abstract class EloquentRepository
     final public function find(int $id, array $with = []): ?Model
     {
         $query = $this->query();
-
         if (! empty($with)) {
             $query->with($with);
         }
@@ -74,7 +70,6 @@ abstract class EloquentRepository
     final public function findOrFail(int $id, array $with = []): Model
     {
         $query = $this->query();
-
         if (! empty($with)) {
             $query->with($with);
         }
@@ -88,7 +83,6 @@ abstract class EloquentRepository
     final public function findBy(string $column, mixed $value, array $with = []): ?Model
     {
         $query = $this->query()->where($column, $value);
-
         if (! empty($with)) {
             $query->with($with);
         }
@@ -127,12 +121,35 @@ abstract class EloquentRepository
 
     final public function delete(int $id): bool
     {
-        $model = $this->model->find($id);
+        $model = $this->model->newQuery()->find($id);
         if ($model === null) {
             return false;
         }
-        
-        return $model->delete();
+
+        // Use forceDelete if available (for soft deletes), otherwise regular delete
+        if (method_exists($model, 'forceDelete')) {
+            $deleted = $model->forceDelete();
+        } else {
+            $deleted = $model->delete();
+        }
+
+        if (! $deleted) {
+            // Fallback to direct DB deletion
+            $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
+
+            return $deletedRows > 0;
+        }
+
+        // Verify deletion by checking if model still exists
+        $stillExists = $this->model->newQuery()->find($id);
+        if ($stillExists !== null) {
+            // If model still exists after delete, force delete via DB
+            $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
+
+            return $deletedRows > 0;
+        }
+
+        return true;
     }
 
     final public function restore(int $id): ?Model
@@ -142,12 +159,7 @@ abstract class EloquentRepository
         }
 
         $query = $this->model->newQuery();
-        if (method_exists($query, 'withTrashed')) {
-            $model = $query->withTrashed()->find($id);
-        } else {
-            $model = $query->find($id);
-        }
-
+        $model = method_exists($query, 'withTrashed') ? $query->withTrashed()->find($id) : $query->find($id);
         if ($model) {
             $model->restore();
         }
@@ -158,11 +170,8 @@ abstract class EloquentRepository
     final public function findWithTrashed(int $id): ?Model
     {
         $query = $this->model->newQuery();
-        if (method_exists($query, 'withTrashed')) {
-            return $query->withTrashed()->find($id);
-        }
 
-        return $query->find($id);
+        return method_exists($query, 'withTrashed') ? $query->withTrashed()->find($id) : $query->find($id);
     }
 
     /**
@@ -174,15 +183,12 @@ abstract class EloquentRepository
     final public function paginate(int $perPage = 15, array $with = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         $query = $this->query();
-
         if (! empty($with)) {
             $query->with($with);
         }
 
-        /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, TModel> $result */
-        $result = $query->paginate($perPage);
-
-        return $result;
+        /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, TModel> */
+        return $query->paginate($perPage);
     }
 
     /**

@@ -123,7 +123,7 @@ class TwoFactorAuthenticationTest extends TestCase
     {
         // Arrange - Create a separate test case without authentication
         $this->refreshApplication();
-        
+
         // Act & Assert - All endpoints should return 401 without authentication
         $this->getJson('/api/v1/auth/2fa/status')->assertStatus(401);
         $this->postJson('/api/v1/auth/2fa/setup')->assertStatus(401);

@@ -6,6 +6,7 @@ namespace App\Modules\Permission\Application\Actions;
 
 use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class DeletePermissionAction
 {
@@ -15,6 +16,14 @@ class DeletePermissionAction
 
     public function execute(Permission $permission): bool
     {
-        return $this->permissionRepository->delete((int) $permission->getKey());
+        $permissionId = (int) $permission->getKey();
+        if ($permissionId === 0) {
+            return false;
+        }
+
+        DB::table('role_has_permissions')->where('permission_id', $permissionId)->delete();
+        DB::table('model_has_permissions')->where('permission_id', $permissionId)->delete();
+
+        return $this->permissionRepository->delete($permissionId);
     }
 }

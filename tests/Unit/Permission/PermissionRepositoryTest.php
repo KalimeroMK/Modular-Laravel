@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Permission;
 
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Modules\Permission\Infrastructure\Models\Permission;
 use Tests\TestCase;
 
 class PermissionRepositoryTest extends TestCase
@@ -67,7 +67,7 @@ class PermissionRepositoryTest extends TestCase
         // Arrange
         $permissionData = [
             'name' => 'edit-posts',
-            'guard_name' => 'web',
+            'guard_name' => 'api',
         ];
 
         // Act
@@ -76,10 +76,10 @@ class PermissionRepositoryTest extends TestCase
         // Assert
         $this->assertInstanceOf(Permission::class, $result);
         $this->assertEquals('edit-posts', $result->name);
-        $this->assertEquals('web', $result->guard_name);
+        $this->assertEquals('api', $result->guard_name);
         $this->assertDatabaseHas('permissions', [
             'name' => 'edit-posts',
-            'guard_name' => 'web',
+            'guard_name' => 'api',
         ]);
     }
 

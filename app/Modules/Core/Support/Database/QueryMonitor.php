@@ -10,9 +10,15 @@ use Illuminate\Support\Facades\Log;
 
 class QueryMonitor
 {
+    /**
+     * @var array<int, array{sql: string, bindings: array<int, mixed>, time: float, connection: string}>
+     */
     protected array $queries = [];
+
     protected float $totalTime = 0;
+
     protected int $queryCount = 0;
+
     protected bool $enabled = false;
 
     public function __construct()
@@ -34,7 +40,7 @@ class QueryMonitor
 
     public function startMonitoring(): void
     {
-        if (!$this->enabled) {
+        if (! $this->enabled) {
             return;
         }
 
@@ -56,6 +62,9 @@ class QueryMonitor
         // DB::listen() is automatically removed when the listener is garbage collected
     }
 
+    /**
+     * @return array<int, array{sql: string, bindings: array<int, mixed>, time: float, connection: string}>
+     */
     public function getQueries(): array
     {
         return $this->queries;
@@ -76,6 +85,9 @@ class QueryMonitor
         return $this->queryCount > 0 ? $this->totalTime / $this->queryCount : 0;
     }
 
+    /**
+     * @return array<int, array{sql: string, bindings: array<int, mixed>, time: float, connection: string}>
+     */
     public function getSlowQueries(float $threshold = 100): array
     {
         return array_filter($this->queries, function ($query) use ($threshold) {
@@ -86,8 +98,8 @@ class QueryMonitor
     public function logSlowQueries(float $threshold = 100): void
     {
         $slowQueries = $this->getSlowQueries($threshold);
-        
-        if (!empty($slowQueries)) {
+
+        if (! empty($slowQueries)) {
             Log::warning('Slow database queries detected', [
                 'count' => count($slowQueries),
                 'threshold' => $threshold,
@@ -103,6 +115,9 @@ class QueryMonitor
         $this->queryCount = 0;
     }
 
+    /**
+     * @return array{total_queries: int, total_time: float, average_time: float, slow_queries: int, queries: array<int, array{sql: string, bindings: array<int, mixed>, time: float, connection: string}>}
+     */
     public function getReport(): array
     {
         return [

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Application\DTO;
 
 use App\Modules\Permission\Infrastructure\Models\Permission;
+use Carbon\Carbon;
 
 readonly class PermissionResponseDTO
 {
@@ -18,17 +19,18 @@ readonly class PermissionResponseDTO
 
     public static function fromPermission(Permission $permission): self
     {
-        // Ensure the model is fresh from database if attributes are null
         if ($permission->name === null) {
             $permission->refresh();
         }
 
+        $formatDate = fn ($date) => $date instanceof Carbon ? $date->toISOString() : ($date ? (string) $date : null);
+
         return new self(
             id: (int) ($permission->id ?? $permission->getKey() ?? 0),
             name: $permission->name ?? '',
-            guardName: $permission->guard_name ?? 'web',
-            createdAt: $permission->created_at instanceof \Carbon\Carbon ? $permission->created_at->toISOString() : ($permission->created_at ? (string) $permission->created_at : null),
-            updatedAt: $permission->updated_at instanceof \Carbon\Carbon ? $permission->updated_at->toISOString() : ($permission->updated_at ? (string) $permission->updated_at : null),
+            guardName: $permission->guard_name ?? 'api',
+            createdAt: $formatDate($permission->created_at),
+            updatedAt: $formatDate($permission->updated_at),
         );
     }
 

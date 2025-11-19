@@ -82,7 +82,7 @@ class FeatureTestGenerator
             } elseif (Str::contains($fieldName, 'password')) {
                 $value = "'password123'";
             } elseif ($fieldName === 'guard_name') {
-                $value = "'web'";
+                $value = "'api'";
             }
 
             // Ensure exactly 12 spaces for consistent indentation

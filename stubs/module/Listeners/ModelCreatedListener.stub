@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\{{module}}\Application\Listeners;
+
+use App\Modules\{{module}}\Application\Events\{{module}}Created;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+
+class {{module}}CreatedListener implements ShouldQueue
+{
+    use InteractsWithQueue;
+
+    /**
+     * Handle the event.
+     */
+    public function handle({{module}}Created $event): void
+    {
+        // Handle {{module}} created event
+        // Example: Send notification, update cache, etc.
+    }
+}
+

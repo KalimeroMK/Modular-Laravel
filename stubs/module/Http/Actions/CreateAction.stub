@@ -9,6 +9,7 @@ use App\Modules\{{module}}\Application\DTO\{{module}}DTO;
 use App\Modules\{{module}}\Application\DTO\{{module}}ResponseDTO;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
+{{event_imports}}
 
 /**
  * Action to create a new {{moduleVar}}.
@@ -35,6 +36,8 @@ class Create{{class}}Action
         if ($result === null) {
             throw new CreateException('Failed to create {{moduleVar}}');
         }
+        
+        {{event_dispatch_created}}
         
         return {{module}}ResponseDTO::from{{class}}($result);
     }

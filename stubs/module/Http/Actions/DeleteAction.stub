@@ -7,6 +7,7 @@ namespace App\Modules\{{module}}\Application\Actions;
 use App\Modules\Core\Exceptions\DeleteException;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
+{{event_imports}}
 
 /**
  * Action to delete a {{moduleVar}}.
@@ -32,6 +33,8 @@ class Delete{{class}}Action
         if (!$deleted) {
             throw new DeleteException('Failed to delete {{moduleVar}}');
         }
+        
+        {{event_dispatch_deleted}}
         
         return true;
     }

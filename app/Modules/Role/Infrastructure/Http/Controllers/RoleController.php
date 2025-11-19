@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Role\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Core\Enums\ErrorCode;
 use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\Role\Application\Actions\CreateRoleAction;
@@ -112,7 +113,9 @@ class RoleController extends Controller
     {
         $roleDTO = $this->getRoleByIdAction->execute($role);
 
-        return ApiResponse::success($roleDTO->toArray(), 'Role retrieved successfully');
+        return $roleDTO === null
+            ? ApiResponse::error('Role not found', ErrorCode::RESOURCE_NOT_FOUND, [], 404)
+            : ApiResponse::success($roleDTO->toArray(), 'Role retrieved successfully');
     }
 
     /**
@@ -130,7 +133,7 @@ class RoleController extends Controller
      *             required={"name"},
      *
      *             @OA\Property(property="name", type="string", example="admin"),
-     *             @OA\Property(property="guard_name", type="string", example="web")
+     *             @OA\Property(property="guard_name", type="string", example="api")
      *         )
      *     ),
      *
@@ -190,7 +193,7 @@ class RoleController extends Controller
      *         @OA\JsonContent(
      *
      *             @OA\Property(property="name", type="string", example="admin"),
-     *             @OA\Property(property="guard_name", type="string", example="web")
+     *             @OA\Property(property="guard_name", type="string", example="api")
      *         )
      *     ),
      *

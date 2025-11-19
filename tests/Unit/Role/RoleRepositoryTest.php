@@ -67,7 +67,7 @@ class RoleRepositoryTest extends TestCase
         // Arrange
         $roleData = [
             'name' => 'editor',
-            'guard_name' => 'web',
+            'guard_name' => 'api',
         ];
 
         // Act
@@ -76,10 +76,10 @@ class RoleRepositoryTest extends TestCase
         // Assert
         $this->assertInstanceOf(Role::class, $result);
         $this->assertEquals('editor', $result->name);
-        $this->assertEquals('web', $result->guard_name);
+        $this->assertEquals('api', $result->guard_name);
         $this->assertDatabaseHas('roles', [
             'name' => 'editor',
-            'guard_name' => 'web',
+            'guard_name' => 'api',
         ]);
     }
 

@@ -11,3 +11,9 @@ parameters:
 
     # Report unused ignore entries
     reportUnmatchedIgnoredErrors: false
+
+    # Ignore covariant return type issues for repository interfaces and relationships
+    ignoreErrors:
+        - '#Return type.*of method.*paginate\(\) should be compatible#'
+        - '#Method.*should return.*BelongsToMany.*but returns#'
+        - '#Method.*should return.*MorphToMany.*but returns#'

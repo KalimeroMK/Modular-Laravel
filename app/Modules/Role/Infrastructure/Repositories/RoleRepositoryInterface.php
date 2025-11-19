@@ -6,7 +6,7 @@ namespace App\Modules\Role\Infrastructure\Repositories;
 
 use App\Modules\Core\Interfaces\RepositoryInterface;
 use App\Modules\Role\Infrastructure\Models\Role;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface RoleRepositoryInterface extends RepositoryInterface
 {
@@ -15,6 +15,8 @@ interface RoleRepositoryInterface extends RepositoryInterface
     /**
      * @param  array<int, string>  $with
      * @return LengthAwarePaginator<int, Role>
+     *
+     * @phpstan-return LengthAwarePaginator<int, Role>
      */
-    public function paginate(int $perPage = 15, array $with = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+    public function paginate(int $perPage = 15, array $with = []): LengthAwarePaginator;
 }

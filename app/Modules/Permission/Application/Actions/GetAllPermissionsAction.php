@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Application\Actions;
 
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class GetAllPermissionsAction
 {
@@ -14,7 +15,7 @@ class GetAllPermissionsAction
     ) {}
 
     /**
-     * @return LengthAwarePaginator<int, \Spatie\Permission\Models\Permission>
+     * @return LengthAwarePaginator<int, Permission>
      */
     public function execute(int $perPage = 15): LengthAwarePaginator
     {

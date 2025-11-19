@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Core\Enums\ErrorCode;
 use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\Permission\Application\Actions\CreatePermissionAction;
@@ -16,8 +17,8 @@ use App\Modules\Permission\Application\DTO\CreatePermissionDTO;
 use App\Modules\Permission\Application\DTO\UpdatePermissionDTO;
 use App\Modules\Permission\Infrastructure\Http\Requests\CreatePermissionRequest;
 use App\Modules\Permission\Infrastructure\Http\Requests\UpdatePermissionRequest;
-use Illuminate\Http\JsonResponse;
 use App\Modules\Permission\Infrastructure\Models\Permission;
+use Illuminate\Http\JsonResponse;
 
 class PermissionController extends Controller
 {
@@ -112,7 +113,9 @@ class PermissionController extends Controller
     {
         $permissionDTO = $this->getPermissionByIdAction->execute($permission);
 
-        return ApiResponse::success($permissionDTO->toArray(), 'Permission retrieved successfully');
+        return $permissionDTO === null
+            ? ApiResponse::error('Permission not found', ErrorCode::RESOURCE_NOT_FOUND, [], 404)
+            : ApiResponse::success($permissionDTO->toArray(), 'Permission retrieved successfully');
     }
 
     /**
@@ -130,7 +133,7 @@ class PermissionController extends Controller
      *             required={"name"},
      *
      *             @OA\Property(property="name", type="string", example="create-users"),
-     *             @OA\Property(property="guard_name", type="string", example="web")
+     *             @OA\Property(property="guard_name", type="string", example="api")
      *         )
      *     ),
      *
@@ -190,7 +193,7 @@ class PermissionController extends Controller
      *         @OA\JsonContent(
      *
      *             @OA\Property(property="name", type="string", example="create-users"),
-     *             @OA\Property(property="guard_name", type="string", example="web")
+     *             @OA\Property(property="guard_name", type="string", example="api")
      *         )
      *     ),
      *

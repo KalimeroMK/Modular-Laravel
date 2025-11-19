@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Infrastructure\Repositories;
 
 use App\Modules\Core\Interfaces\RepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Spatie\Permission\Models\Permission;
+use App\Modules\Permission\Infrastructure\Models\Permission;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface PermissionRepositoryInterface extends RepositoryInterface
 {
@@ -15,6 +15,8 @@ interface PermissionRepositoryInterface extends RepositoryInterface
     /**
      * @param  array<int, string>  $with
      * @return LengthAwarePaginator<int, Permission>
+     *
+     * @phpstan-return LengthAwarePaginator<int, Permission>
      */
-    public function paginate(int $perPage = 15, array $with = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+    public function paginate(int $perPage = 15, array $with = []): LengthAwarePaginator;
 }

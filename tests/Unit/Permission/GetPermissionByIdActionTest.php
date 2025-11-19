@@ -24,7 +24,7 @@ class GetPermissionByIdActionTest extends TestCase
         $permission = new Permission();
         $permission->id = 1;
         $permission->name = 'manage-users';
-        $permission->guard_name = 'web';
+        $permission->guard_name = 'api';
 
         $action = new GetPermissionByIdAction();
 
@@ -35,7 +35,7 @@ class GetPermissionByIdActionTest extends TestCase
         $this->assertInstanceOf(PermissionResponseDTO::class, $result);
         $this->assertEquals(1, $result->id);
         $this->assertEquals('manage-users', $result->name);
-        $this->assertEquals('web', $result->guardName);
+        $this->assertEquals('api', $result->guardName);
     }
 
     public function test_execute_returns_permission_dto(): void
@@ -44,7 +44,7 @@ class GetPermissionByIdActionTest extends TestCase
         $permission = new Permission();
         $permission->id = 2;
         $permission->name = 'view-users';
-        $permission->guard_name = 'web';
+        $permission->guard_name = 'api';
 
         $action = new GetPermissionByIdAction();
 

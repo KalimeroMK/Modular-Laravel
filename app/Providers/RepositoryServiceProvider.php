@@ -22,16 +22,11 @@ class RepositoryServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected array $repositories = [
-UserRepositoryInterface::class => UserRepository::class,
+        UserRepositoryInterface::class => UserRepository::class,
         AuthRepositoryInterface::class => AuthRepository::class,
         RoleRepositoryInterface::class => RoleRepository::class,
         PermissionRepositoryInterface::class => PermissionRepository::class,
-        // Test modules (commented out - only used in tests)
-        // \App\Modules\TestComment\Interfaces\TestCommentInterface::class => \App\Modules\TestComment\Repositories\TestCommentRepository::class,
-        // \App\Modules\TestProduct\Interfaces\TestProductInterface::class => \App\Modules\TestProduct\Repositories\TestProductRepository::class,
-        \App\Modules\TestComment\Interfaces\TestCommentInterface::class => \App\Modules\TestComment\Repositories\TestCommentRepository::class,
-        \App\Modules\TestProduct\Interfaces\TestProductInterface::class => \App\Modules\TestProduct\Repositories\TestProductRepository::class,
-];
+    ];
 
     /**
      * Register services.

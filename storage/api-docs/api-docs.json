@@ -727,7 +727,7 @@
                                     },
                                     "guard_name": {
                                         "type": "string",
-                                        "example": "web"
+                                        "example": "api"
                                     }
                                 },
                                 "type": "object"
@@ -873,7 +873,7 @@
                                     },
                                     "guard_name": {
                                         "type": "string",
-                                        "example": "web"
+                                        "example": "api"
                                     }
                                 },
                                 "type": "object"
@@ -1070,7 +1070,7 @@
                                     },
                                     "guard_name": {
                                         "type": "string",
-                                        "example": "web"
+                                        "example": "api"
                                     }
                                 },
                                 "type": "object"
@@ -1216,7 +1216,7 @@
                                     },
                                     "guard_name": {
                                         "type": "string",
-                                        "example": "web"
+                                        "example": "api"
                                     }
                                 },
                                 "type": "object"

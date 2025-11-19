@@ -16,6 +16,7 @@ class TestProductCrudTest extends TestCase
     {
         $payload = [
             'name' => 'Test Name',
+            'price' => 123.45,
         ];
         $response = $this->postJson('/api/v1/testproducts', $payload);
         $response->assertStatus(200)
@@ -44,6 +45,7 @@ class TestProductCrudTest extends TestCase
         $testproduct = TestProduct::factory()->create();
         $payload = [
             'name' => 'Updated Name',
+            'price' => 99.99,
         ];
         $response = $this->putJson("/api/v1/testproducts/{$testproduct->id}", $payload);
         $response->assertStatus(200)

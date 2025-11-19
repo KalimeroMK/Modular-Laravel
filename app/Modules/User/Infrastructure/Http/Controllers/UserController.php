@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\User\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Core\Enums\ErrorCode;
 use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\User\Application\Actions\CreateUserAction;
@@ -112,7 +113,9 @@ class UserController extends Controller
     {
         $userDTO = $this->getUserByIdAction->execute($user);
 
-        return ApiResponse::success($userDTO->toArray(), 'User retrieved successfully');
+        return $userDTO === null
+            ? ApiResponse::error('User not found', ErrorCode::RESOURCE_NOT_FOUND, [], 404)
+            : ApiResponse::success($userDTO->toArray(), 'User retrieved successfully');
     }
 
     /**

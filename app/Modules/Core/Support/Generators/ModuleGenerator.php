@@ -17,6 +17,8 @@ class ModuleGenerator
         protected ActionGenerator $actionGenerator,
         protected ObserverGenerator $observerGenerator,
         protected PolicyGenerator $policyGenerator,
+        protected EventGenerator $eventGenerator,
+        protected ListenerGenerator $listenerGenerator,
         protected FeatureTestGenerator $testGenerator,
         protected RepositoryBinder $repositoryBinder,
         protected FieldParser $fieldParser,
@@ -41,7 +43,7 @@ class ModuleGenerator
             $this->exceptionGenerator->generate($moduleName);
         }
 
-        $this->actionGenerator->generate($moduleName);
+        $this->actionGenerator->generate($moduleName, ! empty($options['events']));
 
         if (! empty($options['observers'])) {
             $this->observerGenerator->generate($moduleName);
@@ -49,6 +51,11 @@ class ModuleGenerator
 
         if (! empty($options['policies'])) {
             $this->policyGenerator->generate($moduleName);
+        }
+
+        if (! empty($options['events'])) {
+            $this->eventGenerator->generate($moduleName);
+            $this->listenerGenerator->generate($moduleName);
         }
 
         if (! empty($options['enum'])) {

@@ -6,7 +6,6 @@ namespace Tests\Feature\Integration\Auth;
 
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -60,7 +59,7 @@ class AuthFlowIntegrationTest extends TestCase
 
         // 3. Get current user info
         $meResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/v1/auth/me');
 
         $meResponse->assertStatus(200);
@@ -74,14 +73,14 @@ class AuthFlowIntegrationTest extends TestCase
 
         // 4. Logout
         $logoutResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/v1/auth/logout');
 
         $logoutResponse->assertStatus(200);
 
         // 5. Verify token is invalidated (logout might not invalidate token immediately)
         $meAfterLogoutResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/v1/auth/me');
 
         // Token might still be valid in test environment, so we'll just check logout was successful
@@ -119,10 +118,21 @@ class AuthFlowIntegrationTest extends TestCase
     {
         // Create a user with roles and permissions
         $user = User::factory()->create();
-        
-        // Assign role and permission (using Spatie Permission)
-        $user->assignRole('admin');
-        $user->givePermissionTo('manage-users');
+
+        // Create role and permission first (using Spatie Permission with api guard)
+        $role = \App\Modules\Role\Infrastructure\Models\Role::create([
+            'name' => 'admin',
+            'guard_name' => 'api',
+        ]);
+
+        $permission = \App\Modules\Permission\Infrastructure\Models\Permission::create([
+            'name' => 'manage-users',
+            'guard_name' => 'api',
+        ]);
+
+        // Assign role and permission to user
+        $user->assignRole($role);
+        $user->givePermissionTo($permission);
 
         Sanctum::actingAs($user);
 

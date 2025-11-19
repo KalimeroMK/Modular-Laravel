@@ -6,6 +6,7 @@ namespace App\Modules\Role\Application\Actions;
 
 use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class DeleteRoleAction
 {
@@ -15,6 +16,14 @@ class DeleteRoleAction
 
     public function execute(Role $role): bool
     {
-        return $this->roleRepository->delete((int) $role->getKey());
+        $roleId = (int) $role->getKey();
+        if ($roleId === 0) {
+            return false;
+        }
+
+        DB::table('role_has_permissions')->where('role_id', $roleId)->delete();
+        DB::table('model_has_roles')->where('role_id', $roleId)->delete();
+
+        return $this->roleRepository->delete($roleId);
     }
 }

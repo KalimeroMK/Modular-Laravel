@@ -27,14 +27,20 @@ class UpdateUserAction
         }
 
         // Get the user ID - route model binding ensures the model exists
-        // Route model binding should have already resolved the model with an ID
         // Use getKey() as primary method, fallback to id property
         $userId = (int) ($user->getKey() ?: ($user->id ?? 0));
-        
+
         if ($userId === 0) {
-            // If ID is still 0, the model might not be persisted yet
-            // This should not happen with route model binding, but handle it gracefully
-            throw new UpdateException('Invalid user ID: User model must have an ID');
+            // If ID is still 0, try to get it from the route parameter
+            $routeUser = request()->route('user');
+            if ($routeUser instanceof User) {
+                $userId = (int) ($routeUser->getKey() ?: ($routeUser->id ?? 0));
+            }
+
+            if ($userId === 0) {
+                // This should not happen with route model binding, but handle it gracefully
+                throw new UpdateException('Invalid user ID: User model must have an ID');
+            }
         }
 
         /** @var User $updatedUser */

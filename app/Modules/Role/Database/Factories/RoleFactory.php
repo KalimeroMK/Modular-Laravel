@@ -19,6 +19,7 @@ class RoleFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
+            'guard_name' => 'api',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];

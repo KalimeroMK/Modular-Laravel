@@ -25,10 +25,10 @@ class CreatePermissionActionTest extends TestCase
     {
         // Arrange
         $name = 'manage-users';
-        $guardName = 'web';
-        
+        $guardName = 'api';
+
         $dto = new CreatePermissionDTO($name, $guardName);
-        
+
         $permission = new Permission();
         $permission->id = 1;
         $permission->name = $name;
@@ -37,7 +37,7 @@ class CreatePermissionActionTest extends TestCase
         $permissionRepository = Mockery::mock(PermissionRepositoryInterface::class);
         $permissionRepository->shouldReceive('create')
             ->with(Mockery::on(function ($data) use ($name, $guardName) {
-                return $data['name'] === $name 
+                return $data['name'] === $name
                     && $data['guard_name'] === $guardName;
             }))
             ->andReturn($permission);
@@ -57,8 +57,8 @@ class CreatePermissionActionTest extends TestCase
     {
         // Arrange
         $name = 'manage-users';
-        $guardName = 'web';
-        
+        $guardName = 'api';
+
         $dto = new CreatePermissionDTO($name, $guardName);
 
         $permissionRepository = Mockery::mock(PermissionRepositoryInterface::class);

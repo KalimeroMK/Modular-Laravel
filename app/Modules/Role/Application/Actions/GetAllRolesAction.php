@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Application\Actions;
 
+use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class GetAllRolesAction
 {
@@ -14,7 +15,7 @@ class GetAllRolesAction
     ) {}
 
     /**
-     * @return LengthAwarePaginator<int, \App\Modules\Role\Infrastructure\Models\Role>
+     * @return LengthAwarePaginator<int, Role>
      */
     public function execute(int $perPage = 15): LengthAwarePaginator
     {

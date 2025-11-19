@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Support;
 
+use App\Modules\Core\Enums\ErrorCode;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 
@@ -38,20 +39,22 @@ class ApiResponse
      * Return an error JSON response.
      *
      * @param  string  $message  Error message
-     * @param  string  $errorCode  Error code identifier
+     * @param  ErrorCode|string  $errorCode  Error code identifier
      * @param  array<string, mixed>  $errors  Additional error details
      * @param  int  $statusCode  HTTP status code (default: 400)
      * @return JsonResponse JSON response with error structure
      */
     public static function error(
         string $message,
-        string $errorCode = 'ERROR',
+        ErrorCode|string $errorCode = ErrorCode::ERROR,
         array $errors = [],
         int $statusCode = 400
     ): JsonResponse {
+        $code = $errorCode instanceof ErrorCode ? $errorCode->value : $errorCode;
+
         return response()->json([
             'status' => 'error',
-            'error_code' => $errorCode,
+            'error_code' => $code,
             'message' => $message,
             'errors' => $errors,
         ], $statusCode);

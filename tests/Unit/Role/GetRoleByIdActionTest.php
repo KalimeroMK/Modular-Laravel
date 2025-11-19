@@ -24,7 +24,7 @@ class GetRoleByIdActionTest extends TestCase
         $role = new Role();
         $role->id = 1;
         $role->name = 'admin';
-        $role->guard_name = 'web';
+        $role->guard_name = 'api';
 
         $action = new GetRoleByIdAction();
 
@@ -35,7 +35,7 @@ class GetRoleByIdActionTest extends TestCase
         $this->assertInstanceOf(RoleResponseDTO::class, $result);
         $this->assertEquals(1, $result->id);
         $this->assertEquals('admin', $result->name);
-        $this->assertEquals('web', $result->guardName);
+        $this->assertEquals('api', $result->guardName);
     }
 
     public function test_execute_returns_role_dto(): void
@@ -44,7 +44,7 @@ class GetRoleByIdActionTest extends TestCase
         $role = new Role();
         $role->id = 2;
         $role->name = 'user';
-        $role->guard_name = 'web';
+        $role->guard_name = 'api';
 
         $action = new GetRoleByIdAction();
 

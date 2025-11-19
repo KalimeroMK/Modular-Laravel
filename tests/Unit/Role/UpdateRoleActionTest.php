@@ -25,14 +25,14 @@ class UpdateRoleActionTest extends TestCase
     {
         // Arrange
         $name = 'updated-admin';
-        $guardName = 'web';
-        
+        $guardName = 'api';
+
         $dto = new UpdateRoleDTO($name, $guardName);
-        
+
         $role = new Role();
         $role->id = 1;
         $role->name = 'admin';
-        $role->guard_name = 'web';
+        $role->guard_name = 'api';
 
         $updatedRole = new Role();
         $updatedRole->id = 1;
@@ -42,7 +42,7 @@ class UpdateRoleActionTest extends TestCase
         $roleRepository = Mockery::mock(RoleRepositoryInterface::class);
         $roleRepository->shouldReceive('update')
             ->with(1, Mockery::on(function ($data) use ($name, $guardName) {
-                return $data['name'] === $name 
+                return $data['name'] === $name
                     && $data['guard_name'] === $guardName;
             }))
             ->andReturn($updatedRole);
@@ -62,8 +62,8 @@ class UpdateRoleActionTest extends TestCase
     {
         // Arrange
         $name = 'updated-admin';
-        $guardName = 'web';
-        
+        $guardName = 'api';
+
         $dto = new UpdateRoleDTO($name, $guardName);
 
         $role = new Role();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Role\Application\DTO;
 
 use App\Modules\Role\Infrastructure\Models\Role;
+use Carbon\Carbon;
 
 readonly class RoleResponseDTO
 {
@@ -18,17 +19,18 @@ readonly class RoleResponseDTO
 
     public static function fromRole(Role $role): self
     {
-        // Ensure the model is fresh from database if attributes are null
         if ($role->name === null) {
             $role->refresh();
         }
 
+        $formatDate = fn ($date) => $date instanceof Carbon ? $date->toISOString() : ($date ? (string) $date : null);
+
         return new self(
             id: (int) ($role->id ?? $role->getKey() ?? 0),
             name: $role->name ?? '',
-            guardName: $role->guard_name ?? 'web',
-            createdAt: $role->created_at instanceof \Carbon\Carbon ? $role->created_at->toISOString() : ($role->created_at ? (string) $role->created_at : null),
-            updatedAt: $role->updated_at instanceof \Carbon\Carbon ? $role->updated_at->toISOString() : ($role->updated_at ? (string) $role->updated_at : null),
+            guardName: $role->guard_name ?? 'api',
+            createdAt: $formatDate($role->created_at),
+            updatedAt: $formatDate($role->updated_at),
         );
     }
 

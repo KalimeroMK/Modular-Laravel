@@ -8,7 +8,7 @@ readonly class CreatePermissionDTO
 {
     public function __construct(
         public string $name,
-        public string $guardName = 'web',
+        public string $guardName = 'api',
     ) {}
 
     /**
@@ -18,7 +18,7 @@ readonly class CreatePermissionDTO
     {
         return new self(
             name: $data['name'],
-            guardName: $data['guard_name'] ?? 'web',
+            guardName: $data['guard_name'] ?? 'api',
         );
     }
 }

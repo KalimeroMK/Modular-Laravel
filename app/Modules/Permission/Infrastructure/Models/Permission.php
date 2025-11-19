@@ -6,15 +6,29 @@ namespace App\Modules\Permission\Infrastructure\Models;
 
 use App\Modules\Permission\Database\Factories\PermissionFactory;
 use App\Modules\Role\Infrastructure\Models\Role;
+use App\Modules\User\Infrastructure\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Spatie\Permission\Models\Permission as BasePermission;
 
-class Permission extends BasePermission
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $guard_name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @method static PermissionFactory factory()
+ */
+class Permission extends Model
 {
+    /** @use HasFactory<PermissionFactory> */
+    use HasFactory;
+
     protected $table = 'permissions';
 
     protected $attributes = [
-        'guard_name' => 'web',
+        'guard_name' => 'api',
     ];
 
     protected $fillable = [
@@ -40,20 +54,32 @@ class Permission extends BasePermission
      *
      * @param  mixed  $value
      * @param  string|null  $field
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return Model|null
      */
     public function resolveRouteBinding($value, $field = null)
     {
         $field = $field ?: $this->getRouteKeyName();
-        
-        return $this->newQuery()->where($field, $value)->firstOrFail();
+
+        return $this->where($field, $value)->firstOrFail();
     }
 
     /**
-     * @phpstan-ignore-next-line
+     * Get the roles that have this permission.
+     *
+     * @return BelongsToMany<Role, Model>
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'role_has_permissions');
+        return $this->belongsToMany(Role::class, 'role_has_permissions', 'permission_id', 'role_id');
+    }
+
+    /**
+     * Get the users that have this permission.
+     *
+     * @return BelongsToMany<User, Model>
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->morphedByMany(User::class, 'model', 'model_has_permissions', 'permission_id', 'model_id');
     }
 }

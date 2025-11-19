@@ -25,14 +25,14 @@ class UpdatePermissionActionTest extends TestCase
     {
         // Arrange
         $name = 'updated-manage-users';
-        $guardName = 'web';
-        
+        $guardName = 'api';
+
         $dto = new UpdatePermissionDTO($name, $guardName);
-        
+
         $permission = new Permission();
         $permission->id = 1;
         $permission->name = 'manage-users';
-        $permission->guard_name = 'web';
+        $permission->guard_name = 'api';
 
         $updatedPermission = new Permission();
         $updatedPermission->id = 1;
@@ -42,7 +42,7 @@ class UpdatePermissionActionTest extends TestCase
         $permissionRepository = Mockery::mock(PermissionRepositoryInterface::class);
         $permissionRepository->shouldReceive('update')
             ->with(1, Mockery::on(function ($data) use ($name, $guardName) {
-                return $data['name'] === $name 
+                return $data['name'] === $name
                     && $data['guard_name'] === $guardName;
             }))
             ->andReturn($updatedPermission);
@@ -62,8 +62,8 @@ class UpdatePermissionActionTest extends TestCase
     {
         // Arrange
         $name = 'updated-manage-users';
-        $guardName = 'web';
-        
+        $guardName = 'api';
+
         $dto = new UpdatePermissionDTO($name, $guardName);
 
         $permission = new Permission();
