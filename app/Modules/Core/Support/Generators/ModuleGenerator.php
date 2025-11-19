@@ -19,6 +19,7 @@ class ModuleGenerator
         protected PolicyGenerator $policyGenerator,
         protected EventGenerator $eventGenerator,
         protected ListenerGenerator $listenerGenerator,
+        protected NotificationGenerator $notificationGenerator,
         protected FeatureTestGenerator $testGenerator,
         protected RepositoryBinder $repositoryBinder,
         protected FieldParser $fieldParser,
@@ -60,6 +61,10 @@ class ModuleGenerator
 
         if (! empty($options['enum'])) {
             $this->enumGenerator->generate($moduleName);
+        }
+
+        if (! empty($options['notifications'])) {
+            $this->notificationGenerator->generate($moduleName);
         }
 
         $this->testGenerator->generate($moduleName, $fields, $options);

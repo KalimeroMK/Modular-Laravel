@@ -22,6 +22,7 @@ class ModuleStructureBuilder
             'Application/Events',
             'Application/Exceptions',
             'Application/Listeners',
+            'Application/Notifications',
 
             // Infrastructure Layer
             'Infrastructure/Http/Controllers',

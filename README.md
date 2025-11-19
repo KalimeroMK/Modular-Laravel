@@ -230,24 +230,46 @@ SyncRelations::execute($model, [
 
 ### 1. Generate a New Module
 
+#### Interactive Mode (Wizard)
+
+Run the command without arguments to start an interactive wizard:
+
+```bash
+php artisan make:module
+```
+
+The wizard will guide you through:
+- Module name
+- Model fields
+- Relationships
+- Additional features (exceptions, observers, policies, events, enums, notifications)
+
+#### Non-Interactive Mode (Flags)
+
 ```bash
 php artisan make:module Product \
   --model="name:string,price:float,stock:int,is_active:bool,category_id:int" \
   --relations="category:belongsTo:Category,reviews:hasMany:Review" \
   --exceptions \
   --observers \
-  --policies
+  --policies \
+  --events \
+  --enum \
+  --notifications
 ```
 
 ### 2. Flags
 
-| Flag           | Description                           |
-| -------------- | ------------------------------------- |
-| `--model`      | Define fields and types for the model |
-| `--relations`  | Add Eloquent relationships            |
-| `--exceptions` | Generate Exceptions                   |
-| `--observers`  | Generate Observers and auto-register  |
-| `--policies`   | Generate Policies and auto-register   |
+| Flag              | Description                           |
+| ----------------- | ------------------------------------- |
+| `--model`         | Define fields and types for the model |
+| `--relations`     | Add Eloquent relationships            |
+| `--exceptions`    | Generate Exceptions                   |
+| `--observers`     | Generate Observers and auto-register  |
+| `--policies`      | Generate Policies and auto-register   |
+| `--events`        | Generate Events and Listeners         |
+| `--enum`          | Generate Enum class                   |
+| `--notifications` | Generate Notification classes         |
 
 ### 3. Structure
 
@@ -625,8 +647,34 @@ php artisan db:optimize --table=users
 -   [x] Migration and Factory generators
 -   [x] Add Yaml support for module generation
 -   [x] Two-Factor Authentication (2FA) support
+-   [x] Interactive CLI Wizard for module generation
+-   [x] Cross-module Event/Listener communication
+-   [x] Sanctum SPA Authentication documentation
 -   [x] Database optimization and performance monitoring
--   [ ] Interactive CLI wizard (make:module step-by-step)
+
+## 📚 Additional Documentation
+
+### Interactive CLI Wizard
+
+The `make:module` command now supports an interactive wizard mode. Simply run:
+
+```bash
+php artisan make:module
+```
+
+The wizard will guide you through all module creation steps with helpful prompts.
+
+### Event/Listener Communication
+
+Learn how to implement cross-module communication using Events and Listeners:
+
+📖 [Event/Listener Example Guide](docs/EVENT_LISTENER_EXAMPLE.md)
+
+### Sanctum SPA Authentication
+
+Complete guide for setting up Sanctum with Single Page Applications:
+
+📖 [Sanctum SPA Authentication Guide](docs/SANCTUM_SPA_AUTHENTICATION.md)
 
 ## ✅ Requirements
 

@@ -8,19 +8,21 @@ use App\Modules\Core\Support\Generators\ModuleGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
+use Laravel\Prompts\textarea;
 use Throwable;
 
 class MakeModuleCommand extends Command
 {
     protected $signature = 'make:module
-        {name : The name of the module}
+        {name? : The name of the module}
         {--model= : Model fields, e.g. name:string,price:float}
         {--relations= : Eloquent relationships, e.g. user:belongsTo:User}
         {--exceptions : Generate exception classes}
         {--observers : Generate observer stubs}
         {--policies : Generate policy stubs}
         {--events : Generate event and listener classes}
-        {--enum : Generate enum class}';
+        {--enum : Generate enum class}
+        {--notifications : Generate notification classes}';
 
     protected $description = 'Create a new API module with predefined structure and files';
 
@@ -29,9 +31,109 @@ class MakeModuleCommand extends Command
      */
     public function handle(): int
     {
-        $name = Str::studly($this->argument('name'));
+        $nameArg = $this->argument('name');
+        $hasOptions = $this->option('model') || $this->option('relations') || $this->option('exceptions')
+            || $this->option('observers') || $this->option('policies') || $this->option('events')
+            || $this->option('enum') || $this->option('notifications');
 
-        /** @var array{model: string, relations: string, exceptions: bool, observers: bool, policies: bool, events: bool, enum: bool, repositories: array<mixed>, table?: string, relationships?: string} $options */
+        // If name is provided or options are used, run in non-interactive mode
+        if ($nameArg || $hasOptions) {
+            return $this->runNonInteractive($nameArg);
+        }
+
+        // Otherwise, run interactive wizard
+        return $this->runInteractive();
+    }
+
+    /**
+     * Run interactive wizard mode
+     */
+    protected function runInteractive(): int
+    {
+        info('🚀 Welcome to the Module Generator Wizard!');
+        info('This wizard will guide you through creating a new API module.');
+
+        $responses = form()
+            ->text(
+                label: 'What is the name of the module?',
+                placeholder: 'e.g., Product, Order, Comment',
+                required: true,
+                name: 'name'
+            )
+            ->textarea(
+                label: 'Enter model fields (format: name:type, one per line)',
+                placeholder: "name:string\nprice:float\nstock:int\nis_active:bool",
+                hint: 'Format: field_name:type (e.g., name:string, price:float)',
+                name: 'model'
+            )
+            ->textarea(
+                label: 'Enter relationships (format: relation:type:Model, one per line)',
+                placeholder: "owner:belongsTo:User\nreviews:hasMany:Review",
+                hint: 'Format: relation_name:relationship_type:ModelName (e.g., user:belongsTo:User)',
+                name: 'relations'
+            )
+            ->add(function ($responses) {
+                return multiselect(
+                    label: 'Select additional features to generate',
+                    options: [
+                        'exceptions' => 'Exception classes',
+                        'observers' => 'Observer stubs',
+                        'policies' => 'Policy stubs',
+                        'events' => 'Event and Listener classes',
+                        'enum' => 'Enum class',
+                        'notifications' => 'Notification classes',
+                    ],
+                    default: [],
+                    name: 'features'
+                );
+            })
+            ->submit();
+
+        $name = Str::studly($responses['name']);
+        $modelFields = $this->parseTextareaFields($responses['model'] ?? '');
+        $relations = $this->parseTextareaFields($responses['relations'] ?? '');
+        $features = $responses['features'] ?? [];
+
+        /** @var array{model: string, relations: string, exceptions: bool, observers: bool, policies: bool, events: bool, enum: bool, notifications: bool, repositories: array<mixed>, table?: string, relationships?: string} $options */
+        $options = [
+            'model' => $this->fieldsToString($modelFields),
+            'relations' => implode(',', $relations),
+            'exceptions' => in_array('exceptions', $features, true),
+            'observers' => in_array('observers', $features, true),
+            'policies' => in_array('policies', $features, true),
+            'events' => in_array('events', $features, true),
+            'enum' => in_array('enum', $features, true),
+            'notifications' => in_array('notifications', $features, true),
+            'repositories' => [],
+        ];
+
+        $options['table'] = Str::plural(Str::snake($name));
+        $options['relationships'] = $this->buildRelationships($options['relations']);
+
+        $fields = $modelFields;
+
+        try {
+            $generator = app(ModuleGenerator::class);
+            $generator->generate($name, $fields, $options);
+            Artisan::call('optimize:clear');
+            outro("✅ Module '{$name}' generated successfully!");
+
+            return 0;
+        } catch (Throwable $e) {
+            $this->error("❌ Error generating module: {$e->getMessage()}");
+
+            return 1;
+        }
+    }
+
+    /**
+     * Run non-interactive mode (original behavior)
+     */
+    protected function runNonInteractive(?string $nameArg): int
+    {
+        $name = Str::studly($nameArg ?? 'Module');
+
+        /** @var array{model: string, relations: string, exceptions: bool, observers: bool, policies: bool, events: bool, enum: bool, notifications: bool, repositories: array<mixed>, table?: string, relationships?: string} $options */
         $options = [
             'model' => $this->option('model') ?? '',
             'relations' => $this->option('relations') ?? '',
@@ -40,6 +142,7 @@ class MakeModuleCommand extends Command
             'policies' => $this->option('policies'),
             'events' => $this->option('events'),
             'enum' => $this->option('enum'),
+            'notifications' => $this->option('notifications'),
             'repositories' => [],
         ];
 
@@ -60,6 +163,40 @@ class MakeModuleCommand extends Command
 
             return 1;
         }
+    }
+
+    /**
+     * Parse textarea input into array of field strings
+     *
+     * @return array<int, string>
+     */
+    protected function parseTextareaFields(string $input): array
+    {
+        if (empty($input)) {
+            return [];
+        }
+
+        $lines = explode("\n", $input);
+        $fields = [];
+
+        foreach ($lines as $line) {
+            $line = mb_trim($line);
+            if (! empty($line)) {
+                $fields[] = $line;
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Convert fields array to string format
+     *
+     * @param  array<int, array{name: string, type: string}>  $fields
+     */
+    protected function fieldsToString(array $fields): string
+    {
+        return implode(',', array_map(fn ($field) => "{$field['name']}:{$field['type']}", $fields));
     }
 
     /**
