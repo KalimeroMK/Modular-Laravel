@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Infrastructure\Providers;
 
+use App\Modules\{{module}}\Infrastructure\Models\{{module}};
 use App\Modules\{{module}}\Infrastructure\Repositories\{{module}}Repository;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{module}}RepositoryInterface;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,8 +25,17 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
     {
         // Register route model binding BEFORE loading routes
         Route::bind('{{module_lower}}', function ($value) {
-            return \App\Modules\{{module}}\Infrastructure\Models\{{module}}::findOrFail($value);
+            return {{module}}::findOrFail($value);
         });
+
+        // Register policies if they exist
+        $this->registerPolicies();
+
+        // Register observers if they exist
+        $this->registerObservers();
+
+        // Register events and listeners if they exist
+        $this->registerEvents();
 
         // Load routes
         $this->loadRoutes();
@@ -36,6 +49,54 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
             Route::group([], function () use ($routeFile) {
                 require $routeFile;
             });
+        }
+    }
+
+    protected function registerPolicies(): void
+    {
+        $policyClass = "App\\Modules\\{{module}}\\Infrastructure\\Policies\\{{module}}Policy";
+
+        if (class_exists($policyClass) && class_exists({{module}}::class)) {
+            Gate::policy({{module}}::class, $policyClass);
+        }
+    }
+
+    protected function registerObservers(): void
+    {
+        $observerClass = "App\\Modules\\{{module}}\\Infrastructure\\Observers\\{{module}}Observer";
+
+        if (class_exists($observerClass) && class_exists({{module}}::class)) {
+            {{module}}::observe($observerClass);
+        }
+    }
+
+    protected function registerEvents(): void
+    {
+        $basePath = app_path("Modules/{{module}}");
+        $eventsPath = "{$basePath}/Application/Events";
+        $listenersPath = "{$basePath}/Application/Listeners";
+
+        if (! is_dir($eventsPath) || ! is_dir($listenersPath)) {
+            return;
+        }
+
+        $fs = new Filesystem();
+
+        foreach ($fs->files($eventsPath) as $eventFile) {
+            $eventName = $eventFile->getFilenameWithoutExtension();
+            $eventClass = "App\\Modules\\{{module}}\\Application\\Events\\{$eventName}";
+
+            if (! class_exists($eventClass)) {
+                continue;
+            }
+
+            // Find corresponding listener
+            $listenerName = $eventName.'Listener';
+            $listenerClass = "App\\Modules\\{{module}}\\Application\\Listeners\\{$listenerName}";
+
+            if (class_exists($listenerClass)) {
+                Event::listen($eventClass, $listenerClass);
+            }
         }
     }
 }
