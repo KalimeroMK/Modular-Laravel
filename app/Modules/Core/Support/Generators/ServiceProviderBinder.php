@@ -36,7 +36,7 @@ class ServiceProviderBinder
         }
 
         // Find the withProviders array and add new provider at the end
-        // Match the entire withProviders block including all providers
+        // Pattern to match: ->withProviders([...])->create()
         $pattern = '/->withProviders\(\[(.*?)\]\)->create\(\)/s';
         if (preg_match($pattern, $content, $matches)) {
             $existingProviders = trim($matches[1]);
@@ -50,16 +50,45 @@ class ServiceProviderBinder
                     $content
                 );
             } else {
-                // Add to existing providers at the end, before the closing bracket
-                // Simply replace the closing bracket with new provider + closing bracket
-                $newContent = str_replace(
-                    '    ])->create()',
-                    "        {$providerClass},\n    ])->create()",
-                    $content
-                );
+                // Find the last provider line - handle case where last provider is on same line as ])->create()
+                // Pattern to match: "        Provider::class,])->create()" or "        Provider::class])->create()"
+                // Use preg_match_all to find all matches, then get the last one
+                $lastProviderPattern = '/(\s+)(App\\\\Modules\\\\[^,]+::class)(,?)(\]\)->create\(\))/s';
+                if (preg_match_all($lastProviderPattern, $content, $allMatches, PREG_SET_ORDER)) {
+                    // Get the last match
+                    $lastMatch = end($allMatches);
+                    $indent = $lastMatch[1];
+                    $lastProvider = $lastMatch[2];
+                    $closing = $lastMatch[4];
+
+                    // Build replacement: last provider with comma, new provider with comma, then closing on new line
+                    $replacement = "{$indent}{$lastProvider},\n{$indent}{$providerClass},\n{$indent}]{$closing}";
+
+                    $newContent = str_replace($lastMatch[0], $replacement, $content);
+                } else {
+                    // Fallback: try to find any provider followed by ])->create()
+                    $simplePattern = '/(App\\\\Modules\\\\[^,]+::class)(,?)(\]\)->create\(\))/s';
+                    if (preg_match_all($simplePattern, $content, $allSimpleMatches, PREG_SET_ORDER)) {
+                        $simpleMatch = end($allSimpleMatches);
+                        $lastProvider = $simpleMatch[1];
+                        $closing = $simpleMatch[3];
+
+                        $replacement = "{$lastProvider},\n        {$providerClass},\n    ]{$closing}";
+                        $newContent = str_replace($simpleMatch[0], $replacement, $content);
+                    } else {
+                        // Last resort: replace ])->create() with new provider + ])->create()
+                        $newContent = str_replace(
+                            '])->create()',
+                            "        {$providerClass},\n    ])->create()",
+                            $content
+                        );
+                    }
+                }
             }
 
-            $this->files->put($bootstrapPath, $newContent);
+            if (isset($newContent) && $newContent !== $content) {
+                $this->files->put($bootstrapPath, $newContent);
+            }
         }
     }
 }

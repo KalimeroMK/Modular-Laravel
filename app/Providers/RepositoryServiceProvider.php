@@ -15,6 +15,9 @@ use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
 use ReflectionNamedType;
+use App\Modules\TestProviderModule\Infrastructure\Repositories\TestProviderModuleRepositoryInterface;
+use App\Modules\TestProviderModule\Infrastructure\Repositories\TestProviderModuleRepository;
+
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -22,11 +25,12 @@ class RepositoryServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected array $repositories = [
-        UserRepositoryInterface::class => UserRepository::class,
+UserRepositoryInterface::class => UserRepository::class,
         AuthRepositoryInterface::class => AuthRepository::class,
         RoleRepositoryInterface::class => RoleRepository::class,
         PermissionRepositoryInterface::class => PermissionRepository::class,
-    ];
+        TestProviderModuleRepositoryInterface::class => TestProviderModuleRepository::class,
+];
 
     /**
      * Register services.
