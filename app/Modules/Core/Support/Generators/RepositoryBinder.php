@@ -40,13 +40,13 @@ class RepositoryBinder
 
         // Add use statements after existing use statements
         $usePattern = '/^(use\s+[^;]+;)$/m';
-        $lastUseLine = '';
         $lastUsePosition = 0;
 
         if (preg_match_all($usePattern, $content, $useMatches, PREG_OFFSET_CAPTURE)) {
             $lastMatch = end($useMatches[0]);
-            $lastUseLine = $lastMatch[0];
-            $lastUsePosition = $lastMatch[1] + mb_strlen($lastMatch[0]);
+            if ($lastMatch !== false && is_array($lastMatch) && count($lastMatch) >= 2) {
+                $lastUsePosition = $lastMatch[1] + mb_strlen($lastMatch[0]);
+            }
         }
 
         $newUseStatements = "use {$interfaceClass};\nuse {$repositoryClass};\n";

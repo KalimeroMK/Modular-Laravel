@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core;
 
-use App\Modules\Core\Repositories\EloquentRepository;
 use App\Modules\User\Infrastructure\Models\User;
 use App\Modules\User\Infrastructure\Repositories\UserRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Tests\TestCase;
 
 class EloquentRepositoryTest extends TestCase

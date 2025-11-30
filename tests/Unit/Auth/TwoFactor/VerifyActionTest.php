@@ -16,6 +16,7 @@ use Tests\TestCase;
 class VerifyActionTest extends TestCase
 {
     use RefreshDatabase;
+
     protected function tearDown(): void
     {
         Mockery::close();

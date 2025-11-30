@@ -53,6 +53,7 @@ class MakeModuleCommand extends Command
         info('🚀 Welcome to the Module Generator Wizard!');
         info('This wizard will guide you through creating a new API module.');
 
+        /** @phpstan-ignore-next-line */
         $responses = form()
             ->text(
                 label: 'What is the name of the module?',
@@ -90,6 +91,7 @@ class MakeModuleCommand extends Command
             ->submit();
 
         $name = Str::studly($responses['name']);
+        /** @var array<int, array{name: string, type: string}> $modelFields */
         $modelFields = $this->parseTextareaFields($responses['model'] ?? '');
         $relations = $this->parseTextareaFields($responses['relations'] ?? '');
         $features = $responses['features'] ?? [];
@@ -110,12 +112,14 @@ class MakeModuleCommand extends Command
         $options['table'] = Str::plural(Str::snake($name));
         $options['relationships'] = $this->buildRelationships($options['relations']);
 
+        /** @var array<int, array{name: string, type: string}> $fields */
         $fields = $modelFields;
 
         try {
             $generator = app(ModuleGenerator::class);
             $generator->generate($name, $fields, $options);
             Artisan::call('optimize:clear');
+            /** @phpstan-ignore-next-line */
             outro("✅ Module '{$name}' generated successfully!");
 
             return 0;

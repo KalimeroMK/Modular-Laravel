@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamp('last_used_at')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
-            
+
             // Performance indexes (morphs already creates tokenable_type_tokenable_id_index)
             $table->index('last_used_at');
             $table->index('expires_at');

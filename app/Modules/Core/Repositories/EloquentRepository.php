@@ -121,35 +121,10 @@ abstract class EloquentRepository
 
     final public function delete(int $id): bool
     {
-        $model = $this->model->newQuery()->find($id);
-        if ($model === null) {
-            return false;
-        }
+        // Use direct DB deletion to ensure it works with all database drivers including SQLite
+        $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
 
-        // Use forceDelete if available (for soft deletes), otherwise regular delete
-        if (method_exists($model, 'forceDelete')) {
-            $deleted = $model->forceDelete();
-        } else {
-            $deleted = $model->delete();
-        }
-
-        if (! $deleted) {
-            // Fallback to direct DB deletion
-            $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
-
-            return $deletedRows > 0;
-        }
-
-        // Verify deletion by checking if model still exists
-        $stillExists = $this->model->newQuery()->find($id);
-        if ($stillExists !== null) {
-            // If model still exists after delete, force delete via DB
-            $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
-
-            return $deletedRows > 0;
-        }
-
-        return true;
+        return $deletedRows > 0;
     }
 
     final public function restore(int $id): ?Model

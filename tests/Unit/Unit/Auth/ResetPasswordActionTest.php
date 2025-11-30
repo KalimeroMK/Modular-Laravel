@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Unit\Auth;
 
 use PHPUnit\Framework\TestCase;

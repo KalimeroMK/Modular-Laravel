@@ -4,34 +4,47 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Infrastructure\Http\Requests;
 
+use App\Modules\{{module}}\Infrastructure\Models\{{module}};
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * Form request for updating an existing {{moduleVar}}.
- * 
- * Handles validation and authorization for {{moduleVar}} update requests.
- */
 class Update{{module}}Request extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool True if the user is authorized, false otherwise
-     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, array<int, string>|string> Validation rules
+     * @return array<string, array<int, string>>
      */
     public function rules(): array
     {
+        ${{moduleVar}} = $this->route('{{module_lower}}');
+        ${{moduleVar}}Id = ${{moduleVar}} instanceof {{module}} ? ${{moduleVar}}->id : (is_numeric(${{moduleVar}}) ? ${{moduleVar}} : 'NULL');
+
         return [
             {{validation_rules}}
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            {{validation_messages}}
+        ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        ${{moduleVar}} = $this->route('{{module_lower}}');
+        if (${{moduleVar}} && ! (${{moduleVar}} instanceof {{module}}) && ($route = $this->route()) !== null) {
+            $route->setParameter('{{module_lower}}', {{module}}::findOrFail(${{moduleVar}}));
+        }
     }
 }

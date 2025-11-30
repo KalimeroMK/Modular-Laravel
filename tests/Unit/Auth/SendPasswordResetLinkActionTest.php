@@ -26,7 +26,7 @@ class SendPasswordResetLinkActionTest extends TestCase
         $request->shouldReceive('validate')
             ->with(['email' => 'required|email'])
             ->andReturn(true);
-        
+
         $request->shouldReceive('only')
             ->with('email')
             ->andReturn(['email' => 'test@example.com']);
@@ -51,7 +51,7 @@ class SendPasswordResetLinkActionTest extends TestCase
         $request->shouldReceive('validate')
             ->with(['email' => 'required|email'])
             ->andReturn(true);
-        
+
         $request->shouldReceive('only')
             ->with('email')
             ->andReturn(['email' => 'test@example.com']);
@@ -75,7 +75,7 @@ class SendPasswordResetLinkActionTest extends TestCase
         $request->shouldReceive('validate')
             ->with(['email' => 'required|email'])
             ->andReturn(true);
-        
+
         $request->shouldReceive('only')
             ->with('email')
             ->andReturn(['email' => 'test@example.com']);

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Auth;
 
 use App\Modules\Auth\Application\Actions\ResetPasswordAction;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Mockery;
@@ -30,7 +29,7 @@ class ResetPasswordActionTest extends TestCase
                 'password' => 'required|min:8|confirmed',
             ])
             ->andReturn(true);
-        
+
         $request->shouldReceive('only')
             ->with('email', 'password', 'password_confirmation', 'token')
             ->andReturn([
@@ -63,7 +62,7 @@ class ResetPasswordActionTest extends TestCase
                 'password' => 'required|min:8|confirmed',
             ])
             ->andReturn(true);
-        
+
         $request->shouldReceive('only')
             ->with('email', 'password', 'password_confirmation', 'token')
             ->andReturn([
@@ -79,8 +78,7 @@ class ResetPasswordActionTest extends TestCase
         $action = new ResetPasswordAction();
 
         // Act & Assert
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Failed to reset password');
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
         $action->execute($request);
     }
 }

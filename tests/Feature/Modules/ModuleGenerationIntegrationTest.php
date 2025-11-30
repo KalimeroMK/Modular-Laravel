@@ -38,6 +38,14 @@ class ModuleGenerationIntegrationTest extends TestCase
             $this->files->deleteDirectory($testPath);
         }
 
+        // Cleanup bootstrap/app.php - remove IntegrationTestModule provider registration
+        $bootstrapPath = base_path('bootstrap/app.php');
+        if ($this->files->exists($bootstrapPath)) {
+            $content = $this->files->get($bootstrapPath);
+            $content = preg_replace('/\s+App\\\\Modules\\\\IntegrationTestModule\\\\Infrastructure\\\\Providers\\\\IntegrationTestModuleModuleServiceProvider::class,?\s*/', '', $content);
+            $this->files->put($bootstrapPath, $content);
+        }
+
         parent::tearDown();
     }
 

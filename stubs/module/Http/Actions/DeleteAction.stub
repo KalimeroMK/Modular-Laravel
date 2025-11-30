@@ -4,38 +4,27 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
-use App\Modules\Core\Exceptions\DeleteException;
-use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
+use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 {{event_imports}}
 
-/**
- * Action to delete a {{moduleVar}}.
- */
 class Delete{{class}}Action
 {
-    /**
-     * Create a new action instance.
-     */
-    public function __construct(protected {{class}}RepositoryInterface $repository) {}
+    public function __construct(
+        protected {{class}}RepositoryInterface ${{moduleVar}}Repository,
+    ) {}
 
-    /**
-     * Execute the action to delete a {{moduleVar}}.
-     *
-     * @param {{class}} ${{moduleVar}} The {{moduleVar}} model to delete (resolved via route model binding)
-     * @return bool True if deletion was successful
-     * @throws DeleteException If {{moduleVar}} deletion fails
-     */
     public function execute({{class}} ${{moduleVar}}): bool
     {
-        $deleted = $this->repository->delete((int) ${{moduleVar}}->id);
-        
-        if (!$deleted) {
-            throw new DeleteException('Failed to delete {{moduleVar}}');
+        // Get the {{moduleVar}} ID - route model binding ensures the model exists
+        ${{moduleVar}}Id = (int) ${{moduleVar}}->getKey();
+
+        if (${{moduleVar}}Id === 0) {
+            return false;
         }
-        
+
         {{event_dispatch_deleted}}
-        
-        return true;
+
+        return $this->{{moduleVar}}Repository->delete(${{moduleVar}}Id);
     }
 }

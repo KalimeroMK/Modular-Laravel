@@ -43,6 +43,14 @@ class ModuleGenerationE2ETest extends TestCase
             $this->files->put($providerPath, $content);
         }
 
+        // Cleanup bootstrap/app.php - remove E2ETestModule provider registration
+        $bootstrapPath = base_path('bootstrap/app.php');
+        if ($this->files->exists($bootstrapPath)) {
+            $content = $this->files->get($bootstrapPath);
+            $content = preg_replace('/\s+App\\\\Modules\\\\E2ETestModule\\\\Infrastructure\\\\Providers\\\\E2ETestModuleModuleServiceProvider::class,?\s*/', '', $content);
+            $this->files->put($bootstrapPath, $content);
+        }
+
         parent::tearDown();
     }
 

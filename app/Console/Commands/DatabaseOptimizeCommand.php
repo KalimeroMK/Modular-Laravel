@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Modules\Core\Support\Database\DatabaseOptimizationService;
+use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class DatabaseOptimizeCommand extends Command
 {
@@ -60,8 +60,8 @@ class DatabaseOptimizeCommand extends Command
             $this->monitorQueries();
         }
 
-        if (!$this->option('analyze') && !$this->option('slow-queries') && 
-            !$this->option('connection-info') && !$this->option('monitor')) {
+        if (! $this->option('analyze') && ! $this->option('slow-queries') &&
+            ! $this->option('connection-info') && ! $this->option('monitor')) {
             $this->showHelp();
         }
 
@@ -82,7 +82,7 @@ class DatabaseOptimizeCommand extends Command
             try {
                 $analysis = $this->optimizationService->analyzeTable($table);
                 $size = $this->optimizationService->getTableSize($table);
-                
+
                 $rows[] = [
                     $table,
                     number_format($analysis['rows']),
@@ -91,7 +91,7 @@ class DatabaseOptimizeCommand extends Command
                     $size['Index_MB'],
                     $analysis['status'],
                 ];
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $rows[] = [$table, 'Error', '-', '-', '-', 'Failed'];
             }
         }
@@ -107,9 +107,10 @@ class DatabaseOptimizeCommand extends Command
 
         try {
             $slowQueries = $this->optimizationService->getSlowQueries(10);
-            
+
             if (empty($slowQueries)) {
                 $this->warn('No slow queries found or performance_schema not available.');
+
                 return;
             }
 
@@ -118,7 +119,7 @@ class DatabaseOptimizeCommand extends Command
 
             foreach ($slowQueries as $query) {
                 $rows[] = [
-                    substr($query->sql_text, 0, 100) . '...',
+                    mb_substr($query->sql_text, 0, 100).'...',
                     $query->exec_count,
                     round($query->avg_time_seconds, 4),
                     round($query->max_time_seconds, 4),
@@ -126,8 +127,8 @@ class DatabaseOptimizeCommand extends Command
             }
 
             $this->table($headers, $rows);
-        } catch (\Exception $e) {
-            $this->error('Error retrieving slow queries: ' . $e->getMessage());
+        } catch (Exception $e) {
+            $this->error('Error retrieving slow queries: '.$e->getMessage());
         }
 
         $this->newLine();

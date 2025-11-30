@@ -7,7 +7,6 @@ namespace Tests\Unit\Auth\TwoFactor;
 use App\Modules\Auth\Application\Services\TwoFactor\Service;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Crypt;
 use Mockery;
 use PragmaRX\Google2FA\Google2FA;
 use Tests\TestCase;
@@ -17,6 +16,7 @@ class TwoFactorServiceTest extends TestCase
     use RefreshDatabase;
 
     protected Google2FA $google2fa;
+
     protected Service $service;
 
     protected function setUp(): void
@@ -39,7 +39,7 @@ class TwoFactorServiceTest extends TestCase
 
         // Assert
         $this->assertIsString($secretKey);
-        $this->assertGreaterThan(10, strlen($secretKey));
+        $this->assertGreaterThan(10, mb_strlen($secretKey));
     }
 
     public function test_generate_qr_code_url(): void
@@ -65,7 +65,7 @@ class TwoFactorServiceTest extends TestCase
         // Assert
         $this->assertCount(8, $recoveryCodes->codes);
         foreach ($recoveryCodes->codes as $code) {
-            $this->assertEquals(10, strlen($code));
+            $this->assertEquals(10, mb_strlen($code));
         }
     }
 

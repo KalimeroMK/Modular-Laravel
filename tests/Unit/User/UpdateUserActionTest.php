@@ -28,9 +28,9 @@ class UpdateUserActionTest extends TestCase
         $name = 'Updated User';
         $email = 'updated@example.com';
         $password = 'newpassword123';
-        
+
         $dto = new UpdateUserDTO($name, $email, $password);
-        
+
         $user = new User();
         $user->id = 1;
         $user->name = 'Original User';
@@ -44,8 +44,8 @@ class UpdateUserActionTest extends TestCase
         $userRepository = Mockery::mock(UserRepositoryInterface::class);
         $userRepository->shouldReceive('update')
             ->with(1, Mockery::on(function ($data) use ($name, $email) {
-                return $data['name'] === $name 
-                    && $data['email'] === $email 
+                return $data['name'] === $name
+                    && $data['email'] === $email
                     && isset($data['password']);
             }))
             ->andReturn($updatedUser);
@@ -71,7 +71,7 @@ class UpdateUserActionTest extends TestCase
         $name = 'Updated User';
         $email = 'updated@example.com';
         $password = 'newpassword123';
-        
+
         $dto = new UpdateUserDTO($name, $email, $password);
 
         $user = new User();

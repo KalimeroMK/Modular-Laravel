@@ -28,9 +28,9 @@ class RegisterUserActionTest extends TestCase
         $name = 'Test User';
         $email = 'test@example.com';
         $password = 'password123';
-        
+
         $dto = new RegisterUserDTO($name, $email, $password);
-        
+
         $user = new User();
         $user->id = 1;
         $user->name = $name;
@@ -39,8 +39,8 @@ class RegisterUserActionTest extends TestCase
         $authRepository = Mockery::mock(AuthRepositoryInterface::class);
         $authRepository->shouldReceive('create')
             ->with(Mockery::on(function ($data) use ($name, $email) {
-                return $data['name'] === $name 
-                    && $data['email'] === $email 
+                return $data['name'] === $name
+                    && $data['email'] === $email
                     && isset($data['password']);
             }))
             ->andReturn($user);
@@ -72,7 +72,7 @@ class RegisterUserActionTest extends TestCase
         $name = 'Test User';
         $email = 'test@example.com';
         $password = 'password123';
-        
+
         $dto = new RegisterUserDTO($name, $email, $password);
 
         $authRepository = Mockery::mock(AuthRepositoryInterface::class);

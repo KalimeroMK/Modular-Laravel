@@ -9,7 +9,6 @@ use App\Modules\Core\Support\Database\QueryMonitor;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class DatabaseOptimizationServiceTest extends TestCase
@@ -17,6 +16,7 @@ class DatabaseOptimizationServiceTest extends TestCase
     use RefreshDatabase;
 
     protected DatabaseOptimizationService $service;
+
     protected QueryMonitor $queryMonitor;
 
     protected function setUp(): void
@@ -31,7 +31,7 @@ class DatabaseOptimizationServiceTest extends TestCase
         // Arrange
         $key = 'test_cache_key';
         $expectedData = ['test' => 'data'];
-        
+
         // Act
         $result = $this->service->cacheQuery($key, function () use ($expectedData) {
             return $expectedData;
@@ -113,11 +113,11 @@ class DatabaseOptimizationServiceTest extends TestCase
 
         // Act
         $this->service->startMonitoring();
-        
+
         // Execute some queries
         User::all();
         User::where('name', 'like', '%test%')->get();
-        
+
         $report = $this->service->stopMonitoring();
 
         // Assert

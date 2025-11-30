@@ -21,7 +21,7 @@ class AuthModuleServiceProvider extends ServiceProvider
         // Bind interfaces to implementations
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
         $this->app->bind(IssueTokenServiceInterface::class, IssueTokenService::class);
-        
+
         // Bind 2FA service
         $this->app->bind(ServiceInterface::class, Service::class);
         $this->app->singleton(Google2FA::class, function () {

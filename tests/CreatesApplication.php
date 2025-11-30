@@ -19,6 +19,10 @@ trait CreatesApplication
 
         $app->make(Kernel::class)->bootstrap();
 
+        // Use SQLite in-memory database for tests
+        config(['database.default' => 'sqlite']);
+        config(['database.connections.sqlite.database' => ':memory:']);
+
         return $app;
     }
 }

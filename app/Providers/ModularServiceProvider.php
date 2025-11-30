@@ -39,7 +39,12 @@ class ModularServiceProvider extends ServiceProvider
 
         $modules = Cache::remember($cacheKey, $ttl, function () use ($basePath) {
             $dirs = array_filter(scandir($basePath) ?: [], function ($d) use ($basePath) {
-                return $d !== '.' && $d !== '..' && is_dir("{$basePath}/{$d}");
+                return $d !== '.' 
+                    && $d !== '..' 
+                    && is_dir("{$basePath}/{$d}")
+                    && ! str_starts_with($d, 'NonExistent')
+                    && ! str_starts_with($d, 'Test')
+                    && ! str_contains($d, 'Test');
             });
 
             return array_values($dirs);

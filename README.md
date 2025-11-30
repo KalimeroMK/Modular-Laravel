@@ -608,7 +608,7 @@ modules:
     # Module comment
     Product:
         fields:
-            name: string  # Inline comment
+            name: string # Inline comment
             price: float
         # Relations comment
         relations:

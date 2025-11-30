@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            
+
             // Performance indexes
             $table->index('email_verified_at');
             $table->index('created_at');
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
-            
+
             // Performance indexes
             $table->index('token');
             $table->index('created_at');
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
-            
+
             // Performance indexes
             $table->index('ip_address');
             $table->index(['user_id', 'last_activity']);

@@ -17,7 +17,7 @@ class ModuleGenerationTracker
     protected array $generatedFiles = [];
 
     /**
-     * @var array<string, array<string>>
+     * @var array<string, string>
      */
     protected array $modifiedFiles = [];
 

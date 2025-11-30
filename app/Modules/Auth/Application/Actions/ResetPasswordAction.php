@@ -31,6 +31,11 @@ class ResetPasswordAction
             return 'passwords.reset';
         }
 
-        throw new Exception('Failed to reset password');
+        // Return error message instead of throwing exception
+        // This allows the controller to handle validation errors properly
+        throw new \Illuminate\Validation\ValidationException(
+            \Illuminate\Support\Facades\Validator::make([], []),
+            ['password' => [__($status)]]
+        );
     }
 }

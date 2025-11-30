@@ -19,14 +19,14 @@ interface UserRepositoryInterface extends RepositoryInterface
 
     /**
      * Get users with their roles and permissions
-     * 
+     *
      * @return LengthAwarePaginator<int, User>
      */
     public function paginateWithRoles(int $perPage = 15): LengthAwarePaginator;
 
     /**
      * Get cached users list
-     * 
+     *
      * @return LengthAwarePaginator<int, User>
      */
     public function paginateCached(int $perPage = 15, int $ttl = 1800): LengthAwarePaginator;

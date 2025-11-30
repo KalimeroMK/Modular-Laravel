@@ -21,9 +21,11 @@ class DeletePermissionAction
             return false;
         }
 
+        // Delete pivot table relationships first
         DB::table('role_has_permissions')->where('permission_id', $permissionId)->delete();
         DB::table('model_has_permissions')->where('permission_id', $permissionId)->delete();
 
+        // Delete the permission itself
         return $this->permissionRepository->delete($permissionId);
     }
 }

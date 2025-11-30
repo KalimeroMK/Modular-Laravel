@@ -27,7 +27,10 @@ class RequestGenerator
                 continue;
             }
 
-            $rules = implode("\n", array_filter(array_map(function ($field) {
+            $moduleVar = \Illuminate\Support\Str::camel($moduleName);
+            $moduleLower = \Illuminate\Support\Str::lower($moduleName);
+
+            $rules = implode("\n", array_filter(array_map(function ($field) use ($type) {
                 if ($field['name'] === 'id') {
                     return null;
                 }
@@ -36,10 +39,10 @@ class RequestGenerator
                     return null;
                 }
 
-                $type = $field['type'];
+                $fieldType = $field['type'];
                 $name = $field['name'];
 
-                $rule = match ($type) {
+                $rule = match ($fieldType) {
                     'int', 'integer', 'bigint', 'tinyInteger', 'smallInteger', 'mediumInteger', 'unsignedBigInteger' => 'integer',
                     'float', 'double', 'decimal' => 'numeric',
                     'bool', 'boolean' => 'boolean',
@@ -48,12 +51,42 @@ class RequestGenerator
                     default => 'string'
                 };
 
-                return "            '{$name}' => ['required', '{$rule}'],";
+                // For Update requests, use 'sometimes' instead of 'required'
+                $required = $type === 'Update' ? 'sometimes' : 'required';
+
+                return "            '{$name}' => ['{$required}', '{$rule}'],";
+            }, $fields)));
+
+            // Generate validation messages
+            $messages = implode("\n", array_filter(array_map(function ($field) {
+                if ($field['name'] === 'id') {
+                    return null;
+                }
+
+                if ($field['type'] === 'foreignId' && (! isset($field['references']) || ! isset($field['on']))) {
+                    return null;
+                }
+
+                $fieldType = $field['type'];
+                $name = $field['name'];
+
+                $messageType = match ($fieldType) {
+                    'int', 'integer', 'bigint', 'tinyInteger', 'smallInteger', 'mediumInteger', 'unsignedBigInteger' => 'integer',
+                    'float', 'double', 'decimal' => 'numeric',
+                    'bool', 'boolean' => 'boolean',
+                    'array', 'json' => 'array',
+                    default => 'string'
+                };
+
+                return "            '{$name}.{$messageType}' => 'The {$name} must be a {$messageType}.',";
             }, $fields)));
 
             $replacements = [
                 '{{module}}' => $moduleName,
+                '{{moduleVar}}' => $moduleVar,
+                '{{module_lower}}' => $moduleLower,
                 '{{validation_rules}}' => $rules,
+                '{{validation_messages}}' => $messages,
             ];
 
             $content = $this->files->get($stubPath);

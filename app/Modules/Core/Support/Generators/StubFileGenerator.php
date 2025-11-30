@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Support\Generators;
 
-use App\Modules\Core\Support\Generators\ModuleGenerationTracker;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
@@ -38,6 +37,7 @@ class StubFileGenerator
             'Infrastructure/Routes/{{module_lower}}.php' => 'stubs/module/routes/api.stub',
             'Infrastructure/Http/Controllers/{{module}}Controller.php' => 'stubs/module/Http/Controllers/Controller.stub',
             'Infrastructure/Http/Resources/{{module}}Resource.php' => 'stubs/module/Http/Resource/Resource.stub',
+            'Infrastructure/Providers/{{module}}ModuleServiceProvider.php' => 'stubs/module/ServiceProvider.stub',
             'Database/migrations/{{timestamp}}_create_{{table}}_table.php' => 'stubs/module/Migration.stub',
         ];
 
@@ -51,6 +51,12 @@ class StubFileGenerator
             $stubFullPath = base_path($stubPath);
 
             if (! $this->files->exists($stubFullPath)) {
+                continue;
+            }
+
+            // Skip if file already exists (for existing modules, only generate missing files)
+            // Exception: migrations should always be generated with timestamp
+            if ($this->files->exists($targetPath) && ! str_contains($targetPath, 'migrations')) {
                 continue;
             }
 

@@ -28,11 +28,11 @@ class CacheHelper
      * @param  int  $ttl  Cache time in seconds
      */
     /**
-     * @param  \Closure(): mixed  $callback
+     * @param  Closure(): mixed  $callback
      */
     public static function remember(string $key, callable $callback, int $ttl = self::DEFAULT_TTL): mixed
     {
-        return Cache::remember($key, $ttl, \Closure::fromCallable($callback));
+        return Cache::remember($key, $ttl, Closure::fromCallable($callback));
     }
 
     /**

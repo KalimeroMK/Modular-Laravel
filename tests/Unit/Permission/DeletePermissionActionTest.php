@@ -26,6 +26,7 @@ class DeletePermissionActionTest extends TestCase
         $permission->shouldReceive('getKey')->andReturn(1);
 
         $permissionRepository = Mockery::mock(PermissionRepositoryInterface::class);
+        $permissionRepository->shouldReceive('delete')->with(1)->andReturn(true);
 
         // Mock DB query builder chain
         $queryBuilder = Mockery::mock();
@@ -36,13 +37,8 @@ class DeletePermissionActionTest extends TestCase
         $queryBuilder2->shouldReceive('where')->with('permission_id', 1)->andReturnSelf();
         $queryBuilder2->shouldReceive('delete')->andReturn(1);
 
-        $queryBuilder3 = Mockery::mock();
-        $queryBuilder3->shouldReceive('where')->with('id', 1)->andReturnSelf();
-        $queryBuilder3->shouldReceive('delete')->andReturn(1);
-
         DB::shouldReceive('table')->with('role_has_permissions')->andReturn($queryBuilder);
         DB::shouldReceive('table')->with('model_has_permissions')->andReturn($queryBuilder2);
-        DB::shouldReceive('table')->with('permissions')->andReturn($queryBuilder3);
 
         $action = new DeletePermissionAction($permissionRepository);
 
@@ -60,6 +56,7 @@ class DeletePermissionActionTest extends TestCase
         $permission->shouldReceive('getKey')->andReturn(1);
 
         $permissionRepository = Mockery::mock(PermissionRepositoryInterface::class);
+        $permissionRepository->shouldReceive('delete')->with(1)->andReturn(false);
 
         // Mock DB query builder chain
         $queryBuilder = Mockery::mock();
@@ -70,13 +67,8 @@ class DeletePermissionActionTest extends TestCase
         $queryBuilder2->shouldReceive('where')->with('permission_id', 1)->andReturnSelf();
         $queryBuilder2->shouldReceive('delete')->andReturn(1);
 
-        $queryBuilder3 = Mockery::mock();
-        $queryBuilder3->shouldReceive('where')->with('id', 1)->andReturnSelf();
-        $queryBuilder3->shouldReceive('delete')->andReturn(0); // No rows deleted
-
         DB::shouldReceive('table')->with('role_has_permissions')->andReturn($queryBuilder);
         DB::shouldReceive('table')->with('model_has_permissions')->andReturn($queryBuilder2);
-        DB::shouldReceive('table')->with('permissions')->andReturn($queryBuilder3);
 
         $action = new DeletePermissionAction($permissionRepository);
 

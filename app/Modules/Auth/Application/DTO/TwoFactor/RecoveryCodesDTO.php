@@ -7,14 +7,14 @@ namespace App\Modules\Auth\Application\DTO\TwoFactor;
 class RecoveryCodesDTO
 {
     /**
-     * @param array<int, string> $codes
+     * @param  array<int, string>  $codes
      */
     public function __construct(
         public array $codes,
     ) {}
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public static function fromArray(array $data): self
     {

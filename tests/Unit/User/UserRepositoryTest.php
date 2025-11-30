@@ -103,5 +103,4 @@ class UserRepositoryTest extends TestCase
             'name' => 'Updated Name',
         ]);
     }
-
 }

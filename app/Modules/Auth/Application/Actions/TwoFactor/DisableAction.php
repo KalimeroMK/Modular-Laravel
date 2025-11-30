@@ -16,7 +16,7 @@ class DisableAction
 
     public function execute(User $user): bool
     {
-        if (!$this->twoFactorService->isTwoFactorEnabled($user)) {
+        if (! $this->twoFactorService->isTwoFactorEnabled($user)) {
             throw new Exception('Two-factor authentication is not enabled for this user.');
         }
 

@@ -38,6 +38,14 @@ class ModuleGenerationSnapshotTest extends TestCase
             $this->files->deleteDirectory($testPath);
         }
 
+        // Cleanup bootstrap/app.php - remove SnapshotTestModule provider registration
+        $bootstrapPath = base_path('bootstrap/app.php');
+        if ($this->files->exists($bootstrapPath)) {
+            $content = $this->files->get($bootstrapPath);
+            $content = preg_replace('/\s+App\\\\Modules\\\\SnapshotTestModule\\\\Infrastructure\\\\Providers\\\\SnapshotTestModuleModuleServiceProvider::class,?\s*/', '', $content);
+            $this->files->put($bootstrapPath, $content);
+        }
+
         parent::tearDown();
     }
 

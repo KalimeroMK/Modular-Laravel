@@ -26,8 +26,8 @@ class GetCurrentUserActionTest extends TestCase
         // Arrange
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
-        $user->shouldReceive('getAttribute')->andReturnUsing(function($key) use ($user) {
-            return match($key) {
+        $user->shouldReceive('getAttribute')->andReturnUsing(function ($key) {
+            return match ($key) {
                 'id' => 1,
                 'name' => 'Test User',
                 'email' => 'test@example.com',

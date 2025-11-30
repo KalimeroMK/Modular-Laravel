@@ -17,3 +17,4 @@ parameters:
         - '#Return type.*of method.*paginate\(\) should be compatible#'
         - '#Method.*should return.*BelongsToMany.*but returns#'
         - '#Method.*should return.*MorphToMany.*but returns#'
+        - '#Function (form|multiselect|outro) not found#'

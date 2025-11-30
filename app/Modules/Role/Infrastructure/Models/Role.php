@@ -50,20 +50,6 @@ class Role extends Model
     }
 
     /**
-     * Retrieve the model for bound value.
-     *
-     * @param  mixed  $value
-     * @param  string|null  $field
-     * @return Model|null
-     */
-    public function resolveRouteBinding($value, $field = null)
-    {
-        $field = $field ?: $this->getRouteKeyName();
-
-        return $this->where($field, $value)->firstOrFail();
-    }
-
-    /**
      * Get the permissions for this role.
      *
      * @return BelongsToMany<Permission, Model>

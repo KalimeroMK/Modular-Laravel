@@ -22,6 +22,7 @@ class ModuleGenerator
         protected NotificationGenerator $notificationGenerator,
         protected FeatureTestGenerator $testGenerator,
         protected RepositoryBinder $repositoryBinder,
+        protected ServiceProviderBinder $serviceProviderBinder,
         protected FieldParser $fieldParser,
         protected EnumGenerator $enumGenerator,
     ) {}
@@ -84,6 +85,7 @@ class ModuleGenerator
         $this->trackFile($tracker, $moduleName, "../../../tests/Feature/Modules/{$moduleName}/{$moduleName}CrudTest.php");
 
         $this->repositoryBinder->bind($moduleName);
+        $this->serviceProviderBinder->bind($moduleName);
     }
 
     /**

@@ -54,8 +54,11 @@ class ModulesBuildFromYamlCommand extends Command
                     $tracker = $this->getTracker();
                     $providerPath = app_path('Providers/RepositoryServiceProvider.php');
                     if (file_exists($providerPath) && ! isset($tracker->getModifiedFiles()[$providerPath])) {
-                        $tracker->trackModifiedFile($providerPath, file_get_contents($providerPath));
-                        $providerBackedUp = true;
+                        $originalContent = file_get_contents($providerPath);
+                        if ($originalContent !== false) {
+                            $tracker->trackModifiedFile($providerPath, $originalContent);
+                            $providerBackedUp = true;
+                        }
                     }
                 }
 
@@ -65,7 +68,7 @@ class ModulesBuildFromYamlCommand extends Command
                     return ['name' => trim($name), 'type' => trim($type)];
                 }, $definition['fields']);
 
-                /** @var array{relations: string, exceptions: mixed, observers: mixed, policies: mixed, events: mixed, enum: mixed, notifications: mixed, repositories: array<mixed>, table?: string, relationships?: string} $options */
+                /** @var array{relations: string, exceptions: mixed, observers: mixed, policies: mixed, events: mixed, enum: mixed, notifications: mixed, repositories: array{}, table?: string, relationships?: string, tracker?: mixed} $options */
                 $options = [
                     'relations' => implode(',', $definition['relations']),
                     'exceptions' => $definition['exceptions'] ?? false,
