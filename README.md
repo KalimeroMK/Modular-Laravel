@@ -4,7 +4,7 @@
 
 ## 🚀 Introduction
 
-This kit is ideal for teams and developers who want a clean, well-structured codebase with clearly separated logic, using modern patterns such as repositories, DTOs, actions, and automatic relationship mapping.
+This kit is ideal for teams and developers who want a clean, well-structured codebase with clearly separated logic, using modern patterns such as repositories, DTOs (for input), Resources (for output), actions, and automatic relationship mapping.
 
 ## 🐳 Docker Setup (Recommended)
 
@@ -186,8 +186,8 @@ Each module is organized into two main layers:
 
 Contains business logic and use cases:
 
--   **Actions/** - Business use cases and operations
--   **DTOs/** - Data Transfer Objects for API communication
+-   **Actions/** - Business use cases and operations (return Eloquent models)
+-   **DTOs/** - Data Transfer Objects for data manipulation (input from requests)
 -   **Services/** - Business services and interfaces
 -   **Interfaces/** - Contracts for external dependencies
 
@@ -198,6 +198,7 @@ Contains external concerns and implementations:
 -   **Models/** - Eloquent models and database entities
 -   **Repositories/** - Data access implementations
 -   **Http/** - Web layer (Controllers, Requests, Resources)
+    -   **Resources/** - API response transformation (output to clients)
 -   **Providers/** - Service providers for dependency injection
 -   **Routes/** - API route definitions
 
@@ -206,15 +207,39 @@ Contains external concerns and implementations:
 ```
 Controllers → Actions → Services → Repositories → Models
      ↓           ↓         ↓           ↓
-   HTTP      Business   Business    Database
-  Layer      Logic      Services    Access
+  Resources  Business   Business    Database
+  (Output)   Logic      Services    Access
+     ↑
+   DTOs (Input)
 ```
 
--   **Controllers** handle HTTP requests and delegate to Actions
--   **Actions** contain business logic and orchestrate Services
+-   **Controllers** handle HTTP requests, use DTOs for input, and return Resources for output
+-   **Actions** contain business logic, accept DTOs, and return Eloquent models
 -   **Services** implement business rules and use Repositories
 -   **Repositories** abstract data access and work with Models
 -   **Models** represent database entities and relationships
+-   **DTOs** are used only for data manipulation (input from requests)
+-   **Resources** are used only for API responses (output to clients)
+
+### 📦 Data Flow Architecture
+
+The application follows a clear separation between input and output:
+
+**Input Flow (Request → Action):**
+```
+HTTP Request → FormRequest → DTO → Action → Model
+```
+
+**Output Flow (Action → Response):**
+```
+Action → Model → Resource → JSON Response
+```
+
+**Key Principles:**
+-   **DTOs** are used **only** for data manipulation (validated input from requests)
+-   **Resources** are used **only** for API responses (formatted output to clients)
+-   **Actions** return **Eloquent models**, not DTOs or Resources
+-   **Controllers** transform models to Resources for API responses
 
 ## 🔄 Automatic Relationship Sync
 
