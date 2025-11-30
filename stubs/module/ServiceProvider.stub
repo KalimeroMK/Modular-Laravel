@@ -17,27 +17,16 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // Bind repository interface to implementation
         $this->app->bind({{module}}RepositoryInterface::class, {{module}}Repository::class);
     }
 
     public function boot(): void
     {
-        // Register route model binding BEFORE loading routes
-        Route::bind('{{module_lower}}', function ($value) {
-            return {{module}}::findOrFail($value);
-        });
+        Route::model('{{module_lower}}', {{module}}::class);
 
-        // Register policies if they exist
         $this->registerPolicies();
-
-        // Register observers if they exist
         $this->registerObservers();
-
-        // Register events and listeners if they exist
         $this->registerEvents();
-
-        // Load routes
         $this->loadRoutes();
     }
 
@@ -90,7 +79,6 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
                 continue;
             }
 
-            // Find corresponding listener
             $listenerName = $eventName.'Listener';
             $listenerClass = "App\\Modules\\{{module}}\\Application\\Listeners\\{$listenerName}";
 

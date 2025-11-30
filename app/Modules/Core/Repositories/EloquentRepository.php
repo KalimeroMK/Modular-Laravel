@@ -122,9 +122,9 @@ abstract class EloquentRepository
     final public function delete(int $id): bool
     {
         // Use direct DB deletion to ensure it works with all database drivers including SQLite
-        $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
+            $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
 
-        return $deletedRows > 0;
+            return $deletedRows > 0;
     }
 
     final public function restore(int $id): ?Model

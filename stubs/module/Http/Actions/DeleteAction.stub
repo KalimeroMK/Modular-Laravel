@@ -18,13 +18,13 @@ class Delete{{class}}Action
     {
         // Get the {{moduleVar}} ID - route model binding ensures the model exists
         ${{moduleVar}}Id = (int) ${{moduleVar}}->getKey();
-
+        
         if (${{moduleVar}}Id === 0) {
             return false;
         }
-
+        
         {{event_dispatch_deleted}}
-
+        
         return $this->{{moduleVar}}Repository->delete(${{moduleVar}}Id);
     }
 }

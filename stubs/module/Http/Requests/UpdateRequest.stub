@@ -36,15 +36,4 @@ class Update{{module}}Request extends FormRequest
             {{validation_messages}}
         ];
     }
-
-    /**
-     * Prepare the data for validation.
-     */
-    protected function prepareForValidation(): void
-    {
-        ${{moduleVar}} = $this->route('{{module_lower}}');
-        if (${{moduleVar}} && ! (${{moduleVar}} instanceof {{module}}) && ($route = $this->route()) !== null) {
-            $route->setParameter('{{module_lower}}', {{module}}::findOrFail(${{moduleVar}}));
-        }
-    }
 }

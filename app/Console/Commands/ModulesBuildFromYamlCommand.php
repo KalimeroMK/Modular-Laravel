@@ -244,9 +244,9 @@ class ModulesBuildFromYamlCommand extends Command
                 $morphName = $parts[3] ?? $relName;
                 $lines[] = $this->buildPolymorphicRelationship($relName, $relType, $relModel, $parts);
             } else {
-                // Add import for the related model
-                $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
-                $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
+            // Add import for the related model
+            $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
+            $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
             }
         }
 
