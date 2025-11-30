@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Infrastructure\Providers;
 
-use App\Modules\User\Infrastructure\Models\User;
 use App\Modules\User\Infrastructure\Repositories\UserRepository;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Route;
@@ -20,12 +19,6 @@ class UserModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Register route model binding BEFORE loading routes
-        Route::bind('user', function ($value) {
-            return User::findOrFail($value);
-        });
-
-        // Load routes
         $this->loadRoutes();
     }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Infrastructure\Http\Requests;
 
-use App\Modules\Permission\Infrastructure\Models\Permission;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePermissionRequest extends FormRequest
@@ -19,11 +18,10 @@ class UpdatePermissionRequest extends FormRequest
      */
     public function rules(): array
     {
-        $permission = $this->route('permission');
-        $permissionId = $permission instanceof Permission ? $permission->id : (is_numeric($permission) ? $permission : 'NULL');
+        $id = $this->route('id');
 
         return [
-            'name' => ['sometimes', 'string', 'max:255', 'unique:permissions,name,'.$permissionId],
+            'name' => ['sometimes', 'string', 'max:255', 'unique:permissions,name,'.$id],
             'guard_name' => ['sometimes', 'string', 'max:255'],
         ];
     }
@@ -38,16 +36,5 @@ class UpdatePermissionRequest extends FormRequest
             'name.unique' => 'The permission name has already been taken.',
             'guard_name.string' => 'The guard name must be a string.',
         ];
-    }
-
-    /**
-     * Prepare the data for validation.
-     */
-    protected function prepareForValidation(): void
-    {
-        $permission = $this->route('permission');
-        if ($permission && ! ($permission instanceof Permission) && ($route = $this->route()) !== null) {
-            $route->setParameter('permission', Permission::findOrFail($permission));
-        }
     }
 }

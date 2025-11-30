@@ -14,19 +14,19 @@ Route::prefix('api/v1/roles')->middleware(['auth:sanctum'])->group(function (): 
         ->middleware('throttle:10,60')
         ->name('roles.store');
 
-    Route::get('/{role}', [RoleController::class, 'show'])
+    Route::get('/{id}', [RoleController::class, 'show'])
         ->middleware('throttle:120,1')
         ->name('roles.show');
 
-    Route::put('/{role}', [RoleController::class, 'update'])
+    Route::put('/{id}', [RoleController::class, 'update'])
         ->middleware('throttle:30,1')
         ->name('roles.update');
 
-    Route::patch('/{role}', [RoleController::class, 'update'])
+    Route::patch('/{id}', [RoleController::class, 'update'])
         ->middleware('throttle:30,1')
         ->name('roles.patch');
 
-    Route::delete('/{role}', [RoleController::class, 'destroy'])
+    Route::delete('/{id}', [RoleController::class, 'destroy'])
         ->middleware('throttle:10,60')
         ->name('roles.destroy');
 });

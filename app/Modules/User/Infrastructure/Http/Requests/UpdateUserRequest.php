@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Infrastructure\Http\Requests;
 
-use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateUserRequest extends FormRequest
@@ -19,12 +18,11 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $user = $this->route('user');
-        $userId = $user instanceof User ? $user->id : (is_numeric($user) ? $user : 'NULL');
+        $id = $this->route('id');
 
         return [
             'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,'.$userId],
+            'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,'.$id],
             'password' => ['sometimes', 'string', 'min:8'],
         ];
     }
@@ -41,16 +39,5 @@ class UpdateUserRequest extends FormRequest
             'email.unique' => 'The email has already been taken.',
             'password.min' => 'The password must be at least 8 characters.',
         ];
-    }
-
-    /**
-     * Prepare the data for validation.
-     */
-    protected function prepareForValidation(): void
-    {
-        $user = $this->route('user');
-        if ($user && ! ($user instanceof User) && ($route = $this->route()) !== null) {
-            $route->setParameter('user', User::findOrFail($user));
-        }
     }
 }

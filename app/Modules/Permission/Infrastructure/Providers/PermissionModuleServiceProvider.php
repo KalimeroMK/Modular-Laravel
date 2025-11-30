@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Infrastructure\Providers;
 
-use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepository;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Illuminate\Support\Facades\Route;
@@ -20,12 +19,6 @@ class PermissionModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Register route model binding BEFORE loading routes
-        Route::bind('permission', function ($value) {
-            return Permission::findOrFail($value);
-        });
-
-        // Load routes
         $this->loadRoutes();
     }
 

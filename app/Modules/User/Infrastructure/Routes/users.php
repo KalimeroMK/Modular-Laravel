@@ -14,19 +14,19 @@ Route::prefix('api/v1/users')->middleware(['auth:sanctum'])->group(function (): 
         ->middleware('throttle:10,60')
         ->name('users.store');
 
-    Route::get('/{user}', [UserController::class, 'show'])
+    Route::get('/{id}', [UserController::class, 'show'])
         ->middleware('throttle:120,1')
         ->name('users.show');
 
-    Route::put('/{user}', [UserController::class, 'update'])
+    Route::put('/{id}', [UserController::class, 'update'])
         ->middleware('throttle:30,1')
         ->name('users.update');
 
-    Route::patch('/{user}', [UserController::class, 'update'])
+    Route::patch('/{id}', [UserController::class, 'update'])
         ->middleware('throttle:30,1')
         ->name('users.patch');
 
-    Route::delete('/{user}', [UserController::class, 'destroy'])
+    Route::delete('/{id}', [UserController::class, 'destroy'])
         ->middleware('throttle:10,60')
         ->name('users.destroy');
 });

@@ -6,18 +6,21 @@ namespace App\Providers;
 
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepository;
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepositoryInterface;
+use App\Modules\IntegrationTestModule\Infrastructure\Repositories\IntegrationTestModuleRepository;
+use App\Modules\IntegrationTestModule\Infrastructure\Repositories\IntegrationTestModuleRepositoryInterface;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepository;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepository;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
+use App\Modules\SnapshotTestModule\Infrastructure\Repositories\SnapshotTestModuleRepository;
+use App\Modules\SnapshotTestModule\Infrastructure\Repositories\SnapshotTestModuleRepositoryInterface;
+use App\Modules\TestProduct\Infrastructure\Repositories\TestProductRepository;
+use App\Modules\TestProduct\Infrastructure\Repositories\TestProductRepositoryInterface;
 use App\Modules\User\Infrastructure\Repositories\UserRepository;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
 use ReflectionNamedType;
-use App\Modules\TestProviderModule\Infrastructure\Repositories\TestProviderModuleRepositoryInterface;
-use App\Modules\TestProviderModule\Infrastructure\Repositories\TestProviderModuleRepository;
-
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -25,12 +28,14 @@ class RepositoryServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected array $repositories = [
-UserRepositoryInterface::class => UserRepository::class,
+        UserRepositoryInterface::class => UserRepository::class,
         AuthRepositoryInterface::class => AuthRepository::class,
         RoleRepositoryInterface::class => RoleRepository::class,
         PermissionRepositoryInterface::class => PermissionRepository::class,
-        TestProviderModuleRepositoryInterface::class => TestProviderModuleRepository::class,
-];
+        IntegrationTestModuleRepositoryInterface::class => IntegrationTestModuleRepository::class,
+        SnapshotTestModuleRepositoryInterface::class => SnapshotTestModuleRepository::class,
+        TestProductRepositoryInterface::class => TestProductRepository::class,
+    ];
 
     /**
      * Register services.

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Infrastructure\Providers;
 
-use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepository;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use Illuminate\Support\Facades\Route;
@@ -20,12 +19,6 @@ class RoleModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Register route model binding BEFORE loading routes
-        Route::bind('role', function ($value) {
-            return Role::findOrFail($value);
-        });
-
-        // Load routes
         $this->loadRoutes();
     }
 
