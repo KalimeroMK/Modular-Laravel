@@ -183,19 +183,23 @@ This starter kit follows **Clean Architecture** principles with clear separation
 Each module is organized into two main layers:
 
 #### 🎯 Application Layer (`Application/`)
+
 Contains business logic and use cases:
-- **Actions/** - Business use cases and operations
-- **DTOs/** - Data Transfer Objects for API communication
-- **Services/** - Business services and interfaces
-- **Interfaces/** - Contracts for external dependencies
+
+-   **Actions/** - Business use cases and operations
+-   **DTOs/** - Data Transfer Objects for API communication
+-   **Services/** - Business services and interfaces
+-   **Interfaces/** - Contracts for external dependencies
 
 #### 🔧 Infrastructure Layer (`Infrastructure/`)
+
 Contains external concerns and implementations:
-- **Models/** - Eloquent models and database entities
-- **Repositories/** - Data access implementations
-- **Http/** - Web layer (Controllers, Requests, Resources)
-- **Providers/** - Service providers for dependency injection
-- **Routes/** - API route definitions
+
+-   **Models/** - Eloquent models and database entities
+-   **Repositories/** - Data access implementations
+-   **Http/** - Web layer (Controllers, Requests, Resources)
+-   **Providers/** - Service providers for dependency injection
+-   **Routes/** - API route definitions
 
 ### 🔄 Dependency Flow
 
@@ -206,11 +210,11 @@ Controllers → Actions → Services → Repositories → Models
   Layer      Logic      Services    Access
 ```
 
-- **Controllers** handle HTTP requests and delegate to Actions
-- **Actions** contain business logic and orchestrate Services
-- **Services** implement business rules and use Repositories
-- **Repositories** abstract data access and work with Models
-- **Models** represent database entities and relationships
+-   **Controllers** handle HTTP requests and delegate to Actions
+-   **Actions** contain business logic and orchestrate Services
+-   **Services** implement business rules and use Repositories
+-   **Repositories** abstract data access and work with Models
+-   **Models** represent database entities and relationships
 
 ## 🔄 Automatic Relationship Sync
 
@@ -239,10 +243,11 @@ php artisan make:module
 ```
 
 The wizard will guide you through:
-- Module name
-- Model fields
-- Relationships
-- Additional features (exceptions, observers, policies, events, enums, notifications)
+
+-   Module name
+-   Model fields
+-   Relationships
+-   Additional features (exceptions, observers, policies, events, enums, notifications)
 
 #### Non-Interactive Mode (Flags)
 
@@ -491,17 +496,37 @@ modules:
             name: string
             price: float
             is_active: boolean
+            status: enum
+            metadata: json
+            published_at: datetime
         relations:
-            belongsToMany: [Category]
+            belongsToMany: [Category, Tag]
             user: belongsTo:User
+            comments: morphMany:Comment:commentable
         observers: true
         policies: true
+        exceptions: true
+        events: true
+        enum: true
+        notifications: false
 
     Category:
         fields:
             name: string
+            slug: string
         relations:
             belongsToMany: [Product]
+
+    Comment:
+        fields:
+            body: text
+            commentable_type: string
+            commentable_id: int
+        relations:
+            commentable: morphTo
+            author: belongsTo:User
+        policies: true
+        exceptions: true
 ```
 
 2. Run the command:
@@ -515,9 +540,38 @@ This will:
 > 📌 Note: Pivot migrations are automatically generated **only** when using `modules:build-from-yaml` and when both related modules define a `belongsToMany` relationship to each other.
 
 -   Automatically generate all modules using the same logic as `make:module`
--   Parse `fields`, `relations`, and options like `observers` and `policies`
+-   Parse `fields`, `relations`, and all available options
 -   Fill in `fillable`, `casts`, `migrations`, `factories`, and `resources`
 -   Avoids manual repetition by letting you define multiple modules at once
+
+### 📋 Supported YAML Options
+
+| Option          | Description                         | Example                                                                                        |
+| --------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `fields`        | Model fields with types             | `name: string`, `price: float`, `status: enum`                                                 |
+| `relations`     | Eloquent relationships              | `belongsToMany: [Category]`, `user: belongsTo:User`, `comments: morphMany:Comment:commentable` |
+| `observers`     | Generate observer classes           | `observers: true`                                                                              |
+| `policies`      | Generate policy classes             | `policies: true`                                                                               |
+| `exceptions`    | Generate exception classes          | `exceptions: true`                                                                             |
+| `events`        | Generate event and listener classes | `events: true`                                                                                 |
+| `enum`          | Generate enum class                 | `enum: true`                                                                                   |
+| `notifications` | Generate notification classes       | `notifications: true`                                                                          |
+
+### 🔗 Relationship Types
+
+**Standard Relationships:**
+
+-   `belongsTo`: `user: belongsTo:User`
+-   `hasMany`: `orders: hasMany:Order`
+-   `hasOne`: `profile: hasOne:Profile`
+-   `belongsToMany`: `belongsToMany: [Category, Tag]`
+
+**Polymorphic Relationships:**
+
+-   `morphTo`: `commentable: morphTo`
+-   `morphMany`: `comments: morphMany:Comment:commentable`
+-   `morphOne`: `image: morphOne:Image:imageable`
+-   `morphToMany`: `tags: morphToMany:Tag:taggable`
 
 ## 🔐 Two-Factor Authentication (2FA)
 

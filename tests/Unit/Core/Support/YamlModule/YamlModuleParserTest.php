@@ -356,6 +356,129 @@ class YamlModuleParserTest extends TestCase
         $this->assertEquals([], $result['Simple']['relations']);
     }
 
+    public function test_parses_events_option(): void
+    {
+        $data = [
+            'modules' => [
+                'Product' => [
+                    'fields' => ['name' => 'string'],
+                    'events' => true,
+                ],
+            ],
+        ];
+
+        $this->createYamlFile($data);
+        $parser = new YamlModuleParser($this->tempFile);
+        $result = $parser->parse();
+
+        $this->assertTrue($result['Product']['events']);
+    }
+
+    public function test_parses_enum_option(): void
+    {
+        $data = [
+            'modules' => [
+                'Product' => [
+                    'fields' => ['name' => 'string'],
+                    'enum' => true,
+                ],
+            ],
+        ];
+
+        $this->createYamlFile($data);
+        $parser = new YamlModuleParser($this->tempFile);
+        $result = $parser->parse();
+
+        $this->assertTrue($result['Product']['enum']);
+    }
+
+    public function test_parses_notifications_option(): void
+    {
+        $data = [
+            'modules' => [
+                'Product' => [
+                    'fields' => ['name' => 'string'],
+                    'notifications' => true,
+                ],
+            ],
+        ];
+
+        $this->createYamlFile($data);
+        $parser = new YamlModuleParser($this->tempFile);
+        $result = $parser->parse();
+
+        $this->assertTrue($result['Product']['notifications']);
+    }
+
+    public function test_parses_all_options_together(): void
+    {
+        $data = [
+            'modules' => [
+                'Product' => [
+                    'fields' => ['name' => 'string'],
+                    'exceptions' => true,
+                    'observers' => true,
+                    'policies' => true,
+                    'events' => true,
+                    'enum' => true,
+                    'notifications' => false,
+                ],
+            ],
+        ];
+
+        $this->createYamlFile($data);
+        $parser = new YamlModuleParser($this->tempFile);
+        $result = $parser->parse();
+
+        $this->assertTrue($result['Product']['exceptions']);
+        $this->assertTrue($result['Product']['observers']);
+        $this->assertTrue($result['Product']['policies']);
+        $this->assertTrue($result['Product']['events']);
+        $this->assertTrue($result['Product']['enum']);
+        $this->assertFalse($result['Product']['notifications']);
+    }
+
+    public function test_parses_morph_relation_string_format(): void
+    {
+        $data = [
+            'modules' => [
+                'Product' => [
+                    'fields' => ['name' => 'string'],
+                    'relations' => [
+                        'comments' => 'morphMany:Comment:commentable',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->createYamlFile($data);
+        $parser = new YamlModuleParser($this->tempFile);
+        $result = $parser->parse();
+
+        $this->assertEquals(['comments:morphMany:Comment:commentable'], $result['Product']['relations']);
+    }
+
+    public function test_parses_morph_to_string_format(): void
+    {
+        $data = [
+            'modules' => [
+                'Comment' => [
+                    'fields' => ['body' => 'text'],
+                    'relations' => [
+                        'commentable' => 'morphTo',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->createYamlFile($data);
+        $parser = new YamlModuleParser($this->tempFile);
+        $result = $parser->parse();
+
+        // When commentable is the key and morphTo is the value, it should parse as commentable:morphTo
+        $this->assertContains('commentable:morphTo', $result['Comment']['relations']);
+    }
+
     private function createYamlFile(array $data): void
     {
         file_put_contents($this->tempFile, Yaml::dump($data));

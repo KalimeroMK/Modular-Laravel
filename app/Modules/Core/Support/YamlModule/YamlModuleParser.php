@@ -43,29 +43,50 @@ class YamlModuleParser
             }
 
             $relations = [];
-            foreach ($config['relations'] ?? [] as $relationType => $relationConfig) {
-                if (is_string($relationConfig)) {
-                    // Simple format: 'belongsTo' => 'Role'
-                    $relations[] = "{$relationType}:{$relationConfig}";
+            foreach ($config['relations'] ?? [] as $relationKey => $relationConfig) {
+                // Handle string format like: 'comments: morphMany:Comment:commentable'
+                if (is_string($relationConfig) && str_contains($relationConfig, ':')) {
+                    $parts = explode(':', $relationConfig);
+                    if (count($parts) >= 2) {
+                        $relationType = trim($parts[0]);
+                        $relModel = trim($parts[1] ?? '');
+                        $morphName = trim($parts[2] ?? $relationKey);
+                        if (in_array($relationType, ['morphTo', 'morphMany', 'morphOne', 'morphToMany']) && $morphName) {
+                            $relations[] = "{$relationKey}:{$relationType}:{$relModel}:{$morphName}";
+                        } else {
+                            $relations[] = "{$relationKey}:{$relationConfig}";
+                        }
+                    } else {
+                        $relations[] = "{$relationKey}:{$relationConfig}";
+                    }
+                } elseif (is_string($relationConfig)) {
+                    // Simple format: 'belongsTo' => 'Role' or 'commentable' => 'morphTo'
+                    if ($relationConfig === 'morphTo') {
+                        $relations[] = "{$relationKey}:morphTo";
+                    } elseif ($relationKey === 'morphTo') {
+                        $relations[] = "{$relationConfig}:morphTo";
+                    } else {
+                        $relations[] = "{$relationKey}:{$relationConfig}";
+                    }
                 } elseif (is_array($relationConfig)) {
                     if (isset($relationConfig['name'])) {
                         // Format: 'morphTo' => ['name' => 'commentable']
-                        $relations[] = "{$relationConfig['name']}:{$relationType}";
+                        $relations[] = "{$relationConfig['name']}:{$relationKey}";
                     } elseif (is_array($relationConfig[0] ?? null)) {
                         // Format: 'morphMany' => [['model' => 'Comment', 'morph_name' => 'commentable']]
                         foreach ($relationConfig as $rel) {
                             $model = $rel['model'] ?? '';
                             $morphName = $rel['morph_name'] ?? $rel['name'] ?? '';
                             if ($morphName) {
-                                $relations[] = "{$model}:{$relationType}:{$model}:{$morphName}";
+                                $relations[] = "{$model}:{$relationKey}:{$model}:{$morphName}";
                             } else {
-                                $relations[] = "{$model}:{$relationType}";
+                                $relations[] = "{$model}:{$relationKey}";
                             }
                         }
                     } elseif (is_string($relationConfig[0] ?? null)) {
                         // Format: 'belongsToMany' => ['Category', 'Tag']
                         foreach ($relationConfig as $model) {
-                            $relations[] = "{$model}:{$relationType}";
+                            $relations[] = "{$model}:{$relationKey}";
                         }
                     } else {
                         // Handle other array formats
@@ -83,6 +104,9 @@ class YamlModuleParser
                 'exceptions' => $config['exceptions'] ?? false,
                 'observers' => $config['observers'] ?? false,
                 'policies' => $config['policies'] ?? false,
+                'events' => $config['events'] ?? false,
+                'enum' => $config['enum'] ?? false,
+                'notifications' => $config['notifications'] ?? false,
             ];
         }
 

@@ -4,14 +4,40 @@ modules:
       name: string
       price: float
       is_active: boolean
+      status: enum
+      metadata: json
+      published_at: datetime
     relations:
-      belongsToMany: [ Category ]
+      belongsToMany: [Category, Tag]
       user: belongsTo:User
+      comments: morphMany:Comment:commentable
     observers: true
     policies: true
+    exceptions: true
+    events: true
+    enum: true
 
   Category:
     fields:
       name: string
+      slug: string
+    relations:
+      belongsToMany: [Product]
+
+  Comment:
+    fields:
+      body: text
+      commentable_type: string
+      commentable_id: int
+    relations:
+      commentable: morphTo
+      author: belongsTo:User
+    policies: true
+    exceptions: true
+
+  Tag:
+    fields:
+      name: string
+      color: string
     relations:
       belongsToMany: [Product]

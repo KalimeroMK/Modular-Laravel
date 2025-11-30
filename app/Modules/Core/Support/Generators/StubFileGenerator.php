@@ -41,7 +41,12 @@ class StubFileGenerator
         ];
 
         foreach ($stubMap as $target => $stubPath) {
-            $targetPath = $basePath.'/'.str_replace(array_keys($replacements), array_values($replacements), $target);
+            // Replace placeholders in target path - replace longer placeholders first to avoid conflicts
+            $targetPath = $target;
+            foreach ($replacements as $placeholder => $value) {
+                $targetPath = str_replace($placeholder, $value, $targetPath);
+            }
+            $targetPath = $basePath.'/'.$targetPath;
             $stubFullPath = base_path($stubPath);
 
             if (! $this->files->exists($stubFullPath)) {

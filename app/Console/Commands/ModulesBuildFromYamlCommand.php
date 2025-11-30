@@ -42,12 +42,15 @@ class ModulesBuildFromYamlCommand extends Command
                     return ['name' => trim($name), 'type' => trim($type)];
                 }, $definition['fields']);
 
-                /** @var array{relations: string, exceptions: mixed, observers: mixed, policies: mixed, repositories: array<mixed>, table?: string, relationships?: string} $options */
+                /** @var array{relations: string, exceptions: mixed, observers: mixed, policies: mixed, events: mixed, enum: mixed, notifications: mixed, repositories: array<mixed>, table?: string, relationships?: string} $options */
                 $options = [
                     'relations' => implode(',', $definition['relations']),
                     'exceptions' => $definition['exceptions'] ?? false,
                     'observers' => $definition['observers'] ?? false,
                     'policies' => $definition['policies'] ?? false,
+                    'events' => $definition['events'] ?? false,
+                    'enum' => $definition['enum'] ?? false,
+                    'notifications' => $definition['notifications'] ?? false,
                     'repositories' => [],
                 ];
 
@@ -158,15 +161,52 @@ class ModulesBuildFromYamlCommand extends Command
             $relType = trim($parts[1]);
             $relModel = $parts[2] ?? ucfirst($relName);
 
-            // Add import for the related model
-            $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
-
-            $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
+            // Handle polymorphic relationships
+            if (in_array($relType, ['morphTo', 'morphMany', 'morphOne', 'morphToMany'])) {
+                $morphName = $parts[3] ?? $relName;
+                $lines[] = $this->buildPolymorphicRelationship($relName, $relType, $relModel, $parts);
+            } else {
+                // Add import for the related model
+                $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
+                $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
+            }
         }
 
         // Remove duplicate imports
         $imports = array_unique($imports);
 
         return implode("\n", $imports)."\n\n".implode("\n", $lines);
+    }
+
+    /**
+     * Build polymorphic relationship method
+     *
+     * @param  array<int, string>  $parts
+     */
+    protected function buildPolymorphicRelationship(string $relName, string $relType, string $relModel, array $parts): string
+    {
+        switch ($relType) {
+            case 'morphTo':
+                return "    public function {$relName}()\n    {\n        return \$this->morphTo();\n    }";
+
+            case 'morphMany':
+                $morphName = $parts[3] ?? $relName;
+
+                return "    public function {$relName}()\n    {\n        return \$this->morphMany({$relModel}::class, '{$morphName}');\n    }";
+
+            case 'morphOne':
+                $morphName = $parts[3] ?? $relName;
+
+                return "    public function {$relName}()\n    {\n        return \$this->morphOne({$relModel}::class, '{$morphName}');\n    }";
+
+            case 'morphToMany':
+                $morphName = $parts[3] ?? $relName;
+
+                return "    public function {$relName}()\n    {\n        return \$this->morphToMany({$relModel}::class, '{$morphName}');\n    }";
+
+            default:
+                // Fallback to standard relationship
+                return "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
+        }
     }
 }

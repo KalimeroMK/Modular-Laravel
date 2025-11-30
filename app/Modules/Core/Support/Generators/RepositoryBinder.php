@@ -23,6 +23,14 @@ class RepositoryBinder
             return;
         }
 
+        // Verify that interface and repository files exist before binding
+        $interfacePath = app_path("Modules/{$moduleName}/Infrastructure/Repositories/{$moduleName}RepositoryInterface.php");
+        $repositoryPath = app_path("Modules/{$moduleName}/Infrastructure/Repositories/{$moduleName}Repository.php");
+
+        if (! $this->files->exists($interfacePath) || ! $this->files->exists($repositoryPath)) {
+            return;
+        }
+
         $content = $this->files->get($providerPath);
 
         // Check if already registered
