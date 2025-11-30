@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Support\Generators;
 
+use App\Modules\Core\Support\Generators\ModuleGenerationTracker;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
@@ -89,6 +90,11 @@ class StubFileGenerator
 
             $this->files->ensureDirectoryExists(dirname($targetPath));
             $this->files->put($targetPath, $content);
+
+            // Track generated file for rollback
+            if (isset($options['tracker']) && $options['tracker'] instanceof ModuleGenerationTracker) {
+                $options['tracker']->trackGeneratedFile($moduleName, $targetPath);
+            }
         }
     }
 

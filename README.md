@@ -490,7 +490,9 @@ In addition to the `php artisan make:module` command, you can now generate multi
 1. Create a `modules.yaml` file in the root of your project:
 
 ```yaml
+# YAML comments are fully supported
 modules:
+    # Product module with all features
     Product:
         fields:
             name: string
@@ -510,6 +512,7 @@ modules:
         enum: true
         notifications: false
 
+    # Category module
     Category:
         fields:
             name: string
@@ -517,6 +520,7 @@ modules:
         relations:
             belongsToMany: [Product]
 
+    # Comment module with polymorphic relations
     Comment:
         fields:
             body: text
@@ -543,6 +547,9 @@ This will:
 -   Parse `fields`, `relations`, and all available options
 -   Fill in `fillable`, `casts`, `migrations`, `factories`, and `resources`
 -   Avoids manual repetition by letting you define multiple modules at once
+-   **Rollback support**: If a module fails to generate, it will automatically rollback all changes
+-   **Statistics**: Display detailed statistics about generated files and modules
+-   **Comment support**: YAML comments are fully supported and ignored during parsing
 
 ### 📋 Supported YAML Options
 
@@ -556,6 +563,57 @@ This will:
 | `events`        | Generate event and listener classes | `events: true`                                                                                 |
 | `enum`          | Generate enum class                 | `enum: true`                                                                                   |
 | `notifications` | Generate notification classes       | `notifications: true`                                                                          |
+
+### 🛡️ Rollback Mechanism
+
+The YAML module generation includes a comprehensive rollback mechanism:
+
+-   **Automatic Rollback**: If a module fails to generate, all changes are automatically rolled back
+-   **File Tracking**: All generated files are tracked for easy rollback
+-   **Modified Files**: Modified files (like `RepositoryServiceProvider`) are backed up and restored on failure
+-   **Clean State**: Ensures your codebase remains in a clean state even if generation fails
+
+### 📊 Generation Statistics
+
+After generating modules, you'll see detailed statistics:
+
+```
+📊 Generation Statistics:
+┌─────────────────────┬───────┐
+│ Metric              │ Value │
+├─────────────────────┼───────┤
+│ Modules Generated   │   3   │
+│ Total Files         │  45   │
+│ Successful          │   3   │
+│ Failed              │   0   │
+└─────────────────────┴───────┘
+
+📁 Files by Module:
+┌──────────┬───────┐
+│ Module   │ Files │
+├──────────┼───────┤
+│ Product  │  15   │
+│ Category │  12   │
+│ Comment  │  18   │
+└──────────┴───────┘
+```
+
+### 💬 YAML Comments Support
+
+YAML comments are fully supported and ignored during parsing:
+
+```yaml
+# This is a comment
+modules:
+    # Module comment
+    Product:
+        fields:
+            name: string  # Inline comment
+            price: float
+        # Relations comment
+        relations:
+            belongsToMany: [Category]
+```
 
 ### 🔗 Relationship Types
 
@@ -705,6 +763,10 @@ php artisan db:optimize --table=users
 -   [x] Cross-module Event/Listener communication
 -   [x] Sanctum SPA Authentication documentation
 -   [x] Database optimization and performance monitoring
+-   [x] Rollback mechanism for module generation
+-   [x] Generation statistics and reporting
+-   [x] YAML comments support
+-   [x] Comprehensive test coverage (Integration, E2E, Snapshot tests)
 
 ## 📚 Additional Documentation
 

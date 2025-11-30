@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Modules\Core\Support\Generators\ModuleGenerationTracker;
 use App\Modules\Core\Support\Generators\ModuleGenerator;
 use App\Modules\Core\Support\YamlModule\YamlModuleParser;
 use Illuminate\Console\Command;
@@ -15,6 +16,13 @@ class ModulesBuildFromYamlCommand extends Command
     protected $signature = 'modules:build-from-yaml {file=modules.yaml}';
 
     protected $description = 'Build multiple modules from a YAML definition file';
+
+    protected ?ModuleGenerationTracker $tracker = null;
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     public function handle(): void
     {
@@ -32,10 +40,25 @@ class ModulesBuildFromYamlCommand extends Command
         $allModules = collect($modules);
         $generator = app(ModuleGenerator::class);
 
+        $successCount = 0;
+        $errorCount = 0;
+        $failedModules = [];
+
         foreach ($modules as $name => $definition) {
             $this->info("Generating module: $name");
 
             try {
+                // Backup RepositoryServiceProvider before modification (only once)
+                static $providerBackedUp = false;
+                if (! $providerBackedUp) {
+                    $tracker = $this->getTracker();
+                    $providerPath = app_path('Providers/RepositoryServiceProvider.php');
+                    if (file_exists($providerPath) && ! isset($tracker->getModifiedFiles()[$providerPath])) {
+                        $tracker->trackModifiedFile($providerPath, file_get_contents($providerPath));
+                        $providerBackedUp = true;
+                    }
+                }
+
                 $fields = array_map(function ($field) {
                     [$name, $type] = explode(':', $field);
 
@@ -52,6 +75,7 @@ class ModulesBuildFromYamlCommand extends Command
                     'enum' => $definition['enum'] ?? false,
                     'notifications' => $definition['notifications'] ?? false,
                     'repositories' => [],
+                    'tracker' => $this->getTracker(),
                 ];
 
                 $options['table'] = Str::plural(Str::snake($name));
@@ -59,14 +83,65 @@ class ModulesBuildFromYamlCommand extends Command
 
                 $generator->generate(Str::studly($name), $fields, $options);
 
+                $successCount++;
                 $this->info("✅ Module '{$name}' generated successfully.");
             } catch (Throwable $e) {
+                $errorCount++;
+                $failedModules[] = $name;
                 $this->error('❌ Error generating module: '.$e->getMessage());
+
+                // Rollback failed module
+                $this->warn("Rolling back module '{$name}'...");
+                $this->getTracker()->rollbackModule(Str::studly($name));
             }
         }
 
         $this->generatePivotMigrations($allModules);
-        $this->info('✅ All modules processed.');
+
+        // Display statistics
+        $stats = $this->getTracker()->getStatistics();
+        $this->newLine();
+        $this->info('📊 Generation Statistics:');
+        $this->table(
+            ['Metric', 'Value'],
+            [
+                ['Modules Generated', $stats['modules']],
+                ['Total Files', $stats['files']],
+                ['Successful', $successCount],
+                ['Failed', $errorCount],
+            ]
+        );
+
+        if (! empty($stats['files_by_module'])) {
+            $this->newLine();
+            $this->info('📁 Files by Module:');
+            $filesTable = [['Module', 'Files']];
+            foreach ($stats['files_by_module'] as $module => $count) {
+                $filesTable[] = [$module, $count];
+            }
+            $this->table(['Module', 'Files'], array_slice($filesTable, 1));
+        }
+
+        if ($errorCount > 0) {
+            $this->newLine();
+            $this->warn("⚠️  {$errorCount} module(s) failed: ".implode(', ', $failedModules));
+            $this->info('Rollback completed for failed modules.');
+            // Restore modified files if all modules failed
+            if ($successCount === 0) {
+                $this->getTracker()->restoreModifiedFiles();
+            }
+        } else {
+            $this->info('✅ All modules processed successfully.');
+        }
+    }
+
+    protected function getTracker(): ModuleGenerationTracker
+    {
+        if ($this->tracker === null) {
+            $this->tracker = app(ModuleGenerationTracker::class);
+        }
+
+        return $this->tracker;
     }
 
     /**
