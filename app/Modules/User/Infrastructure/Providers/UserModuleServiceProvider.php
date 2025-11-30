@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Infrastructure\Providers;
 
+use App\Modules\User\Infrastructure\Models\User;
+use App\Modules\User\Infrastructure\Policies\UserPolicy;
 use App\Modules\User\Infrastructure\Repositories\UserRepository;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -19,7 +22,13 @@ class UserModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->registerPolicies();
         $this->loadRoutes();
+    }
+
+    protected function registerPolicies(): void
+    {
+        Gate::policy(User::class, UserPolicy::class);
     }
 
     protected function loadRoutes(): void

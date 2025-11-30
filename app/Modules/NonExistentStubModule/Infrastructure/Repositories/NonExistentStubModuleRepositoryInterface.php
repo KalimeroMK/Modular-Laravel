@@ -8,10 +8,8 @@ use App\Modules\Core\Interfaces\RepositoryInterface;
 
 /**
  * Repository interface for NonExistentStubModule operations.
- * 
+ *
  * Extends the base RepositoryInterface and can include module-specific methods.
- * 
- * @extends RepositoryInterface
  */
 interface NonExistentStubModuleRepositoryInterface extends RepositoryInterface
 {

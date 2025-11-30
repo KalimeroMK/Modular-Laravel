@@ -48,6 +48,14 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
+    /**
      * Ensure Laravel can find the correct factory for this model.
      */
     /**

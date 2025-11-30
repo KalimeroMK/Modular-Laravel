@@ -15,6 +15,8 @@ use App\Modules\Auth\Application\DTO\LoginRequestDTO;
 use App\Modules\Auth\Application\DTO\RegisterUserDTO;
 use App\Modules\Auth\Infrastructure\Http\Requests\LoginRequest;
 use App\Modules\Auth\Infrastructure\Http\Requests\RegisterRequest;
+use App\Modules\Auth\Infrastructure\Http\Requests\ResetPasswordRequest;
+use App\Modules\Auth\Infrastructure\Http\Requests\SendPasswordResetLinkRequest;
 use App\Modules\Core\Traits\SwaggerTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -249,7 +251,7 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function sendResetLink(Request $request): JsonResponse
+    public function sendResetLink(SendPasswordResetLinkRequest $request): JsonResponse
     {
         $status = $this->sendResetLinkAction->execute($request);
 
@@ -295,7 +297,7 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function resetPassword(Request $request): JsonResponse
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         $status = $this->resetPasswordAction->execute($request);
 

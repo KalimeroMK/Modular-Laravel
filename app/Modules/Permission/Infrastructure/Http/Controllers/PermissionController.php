@@ -63,28 +63,7 @@ class PermissionController extends Controller
     {
         $permissions = $this->getAllPermissionsAction->execute();
 
-        $resourceCollection = PermissionResource::collection($permissions->items());
-        $data = $resourceCollection->response()->getData(true);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Permissions retrieved successfully',
-            'data' => $data['data'] ?? [],
-            'meta' => [
-                'current_page' => $permissions->currentPage(),
-                'last_page' => $permissions->lastPage(),
-                'per_page' => $permissions->perPage(),
-                'total' => $permissions->total(),
-                'from' => $permissions->firstItem(),
-                'to' => $permissions->lastItem(),
-            ],
-            'links' => [
-                'first' => $permissions->url(1),
-                'last' => $permissions->url($permissions->lastPage()),
-                'prev' => $permissions->previousPageUrl(),
-                'next' => $permissions->nextPageUrl(),
-            ],
-        ]);
+        return ApiResponse::paginated($permissions, 'Permissions retrieved successfully', PermissionResource::collection($permissions->items()));
     }
 
     /**
@@ -131,9 +110,7 @@ class PermissionController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $permission = $this->getPermissionByIdAction->execute($id);
-
-        return ApiResponse::success(new PermissionResource($permission), 'Permission retrieved successfully');
+        return ApiResponse::success(new PermissionResource($this->getPermissionByIdAction->execute($id)), 'Permission retrieved successfully');
     }
 
     /**
@@ -182,10 +159,7 @@ class PermissionController extends Controller
      */
     public function store(CreatePermissionRequest $request): JsonResponse
     {
-        $dto = CreatePermissionDTO::fromArray($request->validated());
-        $permission = $this->createPermissionAction->execute($dto);
-
-        return ApiResponse::created(new PermissionResource($permission), 'Permission created successfully');
+        return ApiResponse::created(new PermissionResource($this->createPermissionAction->execute(CreatePermissionDTO::fromArray($request->validated()))), 'Permission created successfully');
     }
 
     /**
@@ -249,10 +223,7 @@ class PermissionController extends Controller
      */
     public function update(int $id, UpdatePermissionRequest $request): JsonResponse
     {
-        $dto = UpdatePermissionDTO::fromArray($request->validated());
-        $updatedPermission = $this->updatePermissionAction->execute($id, $dto);
-
-        return ApiResponse::success(new PermissionResource($updatedPermission), 'Permission updated successfully');
+        return ApiResponse::success(new PermissionResource($this->updatePermissionAction->execute($id, UpdatePermissionDTO::fromArray($request->validated()))), 'Permission updated successfully');
     }
 
     /**

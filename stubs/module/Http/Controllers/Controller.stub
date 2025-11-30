@@ -6,7 +6,6 @@ namespace App\Modules\{{module}}\Infrastructure\Http\Controllers;
 
 use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
-use App\Modules\{{module}}\Infrastructure\Models\{{module}};
 use App\Modules\{{module}}\Infrastructure\Http\Requests\Create{{module}}Request;
 use App\Modules\{{module}}\Infrastructure\Http\Requests\Update{{module}}Request;
 use App\Modules\{{module}}\Infrastructure\Http\Resources\{{module}}Resource;
@@ -79,31 +78,8 @@ class {{module}}Controller extends Controller
      */
     public function index(GetAll{{module}}Action $action): JsonResponse
     {
-        $perPage = (int) request()->get('per_page', 15);
-        ${{moduleVar}}s = $action->execute($perPage);
-
-        $resourceCollection = {{module}}Resource::collection(${{moduleVar}}s->items());
-        $data = $resourceCollection->response()->getData(true);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => '{{module}}s retrieved successfully',
-            'data' => $data['data'] ?? [],
-            'meta' => [
-                'current_page' => ${{moduleVar}}s->currentPage(),
-                'last_page' => ${{moduleVar}}s->lastPage(),
-                'per_page' => ${{moduleVar}}s->perPage(),
-                'total' => ${{moduleVar}}s->total(),
-                'from' => ${{moduleVar}}s->firstItem(),
-                'to' => ${{moduleVar}}s->lastItem(),
-            ],
-            'links' => [
-                'first' => ${{moduleVar}}s->url(1),
-                'last' => ${{moduleVar}}s->url(${{moduleVar}}s->lastPage()),
-                'prev' => ${{moduleVar}}s->previousPageUrl(),
-                'next' => ${{moduleVar}}s->nextPageUrl(),
-            ],
-        ]);
+        ${{moduleVar}}s = $action->execute((int) request()->get('per_page', 15));
+        return ApiResponse::paginated(${{moduleVar}}s, '{{module}}s retrieved successfully', {{module}}Resource::collection(${{moduleVar}}s->items()));
     }
 
     /**
@@ -149,9 +125,7 @@ class {{module}}Controller extends Controller
      */
     public function show(int $id, GetById{{module}}Action $action): JsonResponse
     {
-        ${{moduleVar}} = $action->execute($id);
-
-        return ApiResponse::success(new {{module}}Resource(${{moduleVar}}), '{{module}} retrieved successfully');
+        return ApiResponse::success(new {{module}}Resource($action->execute($id)), '{{module}} retrieved successfully');
     }
 
     /**
@@ -198,9 +172,7 @@ class {{module}}Controller extends Controller
      */
     public function store(Create{{module}}Request $request, Create{{module}}Action $action): JsonResponse
     {
-        $dto = {{module}}DTO::fromRequest($request);
-        ${{moduleVar}} = $action->execute($dto);
-        return ApiResponse::created(new {{module}}Resource(${{moduleVar}}), '{{module}} created successfully');
+        return ApiResponse::created(new {{module}}Resource($action->execute({{module}}DTO::fromRequest($request))), '{{module}} created successfully');
     }
 
     /**
@@ -259,9 +231,7 @@ class {{module}}Controller extends Controller
      */
     public function update(int $id, Update{{module}}Request $request, Update{{module}}Action $action): JsonResponse
     {
-        $dto = {{module}}DTO::fromRequest($request);
-        $updated{{module}} = $action->execute($id, $dto);
-        return ApiResponse::success(new {{module}}Resource($updated{{module}}), '{{module}} updated successfully');
+        return ApiResponse::success(new {{module}}Resource($action->execute($id, {{module}}DTO::fromRequest($request))), '{{module}} updated successfully');
     }
 
     /**

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Unit\Auth;
 
 use App\Modules\Auth\Application\Actions\SendPasswordResetLinkAction;
+use App\Modules\Auth\Infrastructure\Http\Requests\SendPasswordResetLinkRequest;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Mockery;
 use Tests\TestCase;
@@ -22,11 +22,7 @@ class SendPasswordResetLinkActionTest extends TestCase
     public function test_execute_successful_password_reset_link(): void
     {
         // Arrange
-        $request = Mockery::mock(Request::class);
-        $request->shouldReceive('validate')
-            ->with(['email' => 'required|email'])
-            ->andReturn(true);
-
+        $request = Mockery::mock(SendPasswordResetLinkRequest::class);
         $request->shouldReceive('only')
             ->with('email')
             ->andReturn(['email' => 'test@example.com']);
@@ -47,11 +43,7 @@ class SendPasswordResetLinkActionTest extends TestCase
     public function test_execute_user_not_found(): void
     {
         // Arrange
-        $request = Mockery::mock(Request::class);
-        $request->shouldReceive('validate')
-            ->with(['email' => 'required|email'])
-            ->andReturn(true);
-
+        $request = Mockery::mock(SendPasswordResetLinkRequest::class);
         $request->shouldReceive('only')
             ->with('email')
             ->andReturn(['email' => 'test@example.com']);
@@ -71,11 +63,7 @@ class SendPasswordResetLinkActionTest extends TestCase
     public function test_execute_password_reset_failure(): void
     {
         // Arrange
-        $request = Mockery::mock(Request::class);
-        $request->shouldReceive('validate')
-            ->with(['email' => 'required|email'])
-            ->andReturn(true);
-
+        $request = Mockery::mock(SendPasswordResetLinkRequest::class);
         $request->shouldReceive('only')
             ->with('email')
             ->andReturn(['email' => 'test@example.com']);

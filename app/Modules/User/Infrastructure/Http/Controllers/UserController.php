@@ -63,28 +63,7 @@ class UserController extends Controller
     {
         $users = $this->getAllUsersAction->execute();
 
-        $resourceCollection = UserResource::collection($users->items());
-        $data = $resourceCollection->response()->getData(true);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Users retrieved successfully',
-            'data' => $data['data'] ?? [],
-            'meta' => [
-                'current_page' => $users->currentPage(),
-                'last_page' => $users->lastPage(),
-                'per_page' => $users->perPage(),
-                'total' => $users->total(),
-                'from' => $users->firstItem(),
-                'to' => $users->lastItem(),
-            ],
-            'links' => [
-                'first' => $users->url(1),
-                'last' => $users->url($users->lastPage()),
-                'prev' => $users->previousPageUrl(),
-                'next' => $users->nextPageUrl(),
-            ],
-        ]);
+        return ApiResponse::paginated($users, 'Users retrieved successfully', UserResource::collection($users->items()));
     }
 
     /**
@@ -131,9 +110,7 @@ class UserController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $user = $this->getUserByIdAction->execute($id);
-
-        return ApiResponse::success(new UserResource($user), 'User retrieved successfully');
+        return ApiResponse::success(new UserResource($this->getUserByIdAction->execute($id)), 'User retrieved successfully');
     }
 
     /**
@@ -183,10 +160,7 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request): JsonResponse
     {
-        $dto = CreateUserDTO::fromArray($request->validated());
-        $user = $this->createUserAction->execute($dto);
-
-        return ApiResponse::created(new UserResource($user), 'User created successfully');
+        return ApiResponse::created(new UserResource($this->createUserAction->execute(CreateUserDTO::fromArray($request->validated()))), 'User created successfully');
     }
 
     /**
@@ -250,10 +224,7 @@ class UserController extends Controller
      */
     public function update(int $id, UpdateUserRequest $request): JsonResponse
     {
-        $dto = UpdateUserDTO::fromArray($request->validated());
-        $updatedUser = $this->updateUserAction->execute($id, $dto);
-
-        return ApiResponse::success(new UserResource($updatedUser), 'User updated successfully');
+        return ApiResponse::success(new UserResource($this->updateUserAction->execute($id, UpdateUserDTO::fromArray($request->validated()))), 'User updated successfully');
     }
 
     /**

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Auth;
 
 use App\Modules\Auth\Application\Actions\ResetPasswordAction;
-use Illuminate\Http\Request;
+use App\Modules\Auth\Infrastructure\Http\Requests\ResetPasswordRequest;
 use Illuminate\Support\Facades\Password;
 use Mockery;
 use Tests\TestCase;
@@ -21,15 +21,7 @@ class ResetPasswordActionTest extends TestCase
     public function test_execute_successful_password_reset(): void
     {
         // Arrange
-        $request = Mockery::mock(Request::class);
-        $request->shouldReceive('validate')
-            ->with([
-                'token' => 'required',
-                'email' => 'required|email',
-                'password' => 'required|min:8|confirmed',
-            ])
-            ->andReturn(true);
-
+        $request = Mockery::mock(ResetPasswordRequest::class);
         $request->shouldReceive('only')
             ->with('email', 'password', 'password_confirmation', 'token')
             ->andReturn([
@@ -54,15 +46,7 @@ class ResetPasswordActionTest extends TestCase
     public function test_execute_user_not_found(): void
     {
         // Arrange
-        $request = Mockery::mock(Request::class);
-        $request->shouldReceive('validate')
-            ->with([
-                'token' => 'required',
-                'email' => 'required|email',
-                'password' => 'required|min:8|confirmed',
-            ])
-            ->andReturn(true);
-
+        $request = Mockery::mock(ResetPasswordRequest::class);
         $request->shouldReceive('only')
             ->with('email', 'password', 'password_confirmation', 'token')
             ->andReturn([

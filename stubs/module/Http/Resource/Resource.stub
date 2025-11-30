@@ -1,25 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Modules\{{module}}\Infrastructure\Http\Resources;
 
+use App\Modules\{{module}}\Infrastructure\Models\{{module}};
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin {{module}}
+ */
 class {{module}}Resource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray($request): array
     {
         return [
             'id' => $this->id,
+            'name' => $this->name,
             // {{resource_fields}}
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at instanceof \Carbon\Carbon ? $this->created_at->toISOString() : ($this->created_at ? (string) $this->created_at : null),
+            'updated_at' => $this->updated_at instanceof \Carbon\Carbon ? $this->updated_at->toISOString() : ($this->updated_at ? (string) $this->updated_at : null),
         ];
     }
 }

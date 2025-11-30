@@ -61,6 +61,14 @@ class {{module}} extends Model
         return {{module}}Factory::new();
     }
 
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
     // RELATIONSHIPS
     {{relationships}}
 }

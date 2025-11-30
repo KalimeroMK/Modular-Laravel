@@ -6,16 +6,10 @@ namespace App\Providers;
 
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepository;
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepositoryInterface;
-use App\Modules\IntegrationTestModule\Infrastructure\Repositories\IntegrationTestModuleRepository;
-use App\Modules\IntegrationTestModule\Infrastructure\Repositories\IntegrationTestModuleRepositoryInterface;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepository;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepository;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
-use App\Modules\SnapshotTestModule\Infrastructure\Repositories\SnapshotTestModuleRepository;
-use App\Modules\SnapshotTestModule\Infrastructure\Repositories\SnapshotTestModuleRepositoryInterface;
-use App\Modules\TestProduct\Infrastructure\Repositories\TestProductRepository;
-use App\Modules\TestProduct\Infrastructure\Repositories\TestProductRepositoryInterface;
 use App\Modules\User\Infrastructure\Repositories\UserRepository;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -32,9 +26,6 @@ class RepositoryServiceProvider extends ServiceProvider
         AuthRepositoryInterface::class => AuthRepository::class,
         RoleRepositoryInterface::class => RoleRepository::class,
         PermissionRepositoryInterface::class => PermissionRepository::class,
-        IntegrationTestModuleRepositoryInterface::class => IntegrationTestModuleRepository::class,
-        SnapshotTestModuleRepositoryInterface::class => SnapshotTestModuleRepository::class,
-        TestProductRepositoryInterface::class => TestProductRepository::class,
     ];
 
     /**

@@ -4,19 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth\Application\Actions;
 
-use Exception;
-use Illuminate\Http\Request;
+use App\Modules\Auth\Infrastructure\Http\Requests\ResetPasswordRequest;
 use Illuminate\Support\Facades\Password;
 
 class ResetPasswordAction
 {
-    public function execute(Request $request): string
+    public function execute(ResetPasswordRequest $request): string
     {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
@@ -33,9 +27,11 @@ class ResetPasswordAction
 
         // Return error message instead of throwing exception
         // This allows the controller to handle validation errors properly
-        throw new \Illuminate\Validation\ValidationException(
-            \Illuminate\Support\Facades\Validator::make([], []),
-            ['password' => [__($status)]]
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            ['password' => ''],
+            ['password' => ['required']],
+            ['password.required' => __($status)]
         );
+        throw new \Illuminate\Validation\ValidationException($validator);
     }
 }

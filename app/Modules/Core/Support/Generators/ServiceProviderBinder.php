@@ -57,24 +57,28 @@ class ServiceProviderBinder
                 if (preg_match_all($lastProviderPattern, $content, $allMatches, PREG_SET_ORDER)) {
                     // Get the last match
                     $lastMatch = end($allMatches);
-                    $indent = $lastMatch[1];
-                    $lastProvider = $lastMatch[2];
-                    $closing = $lastMatch[4];
+                    if (is_array($lastMatch) && count($lastMatch) >= 5) {
+                        $indent = $lastMatch[1];
+                        $lastProvider = $lastMatch[2];
+                        $closing = $lastMatch[4];
 
-                    // Build replacement: last provider with comma, new provider with comma, then closing on new line
-                    $replacement = "{$indent}{$lastProvider},\n{$indent}{$providerClass},\n{$indent}]{$closing}";
+                        // Build replacement: last provider with comma, new provider with comma, then closing on new line
+                        $replacement = "{$indent}{$lastProvider},\n{$indent}{$providerClass},\n{$indent}]{$closing}";
 
-                    $newContent = str_replace($lastMatch[0], $replacement, $content);
+                        $newContent = str_replace($lastMatch[0], $replacement, $content);
+                    }
                 } else {
                     // Fallback: try to find any provider followed by ])->create()
                     $simplePattern = '/(App\\\\Modules\\\\[^,]+::class)(,?)(\]\)->create\(\))/s';
                     if (preg_match_all($simplePattern, $content, $allSimpleMatches, PREG_SET_ORDER)) {
                         $simpleMatch = end($allSimpleMatches);
-                        $lastProvider = $simpleMatch[1];
-                        $closing = $simpleMatch[3];
+                        if (is_array($simpleMatch) && count($simpleMatch) >= 4) {
+                            $lastProvider = $simpleMatch[1];
+                            $closing = $simpleMatch[3];
 
-                        $replacement = "{$lastProvider},\n        {$providerClass},\n    ]{$closing}";
-                        $newContent = str_replace($simpleMatch[0], $replacement, $content);
+                            $replacement = "{$lastProvider},\n        {$providerClass},\n    ]{$closing}";
+                            $newContent = str_replace($simpleMatch[0], $replacement, $content);
+                        }
                     } else {
                         // Last resort: replace ])->create() with new provider + ])->create()
                         $newContent = str_replace(

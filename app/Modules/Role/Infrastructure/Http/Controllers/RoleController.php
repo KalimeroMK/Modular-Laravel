@@ -63,28 +63,7 @@ class RoleController extends Controller
     {
         $roles = $this->getAllRolesAction->execute();
 
-        $resourceCollection = RoleResource::collection($roles->items());
-        $data = $resourceCollection->response()->getData(true);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Roles retrieved successfully',
-            'data' => $data['data'] ?? [],
-            'meta' => [
-                'current_page' => $roles->currentPage(),
-                'last_page' => $roles->lastPage(),
-                'per_page' => $roles->perPage(),
-                'total' => $roles->total(),
-                'from' => $roles->firstItem(),
-                'to' => $roles->lastItem(),
-            ],
-            'links' => [
-                'first' => $roles->url(1),
-                'last' => $roles->url($roles->lastPage()),
-                'prev' => $roles->previousPageUrl(),
-                'next' => $roles->nextPageUrl(),
-            ],
-        ]);
+        return ApiResponse::paginated($roles, 'Roles retrieved successfully', RoleResource::collection($roles->items()));
     }
 
     /**
@@ -131,9 +110,7 @@ class RoleController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $role = $this->getRoleByIdAction->execute($id);
-
-        return ApiResponse::success(new RoleResource($role), 'Role retrieved successfully');
+        return ApiResponse::success(new RoleResource($this->getRoleByIdAction->execute($id)), 'Role retrieved successfully');
     }
 
     /**
@@ -182,10 +159,7 @@ class RoleController extends Controller
      */
     public function store(CreateRoleRequest $request): JsonResponse
     {
-        $dto = CreateRoleDTO::fromArray($request->validated());
-        $role = $this->createRoleAction->execute($dto);
-
-        return ApiResponse::created(new RoleResource($role), 'Role created successfully');
+        return ApiResponse::created(new RoleResource($this->createRoleAction->execute(CreateRoleDTO::fromArray($request->validated()))), 'Role created successfully');
     }
 
     /**
@@ -249,10 +223,7 @@ class RoleController extends Controller
      */
     public function update(int $id, UpdateRoleRequest $request): JsonResponse
     {
-        $dto = UpdateRoleDTO::fromArray($request->validated());
-        $updatedRole = $this->updateRoleAction->execute($id, $dto);
-
-        return ApiResponse::success(new RoleResource($updatedRole), 'Role updated successfully');
+        return ApiResponse::success(new RoleResource($this->updateRoleAction->execute($id, UpdateRoleDTO::fromArray($request->validated()))), 'Role updated successfully');
     }
 
     /**

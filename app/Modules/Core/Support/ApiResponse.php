@@ -7,6 +7,7 @@ namespace App\Modules\Core\Support;
 use App\Modules\Core\Enums\ErrorCode;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Helper class for standardizing API responses.
@@ -65,16 +66,20 @@ class ApiResponse
      *
      * @param  LengthAwarePaginator<int, mixed>  $paginator  Paginated results
      * @param  string  $message  Success message
+     * @param  AnonymousResourceCollection|null  $resourceCollection  Optional resource collection for data transformation
      * @return JsonResponse JSON response with paginated data structure
      */
     public static function paginated(
         LengthAwarePaginator $paginator,
-        string $message = 'Data retrieved successfully'
+        string $message = 'Data retrieved successfully',
+        ?AnonymousResourceCollection $resourceCollection = null
     ): JsonResponse {
+        $data = $resourceCollection?->response()->getData(true) ?? ['data' => $paginator->items()];
+
         return response()->json([
             'status' => 'success',
             'message' => $message,
-            'data' => $paginator->items(),
+            'data' => $data['data'] ?? [],
             'meta' => [
                 'current_page' => $paginator->currentPage(),
                 'last_page' => $paginator->lastPage(),

@@ -16,12 +16,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
-
 /**
  * NonExistentStubModule Model.
- * 
+ *
  * Represents a nonexistentstubmodule in the database.
- * 
+ *
  * @property int $id
  * @property string $name
  * @property Carbon|null $created_at
@@ -44,28 +43,34 @@ class NonExistentStubModule extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        
+
     ];
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
-        'name'
+        'name',
     ];
 
     /**
      * Create a new factory instance for the model.
-     *
-     * @return NonExistentStubModuleFactory
      */
     public static function newFactory(): NonExistentStubModuleFactory
     {
         return NonExistentStubModuleFactory::new();
     }
 
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
     // RELATIONSHIPS
-    
+
 }

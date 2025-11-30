@@ -18,3 +18,8 @@ parameters:
         - '#Method.*should return.*BelongsToMany.*but returns#'
         - '#Method.*should return.*MorphToMany.*but returns#'
         - '#Function (form|multiselect|outro) not found#'
+        # Ignore errors in NonExistentStubModule (test module)
+        - '#NonExistentStubModule.*#'
+        - '#Call to method execute\(\) on an unknown class#'
+        - '#Call to static method fromRequest\(\) on an unknown class#'
+        - '#Parameter.*of method.*NonExistentStubModule.*#'

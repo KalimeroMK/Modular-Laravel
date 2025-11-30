@@ -13,6 +13,9 @@ class GetUserByIdAction
 
     public function execute(int $id): User
     {
-        return $this->repository->findOrFail($id);
+        /** @var User $user */
+        $user = $this->repository->findOrFail($id);
+
+        return $user;
     }
 }
