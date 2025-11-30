@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\User\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Core\Enums\ErrorCode;
 use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\User\Application\Actions\CreateUserAction;
@@ -17,7 +16,7 @@ use App\Modules\User\Application\DTO\CreateUserDTO;
 use App\Modules\User\Application\DTO\UpdateUserDTO;
 use App\Modules\User\Infrastructure\Http\Requests\CreateUserRequest;
 use App\Modules\User\Infrastructure\Http\Requests\UpdateUserRequest;
-use App\Modules\User\Infrastructure\Models\User;
+use App\Modules\User\Infrastructure\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
@@ -64,7 +63,28 @@ class UserController extends Controller
     {
         $users = $this->getAllUsersAction->execute();
 
-        return ApiResponse::paginated($users, 'Users retrieved successfully');
+        $resourceCollection = UserResource::collection($users->items());
+        $data = $resourceCollection->response()->getData(true);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Users retrieved successfully',
+            'data' => $data['data'] ?? [],
+            'meta' => [
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+                'per_page' => $users->perPage(),
+                'total' => $users->total(),
+                'from' => $users->firstItem(),
+                'to' => $users->lastItem(),
+            ],
+            'links' => [
+                'first' => $users->url(1),
+                'last' => $users->url($users->lastPage()),
+                'prev' => $users->previousPageUrl(),
+                'next' => $users->nextPageUrl(),
+            ],
+        ]);
     }
 
     /**
@@ -109,13 +129,11 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function show(User $user): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        $userDTO = $this->getUserByIdAction->execute($user);
+        $user = $this->getUserByIdAction->execute($id);
 
-        return $userDTO === null
-            ? ApiResponse::error('User not found', ErrorCode::RESOURCE_NOT_FOUND, [], 404)
-            : ApiResponse::success($userDTO->toArray(), 'User retrieved successfully');
+        return ApiResponse::success(new UserResource($user), 'User retrieved successfully');
     }
 
     /**
@@ -168,7 +186,7 @@ class UserController extends Controller
         $dto = CreateUserDTO::fromArray($request->validated());
         $user = $this->createUserAction->execute($dto);
 
-        return ApiResponse::created($user->toArray(), 'User created successfully');
+        return ApiResponse::created(new UserResource($user), 'User created successfully');
     }
 
     /**
@@ -230,12 +248,12 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function update(User $user, UpdateUserRequest $request): JsonResponse
+    public function update(int $id, UpdateUserRequest $request): JsonResponse
     {
         $dto = UpdateUserDTO::fromArray($request->validated());
-        $updatedUser = $this->updateUserAction->execute($user, $dto);
+        $updatedUser = $this->updateUserAction->execute($id, $dto);
 
-        return ApiResponse::success($updatedUser->toArray(), 'User updated successfully');
+        return ApiResponse::success(new UserResource($updatedUser), 'User updated successfully');
     }
 
     /**
@@ -280,9 +298,9 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function destroy(User $user): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        $this->deleteUserAction->execute($user);
+        $this->deleteUserAction->execute($id);
 
         return ApiResponse::success(null, 'User deleted successfully');
     }

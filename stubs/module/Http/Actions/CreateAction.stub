@@ -6,7 +6,6 @@ namespace App\Modules\{{module}}\Application\Actions;
 
 use App\Modules\Core\Exceptions\CreateException;
 use App\Modules\{{module}}\Application\DTO\{{module}}DTO;
-use App\Modules\{{module}}\Application\DTO\{{module}}ResponseDTO;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 {{event_imports}}
@@ -25,10 +24,10 @@ class Create{{class}}Action
      * Execute the action to create a new {{moduleVar}}.
      *
      * @param {{module}}DTO $dto Data transfer object containing {{moduleVar}} data
-     * @return {{module}}ResponseDTO Created {{moduleVar}} response DTO
+     * @return {{class}} Created {{moduleVar}} model
      * @throws CreateException If {{moduleVar}} creation fails
      */
-    public function execute({{module}}DTO $dto): {{module}}ResponseDTO
+    public function execute({{module}}DTO $dto): {{class}}
     {
         /** @var {{class}}|null $result */
         $result = $this->repository->create($dto->toArray());
@@ -39,6 +38,6 @@ class Create{{class}}Action
         
         {{event_dispatch_created}}
         
-        return {{module}}ResponseDTO::from{{class}}($result);
+        return $result;
     }
 }

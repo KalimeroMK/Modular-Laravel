@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Infrastructure\Http\Requests;
 
-use App\Modules\{{module}}\Infrastructure\Models\{{module}};
 use Illuminate\Foundation\Http\FormRequest;
 
 class Update{{module}}Request extends FormRequest
@@ -19,8 +18,7 @@ class Update{{module}}Request extends FormRequest
      */
     public function rules(): array
     {
-        ${{moduleVar}} = $this->route('{{module_lower}}');
-        ${{moduleVar}}Id = ${{moduleVar}} instanceof {{module}} ? ${{moduleVar}}->id : (is_numeric(${{moduleVar}}) ? ${{moduleVar}} : 'NULL');
+        $id = $this->route('id');
 
         return [
             {{validation_rules}}

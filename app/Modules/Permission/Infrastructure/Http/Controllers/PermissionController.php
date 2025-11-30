@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Core\Enums\ErrorCode;
 use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\Permission\Application\Actions\CreatePermissionAction;
@@ -17,7 +16,7 @@ use App\Modules\Permission\Application\DTO\CreatePermissionDTO;
 use App\Modules\Permission\Application\DTO\UpdatePermissionDTO;
 use App\Modules\Permission\Infrastructure\Http\Requests\CreatePermissionRequest;
 use App\Modules\Permission\Infrastructure\Http\Requests\UpdatePermissionRequest;
-use App\Modules\Permission\Infrastructure\Models\Permission;
+use App\Modules\Permission\Infrastructure\Http\Resources\PermissionResource;
 use Illuminate\Http\JsonResponse;
 
 class PermissionController extends Controller
@@ -64,7 +63,28 @@ class PermissionController extends Controller
     {
         $permissions = $this->getAllPermissionsAction->execute();
 
-        return ApiResponse::paginated($permissions, 'Permissions retrieved successfully');
+        $resourceCollection = PermissionResource::collection($permissions->items());
+        $data = $resourceCollection->response()->getData(true);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Permissions retrieved successfully',
+            'data' => $data['data'] ?? [],
+            'meta' => [
+                'current_page' => $permissions->currentPage(),
+                'last_page' => $permissions->lastPage(),
+                'per_page' => $permissions->perPage(),
+                'total' => $permissions->total(),
+                'from' => $permissions->firstItem(),
+                'to' => $permissions->lastItem(),
+            ],
+            'links' => [
+                'first' => $permissions->url(1),
+                'last' => $permissions->url($permissions->lastPage()),
+                'prev' => $permissions->previousPageUrl(),
+                'next' => $permissions->nextPageUrl(),
+            ],
+        ]);
     }
 
     /**
@@ -109,13 +129,11 @@ class PermissionController extends Controller
      *     )
      * )
      */
-    public function show(Permission $permission): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        $permissionDTO = $this->getPermissionByIdAction->execute($permission);
+        $permission = $this->getPermissionByIdAction->execute($id);
 
-        return $permissionDTO === null
-            ? ApiResponse::error('Permission not found', ErrorCode::RESOURCE_NOT_FOUND, [], 404)
-            : ApiResponse::success($permissionDTO->toArray(), 'Permission retrieved successfully');
+        return ApiResponse::success(new PermissionResource($permission), 'Permission retrieved successfully');
     }
 
     /**
@@ -167,7 +185,7 @@ class PermissionController extends Controller
         $dto = CreatePermissionDTO::fromArray($request->validated());
         $permission = $this->createPermissionAction->execute($dto);
 
-        return ApiResponse::created($permission->toArray(), 'Permission created successfully');
+        return ApiResponse::created(new PermissionResource($permission), 'Permission created successfully');
     }
 
     /**
@@ -229,12 +247,12 @@ class PermissionController extends Controller
      *     )
      * )
      */
-    public function update(Permission $permission, UpdatePermissionRequest $request): JsonResponse
+    public function update(int $id, UpdatePermissionRequest $request): JsonResponse
     {
         $dto = UpdatePermissionDTO::fromArray($request->validated());
-        $updatedPermission = $this->updatePermissionAction->execute($permission, $dto);
+        $updatedPermission = $this->updatePermissionAction->execute($id, $dto);
 
-        return ApiResponse::success($updatedPermission->toArray(), 'Permission updated successfully');
+        return ApiResponse::success(new PermissionResource($updatedPermission), 'Permission updated successfully');
     }
 
     /**
@@ -279,9 +297,9 @@ class PermissionController extends Controller
      *     )
      * )
      */
-    public function destroy(Permission $permission): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        $this->deletePermissionAction->execute($permission);
+        $this->deletePermissionAction->execute($id);
 
         return ApiResponse::success(null, 'Permission deleted successfully');
     }

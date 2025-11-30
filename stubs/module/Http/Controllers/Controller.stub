@@ -9,16 +9,18 @@ use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\{{module}}\Infrastructure\Models\{{module}};
 use App\Modules\{{module}}\Infrastructure\Http\Requests\Create{{module}}Request;
 use App\Modules\{{module}}\Infrastructure\Http\Requests\Update{{module}}Request;
+use App\Modules\{{module}}\Infrastructure\Http\Resources\{{module}}Resource;
 use App\Modules\{{module}}\Application\DTO\{{module}}DTO;
 use App\Modules\{{module}}\Application\Actions\Create{{module}}Action;
 use App\Modules\{{module}}\Application\Actions\Update{{module}}Action;
 use App\Modules\{{module}}\Application\Actions\Delete{{module}}Action;
 use App\Modules\{{module}}\Application\Actions\GetAll{{module}}Action;
-use App\Modules\{{module}}\Application\Actions\Get{{module}}ByIdAction;
+use App\Modules\{{module}}\Application\Actions\GetById{{module}}Action;
 use App\Modules\Core\Exceptions\CreateException;
 use App\Modules\Core\Exceptions\DeleteException;
 use App\Modules\Core\Exceptions\UpdateException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controller;
 
 class {{module}}Controller extends Controller
@@ -80,13 +82,34 @@ class {{module}}Controller extends Controller
         $perPage = (int) request()->get('per_page', 15);
         ${{moduleVar}}s = $action->execute($perPage);
 
-        return ApiResponse::paginated(${{moduleVar}}s, '{{module}}s retrieved successfully');
+        $resourceCollection = {{module}}Resource::collection(${{moduleVar}}s->items());
+        $data = $resourceCollection->response()->getData(true);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => '{{module}}s retrieved successfully',
+            'data' => $data['data'] ?? [],
+            'meta' => [
+                'current_page' => ${{moduleVar}}s->currentPage(),
+                'last_page' => ${{moduleVar}}s->lastPage(),
+                'per_page' => ${{moduleVar}}s->perPage(),
+                'total' => ${{moduleVar}}s->total(),
+                'from' => ${{moduleVar}}s->firstItem(),
+                'to' => ${{moduleVar}}s->lastItem(),
+            ],
+            'links' => [
+                'first' => ${{moduleVar}}s->url(1),
+                'last' => ${{moduleVar}}s->url(${{moduleVar}}s->lastPage()),
+                'prev' => ${{moduleVar}}s->previousPageUrl(),
+                'next' => ${{moduleVar}}s->nextPageUrl(),
+            ],
+        ]);
     }
 
     /**
      * Get a specific {{moduleVar}} by ID.
      *
-     * @param {{module}} ${{moduleVar}} The {{moduleVar}} model (resolved via route model binding)
+     * @param int $id The {{moduleVar}} ID
      * @param Get{{module}}ByIdAction $action Action to retrieve {{moduleVar}} by ID
      * @return JsonResponse {{moduleVar}} details
      * 
@@ -124,11 +147,11 @@ class {{module}}Controller extends Controller
      *     )
      * )
      */
-    public function show({{module}} ${{moduleVar}}, Get{{module}}ByIdAction $action): JsonResponse
+    public function show(int $id, GetById{{module}}Action $action): JsonResponse
     {
-        ${{moduleVar}}DTO = $action->execute(${{moduleVar}});
+        ${{moduleVar}} = $action->execute($id);
 
-        return ApiResponse::success(${{moduleVar}}DTO->toArray(), '{{module}} retrieved successfully');
+        return ApiResponse::success(new {{module}}Resource(${{moduleVar}}), '{{module}} retrieved successfully');
     }
 
     /**
@@ -177,13 +200,13 @@ class {{module}}Controller extends Controller
     {
         $dto = {{module}}DTO::fromRequest($request);
         ${{moduleVar}} = $action->execute($dto);
-        return ApiResponse::created(${{moduleVar}}->toArray(), '{{module}} created successfully');
+        return ApiResponse::created(new {{module}}Resource(${{moduleVar}}), '{{module}} created successfully');
     }
 
     /**
      * Update an existing {{moduleVar}}.
      *
-     * @param {{module}} ${{moduleVar}} The {{moduleVar}} model to update (resolved via route model binding)
+     * @param int $id The {{moduleVar}} ID
      * @param Update{{module}}Request $request Validated request containing updated {{moduleVar}} data
      * @param Update{{module}}Action $action Action to update {{moduleVar}}
      * @return JsonResponse Updated {{moduleVar}} details
@@ -234,17 +257,17 @@ class {{module}}Controller extends Controller
      *     )
      * )
      */
-    public function update({{module}} ${{moduleVar}}, Update{{module}}Request $request, Update{{module}}Action $action): JsonResponse
+    public function update(int $id, Update{{module}}Request $request, Update{{module}}Action $action): JsonResponse
     {
         $dto = {{module}}DTO::fromRequest($request);
-        $updated{{module}} = $action->execute(${{moduleVar}}, $dto);
-        return ApiResponse::success($updated{{module}}->toArray(), '{{module}} updated successfully');
+        $updated{{module}} = $action->execute($id, $dto);
+        return ApiResponse::success(new {{module}}Resource($updated{{module}}), '{{module}} updated successfully');
     }
 
     /**
      * Delete a {{moduleVar}}.
      *
-     * @param {{module}} ${{moduleVar}} The {{moduleVar}} model to delete (resolved via route model binding)
+     * @param int $id The {{moduleVar}} ID
      * @param Delete{{module}}Action $action Action to delete {{moduleVar}}
      * @return JsonResponse Success message
      * @throws DeleteException If {{moduleVar}} deletion fails
@@ -282,9 +305,9 @@ class {{module}}Controller extends Controller
      *     )
      * )
      */
-    public function destroy({{module}} ${{moduleVar}}, Delete{{module}}Action $action): JsonResponse
+    public function destroy(int $id, Delete{{module}}Action $action): JsonResponse
     {
-        $action->execute(${{moduleVar}});
+        $action->execute($id);
         return ApiResponse::success(null, '{{module}} deleted successfully');
     }
 }

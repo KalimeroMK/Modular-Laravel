@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Role\Infrastructure\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Core\Enums\ErrorCode;
 use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
 use App\Modules\Role\Application\Actions\CreateRoleAction;
@@ -17,7 +16,7 @@ use App\Modules\Role\Application\DTO\CreateRoleDTO;
 use App\Modules\Role\Application\DTO\UpdateRoleDTO;
 use App\Modules\Role\Infrastructure\Http\Requests\CreateRoleRequest;
 use App\Modules\Role\Infrastructure\Http\Requests\UpdateRoleRequest;
-use App\Modules\Role\Infrastructure\Models\Role;
+use App\Modules\Role\Infrastructure\Http\Resources\RoleResource;
 use Illuminate\Http\JsonResponse;
 
 class RoleController extends Controller
@@ -64,7 +63,28 @@ class RoleController extends Controller
     {
         $roles = $this->getAllRolesAction->execute();
 
-        return ApiResponse::paginated($roles, 'Roles retrieved successfully');
+        $resourceCollection = RoleResource::collection($roles->items());
+        $data = $resourceCollection->response()->getData(true);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Roles retrieved successfully',
+            'data' => $data['data'] ?? [],
+            'meta' => [
+                'current_page' => $roles->currentPage(),
+                'last_page' => $roles->lastPage(),
+                'per_page' => $roles->perPage(),
+                'total' => $roles->total(),
+                'from' => $roles->firstItem(),
+                'to' => $roles->lastItem(),
+            ],
+            'links' => [
+                'first' => $roles->url(1),
+                'last' => $roles->url($roles->lastPage()),
+                'prev' => $roles->previousPageUrl(),
+                'next' => $roles->nextPageUrl(),
+            ],
+        ]);
     }
 
     /**
@@ -109,13 +129,11 @@ class RoleController extends Controller
      *     )
      * )
      */
-    public function show(Role $role): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        $roleDTO = $this->getRoleByIdAction->execute($role);
+        $role = $this->getRoleByIdAction->execute($id);
 
-        return $roleDTO === null
-            ? ApiResponse::error('Role not found', ErrorCode::RESOURCE_NOT_FOUND, [], 404)
-            : ApiResponse::success($roleDTO->toArray(), 'Role retrieved successfully');
+        return ApiResponse::success(new RoleResource($role), 'Role retrieved successfully');
     }
 
     /**
@@ -167,7 +185,7 @@ class RoleController extends Controller
         $dto = CreateRoleDTO::fromArray($request->validated());
         $role = $this->createRoleAction->execute($dto);
 
-        return ApiResponse::created($role->toArray(), 'Role created successfully');
+        return ApiResponse::created(new RoleResource($role), 'Role created successfully');
     }
 
     /**
@@ -229,12 +247,12 @@ class RoleController extends Controller
      *     )
      * )
      */
-    public function update(Role $role, UpdateRoleRequest $request): JsonResponse
+    public function update(int $id, UpdateRoleRequest $request): JsonResponse
     {
         $dto = UpdateRoleDTO::fromArray($request->validated());
-        $updatedRole = $this->updateRoleAction->execute($role, $dto);
+        $updatedRole = $this->updateRoleAction->execute($id, $dto);
 
-        return ApiResponse::success($updatedRole->toArray(), 'Role updated successfully');
+        return ApiResponse::success(new RoleResource($updatedRole), 'Role updated successfully');
     }
 
     /**
@@ -279,9 +297,9 @@ class RoleController extends Controller
      *     )
      * )
      */
-    public function destroy(Role $role): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        $this->deleteRoleAction->execute($role);
+        $this->deleteRoleAction->execute($id);
 
         return ApiResponse::success(null, 'Role deleted successfully');
     }

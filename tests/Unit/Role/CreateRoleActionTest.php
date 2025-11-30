@@ -6,7 +6,6 @@ namespace Tests\Unit\Role;
 
 use App\Modules\Role\Application\Actions\CreateRoleAction;
 use App\Modules\Role\Application\DTO\CreateRoleDTO;
-use App\Modules\Role\Application\DTO\RoleResponseDTO;
 use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use Exception;
@@ -48,9 +47,9 @@ class CreateRoleActionTest extends TestCase
         $result = $action->execute($dto);
 
         // Assert
-        $this->assertInstanceOf(RoleResponseDTO::class, $result);
+        $this->assertInstanceOf(Role::class, $result);
         $this->assertEquals($name, $result->name);
-        $this->assertEquals($guardName, $result->guardName);
+        $this->assertEquals($guardName, $result->guard_name);
     }
 
     public function test_execute_role_creation_failure(): void

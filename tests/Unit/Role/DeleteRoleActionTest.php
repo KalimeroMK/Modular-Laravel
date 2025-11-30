@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Role;
 
 use App\Modules\Role\Application\Actions\DeleteRoleAction;
-use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Mockery;
@@ -22,19 +21,20 @@ class DeleteRoleActionTest extends TestCase
     public function test_execute_successful_role_deletion(): void
     {
         // Arrange
-        $role = Mockery::mock(Role::class);
-        $role->shouldReceive('getKey')->andReturn(1);
+        $roleId = 1;
+        $role = Mockery::mock(\App\Modules\Role\Infrastructure\Models\Role::class);
 
         $roleRepository = Mockery::mock(RoleRepositoryInterface::class);
-        $roleRepository->shouldReceive('delete')->with(1)->andReturn(true);
+        $roleRepository->shouldReceive('findOrFail')->with($roleId)->andReturn($role);
+        $roleRepository->shouldReceive('delete')->with($roleId)->andReturn(true);
 
         // Mock DB query builder chain
         $queryBuilder = Mockery::mock();
-        $queryBuilder->shouldReceive('where')->with('role_id', 1)->andReturnSelf();
+        $queryBuilder->shouldReceive('where')->with('role_id', $roleId)->andReturnSelf();
         $queryBuilder->shouldReceive('delete')->andReturn(1);
 
         $queryBuilder2 = Mockery::mock();
-        $queryBuilder2->shouldReceive('where')->with('role_id', 1)->andReturnSelf();
+        $queryBuilder2->shouldReceive('where')->with('role_id', $roleId)->andReturnSelf();
         $queryBuilder2->shouldReceive('delete')->andReturn(1);
 
         DB::shouldReceive('table')->with('role_has_permissions')->andReturn($queryBuilder);
@@ -43,7 +43,7 @@ class DeleteRoleActionTest extends TestCase
         $action = new DeleteRoleAction($roleRepository);
 
         // Act
-        $result = $action->execute($role);
+        $result = $action->execute($roleId);
 
         // Assert
         $this->assertTrue($result);
@@ -52,19 +52,20 @@ class DeleteRoleActionTest extends TestCase
     public function test_execute_role_deletion_failure(): void
     {
         // Arrange
-        $role = Mockery::mock(Role::class);
-        $role->shouldReceive('getKey')->andReturn(1);
+        $roleId = 1;
+        $role = Mockery::mock(\App\Modules\Role\Infrastructure\Models\Role::class);
 
         $roleRepository = Mockery::mock(RoleRepositoryInterface::class);
-        $roleRepository->shouldReceive('delete')->with(1)->andReturn(false);
+        $roleRepository->shouldReceive('findOrFail')->with($roleId)->andReturn($role);
+        $roleRepository->shouldReceive('delete')->with($roleId)->andReturn(false);
 
         // Mock DB query builder chain
         $queryBuilder = Mockery::mock();
-        $queryBuilder->shouldReceive('where')->with('role_id', 1)->andReturnSelf();
+        $queryBuilder->shouldReceive('where')->with('role_id', $roleId)->andReturnSelf();
         $queryBuilder->shouldReceive('delete')->andReturn(1);
 
         $queryBuilder2 = Mockery::mock();
-        $queryBuilder2->shouldReceive('where')->with('role_id', 1)->andReturnSelf();
+        $queryBuilder2->shouldReceive('where')->with('role_id', $roleId)->andReturnSelf();
         $queryBuilder2->shouldReceive('delete')->andReturn(1);
 
         DB::shouldReceive('table')->with('role_has_permissions')->andReturn($queryBuilder);
@@ -73,7 +74,7 @@ class DeleteRoleActionTest extends TestCase
         $action = new DeleteRoleAction($roleRepository);
 
         // Act
-        $result = $action->execute($role);
+        $result = $action->execute($roleId);
 
         // Assert
         $this->assertFalse($result);

@@ -6,7 +6,6 @@ namespace Tests\Unit\User;
 
 use App\Modules\User\Application\Actions\CreateUserAction;
 use App\Modules\User\Application\DTO\CreateUserDTO;
-use App\Modules\User\Application\DTO\UserResponseDTO;
 use App\Modules\User\Infrastructure\Models\User;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Exception;
@@ -55,7 +54,7 @@ class CreateUserActionTest extends TestCase
         $result = $action->execute($dto);
 
         // Assert
-        $this->assertInstanceOf(UserResponseDTO::class, $result);
+        $this->assertInstanceOf(User::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($email, $result->email);
     }

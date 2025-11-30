@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Application\Actions;
 
 use App\Modules\Core\Exceptions\UpdateException;
-use App\Modules\Permission\Application\DTO\PermissionResponseDTO;
 use App\Modules\Permission\Application\DTO\UpdatePermissionDTO;
 use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
@@ -16,17 +15,23 @@ class UpdatePermissionAction
         protected PermissionRepositoryInterface $permissionRepository,
     ) {}
 
-    public function execute(Permission $permission, UpdatePermissionDTO $dto): PermissionResponseDTO
+    public function execute(int $id, UpdatePermissionDTO $dto): Permission
     {
+        // Validate that the permission exists
+        $this->permissionRepository->findOrFail($id);
+
         $updateData = $dto->toArray();
 
-        /** @var Permission $updatedPermission */
-        $updatedPermission = $this->permissionRepository->update((int) $permission->getKey(), $updateData);
+        // Only include non-null values in the update
+        $updateData = array_filter($updateData, fn ($value) => $value !== null);
+
+        /** @var Permission|null $updatedPermission */
+        $updatedPermission = $this->permissionRepository->update($id, $updateData);
 
         if ($updatedPermission === null) {
             throw new UpdateException('Failed to update permission');
         }
 
-        return PermissionResponseDTO::fromPermission($updatedPermission);
+        return $updatedPermission;
     }
 }

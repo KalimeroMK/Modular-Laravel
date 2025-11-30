@@ -6,7 +6,7 @@ namespace App\Modules\Permission\Application\Actions;
 
 use App\Modules\Core\Exceptions\CreateException;
 use App\Modules\Permission\Application\DTO\CreatePermissionDTO;
-use App\Modules\Permission\Application\DTO\PermissionResponseDTO;
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 
 class CreatePermissionAction
@@ -15,20 +15,20 @@ class CreatePermissionAction
         protected PermissionRepositoryInterface $permissionRepository,
     ) {}
 
-    public function execute(CreatePermissionDTO $dto): PermissionResponseDTO
+    public function execute(CreatePermissionDTO $dto): Permission
     {
         $permissionData = [
             'name' => $dto->name,
             'guard_name' => $dto->guardName,
         ];
 
-        /** @var \App\Modules\Permission\Infrastructure\Models\Permission $permission */
+        /** @var Permission|null $permission */
         $permission = $this->permissionRepository->create($permissionData);
 
         if ($permission === null) {
             throw new CreateException('Failed to create permission');
         }
 
-        return PermissionResponseDTO::fromPermission($permission);
+        return $permission;
     }
 }

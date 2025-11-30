@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Application\Actions;
 
-use App\Modules\Permission\Application\DTO\PermissionResponseDTO;
 use App\Modules\Permission\Infrastructure\Models\Permission;
+use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 
 class GetPermissionByIdAction
 {
-    public function __construct() {}
+    public function __construct(protected PermissionRepositoryInterface $repository) {}
 
-    public function execute(Permission $permission): ?PermissionResponseDTO
+    public function execute(int $id): Permission
     {
-        // Model is already resolved via route model binding, no need to query again
-        return PermissionResponseDTO::fromPermission($permission);
+        return $this->repository->findOrFail($id);
     }
 }

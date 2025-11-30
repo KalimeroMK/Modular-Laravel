@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
-use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 {{event_imports}}
 
@@ -14,17 +13,13 @@ class Delete{{class}}Action
         protected {{class}}RepositoryInterface ${{moduleVar}}Repository,
     ) {}
 
-    public function execute({{class}} ${{moduleVar}}): bool
+    public function execute(int $id): bool
     {
-        // Get the {{moduleVar}} ID - route model binding ensures the model exists
-        ${{moduleVar}}Id = (int) ${{moduleVar}}->getKey();
-        
-        if (${{moduleVar}}Id === 0) {
-            return false;
-        }
+        // Validate that the {{moduleVar}} exists
+        $this->{{moduleVar}}Repository->findOrFail($id);
         
         {{event_dispatch_deleted}}
         
-        return $this->{{moduleVar}}Repository->delete(${{moduleVar}}Id);
+        return $this->{{moduleVar}}Repository->delete($id);
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Application\Actions;
 
-use App\Modules\User\Infrastructure\Models\User;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 
 class DeleteUserAction
@@ -13,15 +12,11 @@ class DeleteUserAction
         protected UserRepositoryInterface $userRepository,
     ) {}
 
-    public function execute(User $user): bool
+    public function execute(int $id): bool
     {
-        // Get the user ID - route model binding ensures the model exists
-        $userId = (int) $user->getKey();
+        // Validate that the user exists
+        $this->userRepository->findOrFail($id);
 
-        if ($userId === 0) {
-            return false;
-        }
-
-        return $this->userRepository->delete($userId);
+        return $this->userRepository->delete($id);
     }
 }

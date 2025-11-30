@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Application\Actions;
 
-use App\Modules\Role\Application\DTO\RoleResponseDTO;
 use App\Modules\Role\Infrastructure\Models\Role;
+use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 
 class GetRoleByIdAction
 {
-    public function __construct() {}
+    public function __construct(protected RoleRepositoryInterface $repository) {}
 
-    public function execute(Role $role): ?RoleResponseDTO
+    public function execute(int $id): Role
     {
-        // Model is already resolved via route model binding, no need to query again
-        return RoleResponseDTO::fromRole($role);
+        return $this->repository->findOrFail($id);
     }
 }

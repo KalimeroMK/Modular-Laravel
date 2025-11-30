@@ -6,7 +6,7 @@ namespace App\Modules\User\Application\Actions;
 
 use App\Modules\Core\Exceptions\CreateException;
 use App\Modules\User\Application\DTO\CreateUserDTO;
-use App\Modules\User\Application\DTO\UserResponseDTO;
+use App\Modules\User\Infrastructure\Models\User;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,7 +16,7 @@ class CreateUserAction
         protected UserRepositoryInterface $userRepository,
     ) {}
 
-    public function execute(CreateUserDTO $dto): UserResponseDTO
+    public function execute(CreateUserDTO $dto): User
     {
         $userData = [
             'name' => $dto->name,
@@ -25,13 +25,13 @@ class CreateUserAction
             'email_verified_at' => $dto->emailVerifiedAt,
         ];
 
-        /** @var \App\Modules\User\Infrastructure\Models\User $user */
+        /** @var User|null $user */
         $user = $this->userRepository->create($userData);
 
         if ($user === null) {
             throw new CreateException('Failed to create user');
         }
 
-        return UserResponseDTO::fromUser($user);
+        return $user;
     }
 }

@@ -4,29 +4,24 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
-use App\Modules\{{module}}\Application\DTO\{{module}}ResponseDTO;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
+use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 
 /**
  * Action to get a {{moduleVar}} by ID.
- * The model is already resolved via route model binding.
  */
 class GetById{{class}}Action
 {
-    /**
-     * Create a new action instance.
-     */
-    public function __construct() {}
+    public function __construct(protected {{class}}RepositoryInterface $repository) {}
 
     /**
      * Execute the action to get a {{moduleVar}} by ID.
      *
-     * @param {{class}} ${{moduleVar}} The {{moduleVar}} model (resolved via route model binding)
-     * @return {{module}}ResponseDTO|null {{moduleVar}} response DTO or null if not found
+     * @param int $id The {{moduleVar}} ID
+     * @return {{class}} {{moduleVar}} model
      */
-    public function execute({{class}} ${{moduleVar}}): ?{{module}}ResponseDTO
+    public function execute(int $id): {{class}}
     {
-        // Model is already resolved via route model binding, no need to query again
-        return {{module}}ResponseDTO::from{{class}}(${{moduleVar}});
+        return $this->repository->findOrFail($id);
     }
 }

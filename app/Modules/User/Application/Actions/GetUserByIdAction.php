@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Application\Actions;
 
-use App\Modules\User\Application\DTO\UserResponseDTO;
 use App\Modules\User\Infrastructure\Models\User;
+use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 
 class GetUserByIdAction
 {
-    public function __construct() {}
+    public function __construct(protected UserRepositoryInterface $repository) {}
 
-    public function execute(User $user): ?UserResponseDTO
+    public function execute(int $id): User
     {
-        // Model is already resolved via route model binding, no need to query again
-        return UserResponseDTO::fromUser($user);
+        return $this->repository->findOrFail($id);
     }
 }

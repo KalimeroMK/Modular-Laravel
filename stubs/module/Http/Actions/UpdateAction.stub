@@ -6,7 +6,6 @@ namespace App\Modules\{{module}}\Application\Actions;
 
 use App\Modules\Core\Exceptions\UpdateException;
 use App\Modules\{{module}}\Application\DTO\{{module}}DTO;
-use App\Modules\{{module}}\Application\DTO\{{module}}ResponseDTO;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 {{event_imports}}
@@ -24,15 +23,21 @@ class Update{{class}}Action
     /**
      * Execute the action to update a {{moduleVar}}.
      *
-     * @param {{class}} ${{moduleVar}} The {{moduleVar}} model to update (resolved via route model binding)
+     * @param int $id The {{moduleVar}} ID
      * @param {{module}}DTO $dto Data transfer object containing updated {{moduleVar}} data
-     * @return {{module}}ResponseDTO Updated {{moduleVar}} response DTO
+     * @return {{class}} Updated {{moduleVar}} model
      * @throws UpdateException If {{moduleVar}} update fails
      */
-    public function execute({{class}} ${{moduleVar}}, {{module}}DTO $dto): {{module}}ResponseDTO
+    public function execute(int $id, {{module}}DTO $dto): {{class}}
     {
+        // Validate that the {{moduleVar}} exists
+        $this->repository->findOrFail($id);
+        
+        // Only include non-null values in the update
+        $updateData = array_filter($dto->toArray(), fn ($value) => $value !== null);
+        
         /** @var {{class}}|null $result */
-        $result = $this->repository->update((int) ${{moduleVar}}->id, $dto->toArray());
+        $result = $this->repository->update($id, $updateData);
         
         if ($result === null) {
             throw new UpdateException('Failed to update {{moduleVar}}');
@@ -40,6 +45,6 @@ class Update{{class}}Action
         
         {{event_dispatch_updated}}
         
-        return {{module}}ResponseDTO::from{{class}}($result);
+        return $result;
     }
 }

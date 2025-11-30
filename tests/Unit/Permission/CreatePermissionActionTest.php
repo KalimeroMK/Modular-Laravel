@@ -6,7 +6,6 @@ namespace Tests\Unit\Permission;
 
 use App\Modules\Permission\Application\Actions\CreatePermissionAction;
 use App\Modules\Permission\Application\DTO\CreatePermissionDTO;
-use App\Modules\Permission\Application\DTO\PermissionResponseDTO;
 use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Exception;
@@ -48,9 +47,9 @@ class CreatePermissionActionTest extends TestCase
         $result = $action->execute($dto);
 
         // Assert
-        $this->assertInstanceOf(PermissionResponseDTO::class, $result);
+        $this->assertInstanceOf(Permission::class, $result);
         $this->assertEquals($name, $result->name);
-        $this->assertEquals($guardName, $result->guardName);
+        $this->assertEquals($guardName, $result->guard_name);
     }
 
     public function test_execute_permission_creation_failure(): void

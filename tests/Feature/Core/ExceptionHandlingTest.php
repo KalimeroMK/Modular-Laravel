@@ -41,20 +41,16 @@ class ExceptionHandlingTest extends TestCase
 
     public function test_model_not_found_exception_returns_404(): void
     {
-        // Route model binding should throw ModelNotFoundException for non-existent IDs
+        // findOrFail() should throw ModelNotFoundException for non-existent IDs
         // This is handled by the exception handler in bootstrap/app.php
         $response = $this->getJson('/api/v1/users/99999');
 
-        // Route model binding should return 404, but if it doesn't, we skip this test
-        // as it's a framework-level behavior that may vary
-        if ($response->getStatusCode() === 404) {
-            $data = json_decode($response->getContent(), true);
-            $this->assertEquals('error', $data['status']);
-            $this->assertEquals('RESOURCE_NOT_FOUND', $data['error_code']);
-        } else {
-            // If route model binding doesn't throw exception, skip this assertion
-            $this->markTestSkipped('Route model binding behavior may vary');
-        }
+        // findOrFail() should return 404
+        $response->assertStatus(404);
+        $data = json_decode($response->getContent(), true);
+        $this->assertEquals('error', $data['status']);
+        $this->assertEquals('RESOURCE_NOT_FOUND', $data['error_code']);
+        $this->assertEquals('Resource not found', $data['message']);
     }
 
     public function test_validation_exception_returns_422_with_errors(): void

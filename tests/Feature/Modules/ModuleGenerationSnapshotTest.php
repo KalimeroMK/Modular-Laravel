@@ -129,7 +129,7 @@ class ModuleGenerationSnapshotTest extends TestCase
         // Verify action structure
         $this->assertStringContainsString("class GetById{$this->testModuleName}Action", $content);
         $this->assertStringContainsString('public function execute', $content);
-        $this->assertStringContainsString("{$this->testModuleName}ResponseDTO", $content);
+        $this->assertStringContainsString(": {$this->testModuleName}", $content); // Should return model, not ResponseDTO
     }
 
     public function test_generated_dto_matches_expected_structure(): void
