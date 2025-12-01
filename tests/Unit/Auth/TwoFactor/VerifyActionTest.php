@@ -26,13 +26,10 @@ class VerifyActionTest extends TestCase
     public function test_execute_successful_verification(): void
     {
         // Arrange
-        $user = User::factory()->create();
+        $user = User::factory()->create(['two_factor_secret' => 'encrypted_secret']);
         $dto = new VerificationDTO('123456');
 
         $twoFactorService = Mockery::mock(ServiceInterface::class);
-        $twoFactorService->shouldReceive('isTwoFactorEnabled')
-            ->with($user)
-            ->andReturn(true);
         $twoFactorService->shouldReceive('verifyTwoFactor')
             ->with($user, $dto)
             ->andReturn(true);
@@ -46,22 +43,19 @@ class VerifyActionTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_execute_throws_exception_when_not_enabled(): void
+    public function test_execute_throws_exception_when_secret_not_set(): void
     {
         // Arrange
-        $user = User::factory()->create();
+        $user = User::factory()->create(['two_factor_secret' => null]);
         $dto = new VerificationDTO('123456');
 
         $twoFactorService = Mockery::mock(ServiceInterface::class);
-        $twoFactorService->shouldReceive('isTwoFactorEnabled')
-            ->with($user)
-            ->andReturn(false);
 
         $action = new VerifyAction($twoFactorService);
 
         // Act & Assert
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Two-factor authentication is not enabled for this user.');
+        $this->expectExceptionMessage('Two-factor authentication secret is not set. Please run setup first.');
         $action->execute($user, $dto);
     }
 }

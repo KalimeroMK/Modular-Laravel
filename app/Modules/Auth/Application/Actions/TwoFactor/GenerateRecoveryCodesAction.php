@@ -8,6 +8,7 @@ use App\Modules\Auth\Application\DTO\TwoFactor\RecoveryCodesDTO;
 use App\Modules\Auth\Application\Services\TwoFactor\ServiceInterface;
 use App\Modules\User\Infrastructure\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Crypt;
 
 class GenerateRecoveryCodesAction
 {
@@ -25,7 +26,7 @@ class GenerateRecoveryCodesAction
 
         // Update user with new recovery codes
         $user->update([
-            'two_factor_recovery_codes' => encrypt($recoveryCodes->toArray()),
+            'two_factor_recovery_codes' => Crypt::encrypt($recoveryCodes->toArray()),
         ]);
 
         return $recoveryCodes;

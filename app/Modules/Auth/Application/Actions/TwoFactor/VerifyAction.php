@@ -17,8 +17,9 @@ class VerifyAction
 
     public function execute(User $user, VerificationDTO $dto): bool
     {
-        if (! $this->twoFactorService->isTwoFactorEnabled($user)) {
-            throw new Exception('Two-factor authentication is not enabled for this user.');
+        // Allow verification even if 2FA is not yet confirmed (for initial setup)
+        if (! $user->two_factor_secret) {
+            throw new Exception('Two-factor authentication secret is not set. Please run setup first.');
         }
 
         return $this->twoFactorService->verifyTwoFactor($user, $dto);

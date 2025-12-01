@@ -51,8 +51,11 @@ class TwoFactorAuthenticationTest extends TestCase
 
     public function test_cannot_setup_two_factor_when_already_enabled(): void
     {
-        // Arrange - Enable 2FA first
+        // Arrange - Setup and verify 2FA to enable it
         $this->postJson('/api/v1/auth/2fa/setup');
+        // Note: In real scenario, we would verify with a valid code
+        // For this test, we'll manually set confirmed_at to simulate enabled state
+        $this->user->update(['two_factor_confirmed_at' => now()]);
 
         // Act - Try to setup again
         $response = $this->postJson('/api/v1/auth/2fa/setup');
@@ -89,13 +92,25 @@ class TwoFactorAuthenticationTest extends TestCase
 
         // Assert
         $response->assertStatus(200)
-            ->assertJsonStructure(['verified']);
+            ->assertJsonStructure(['verified'])
+            ->assertJson(['verified' => true]);
+
+        // Verify that 2FA is now enabled
+        $this->user->refresh();
+        $this->assertNotNull($this->user->two_factor_confirmed_at);
+        $statusResponse = $this->getJson('/api/v1/auth/2fa/status');
+        $statusResponse->assertJson(['enabled' => true]);
     }
 
     public function test_can_disable_two_factor_authentication(): void
     {
-        // Arrange - Setup 2FA first
-        $this->postJson('/api/v1/auth/2fa/setup');
+        // Arrange - Setup and enable 2FA first
+        $setupResponse = $this->postJson('/api/v1/auth/2fa/setup');
+        $recoveryCodes = explode(',', $setupResponse->json('recovery_codes'));
+        // Verify to enable 2FA
+        $this->postJson('/api/v1/auth/2fa/verify', [
+            'recovery_code' => $recoveryCodes[0],
+        ]);
 
         // Act
         $response = $this->deleteJson('/api/v1/auth/2fa/disable');
@@ -103,12 +118,21 @@ class TwoFactorAuthenticationTest extends TestCase
         // Assert
         $response->assertStatus(200)
             ->assertJson(['message' => 'Two-factor authentication disabled successfully']);
+
+        // Verify that 2FA is now disabled
+        $statusResponse = $this->getJson('/api/v1/auth/2fa/status');
+        $statusResponse->assertJson(['enabled' => false]);
     }
 
     public function test_can_generate_new_recovery_codes(): void
     {
-        // Arrange - Setup 2FA first
-        $this->postJson('/api/v1/auth/2fa/setup');
+        // Arrange - Setup and enable 2FA first
+        $setupResponse = $this->postJson('/api/v1/auth/2fa/setup');
+        $recoveryCodes = explode(',', $setupResponse->json('recovery_codes'));
+        // Verify to enable 2FA
+        $this->postJson('/api/v1/auth/2fa/verify', [
+            'recovery_code' => $recoveryCodes[0],
+        ]);
 
         // Act
         $response = $this->postJson('/api/v1/auth/2fa/recovery-codes');
@@ -151,5 +175,44 @@ class TwoFactorAuthenticationTest extends TestCase
         $this->postJson('/api/v1/auth/2fa/verify', ['recovery_code' => 'short'])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['recovery_code']);
+    }
+
+    public function test_complete_2fa_enable_flow(): void
+    {
+        // Step 1: Check initial status (should be disabled)
+        $statusResponse = $this->getJson('/api/v1/auth/2fa/status');
+        $statusResponse->assertStatus(200)
+            ->assertJson(['enabled' => false]);
+
+        // Step 2: Setup 2FA (generates secret and QR code)
+        $setupResponse = $this->postJson('/api/v1/auth/2fa/setup');
+        $setupResponse->assertStatus(200)
+            ->assertJsonStructure([
+                'secret_key',
+                'qr_code_url',
+                'recovery_codes',
+            ]);
+
+        // Step 3: Status should still be disabled (not yet verified)
+        $statusResponse = $this->getJson('/api/v1/auth/2fa/status');
+        $statusResponse->assertStatus(200)
+            ->assertJson(['enabled' => false]);
+
+        // Step 4: Verify with recovery code (enables 2FA)
+        $recoveryCodes = explode(',', $setupResponse->json('recovery_codes'));
+        $verifyResponse = $this->postJson('/api/v1/auth/2fa/verify', [
+            'recovery_code' => $recoveryCodes[0],
+        ]);
+        $verifyResponse->assertStatus(200)
+            ->assertJson(['verified' => true]);
+
+        // Step 5: Status should now be enabled
+        $statusResponse = $this->getJson('/api/v1/auth/2fa/status');
+        $statusResponse->assertStatus(200)
+            ->assertJson(['enabled' => true]);
+
+        // Step 6: Verify user model has confirmed_at set
+        $this->user->refresh();
+        $this->assertNotNull($this->user->two_factor_confirmed_at);
     }
 }

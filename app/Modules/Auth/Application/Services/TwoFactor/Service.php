@@ -52,9 +52,11 @@ class Service implements ServiceInterface
         $recoveryCodes = $this->generateRecoveryCodes();
 
         // Store encrypted secret key and recovery codes
+        // Reset confirmed_at to allow re-verification
         $user->update([
             'two_factor_secret' => Crypt::encrypt($secretKey),
             'two_factor_recovery_codes' => Crypt::encrypt($recoveryCodes->toArray()),
+            'two_factor_confirmed_at' => null,
         ]);
 
         return new SetupDTO(
@@ -72,13 +74,24 @@ class Service implements ServiceInterface
 
         $secretKey = Crypt::decrypt($user->two_factor_secret);
 
+        $verified = false;
+
         // Check if it's a recovery code
         if ($dto->recoveryCode) {
-            return $this->verifyRecoveryCode($user, $dto->recoveryCode);
+            $verified = $this->verifyRecoveryCode($user, $dto->recoveryCode);
+        } else {
+            // Verify TOTP code
+            $verified = (bool) $this->google2fa->verifyKey($secretKey, $dto->code);
         }
 
-        // Verify TOTP code
-        return (bool) $this->google2fa->verifyKey($secretKey, $dto->code);
+        // If verification is successful and 2FA is not yet confirmed, enable it
+        if ($verified && ! $user->two_factor_confirmed_at) {
+            $user->update([
+                'two_factor_confirmed_at' => now(),
+            ]);
+        }
+
+        return $verified;
     }
 
     public function disableTwoFactor(User $user): bool
@@ -86,6 +99,7 @@ class Service implements ServiceInterface
         $user->update([
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
+            'two_factor_confirmed_at' => null,
         ]);
 
         return true;
@@ -93,7 +107,7 @@ class Service implements ServiceInterface
 
     public function isTwoFactorEnabled(User $user): bool
     {
-        return ! empty($user->two_factor_secret);
+        return ! empty($user->two_factor_secret) && ! empty($user->two_factor_confirmed_at);
     }
 
     public function verifyRecoveryCode(User $user, string $recoveryCode): bool
