@@ -23,7 +23,7 @@ cd modular-laravel
 # Access the application
 # Web: http://localhost:8080
 # API Docs: http://localhost:8080/api/documentation
-# Database: localhost:3306 (homestead/secret)
+# Database: localhost:3301 (homestead/secret)
 ```
 
 ### Docker Commands
@@ -880,7 +880,7 @@ This starter kit includes full support for Docker. You can spin up the app, data
 6. **MySQL connection (host machine)**:
 
 -   **Host**: `127.0.0.1`
--   **Port**: `3306`
+-   **Port**: `3301`
 -   **User**: `homestead`
 -   **Password**: `secret`
 -   **Database**: `homestead`
