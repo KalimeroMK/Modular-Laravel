@@ -506,6 +506,46 @@ $product->tags()->attach([1, 2, 3]);
 $taggedProducts = $tag->products;
 ```
 
+## 🚀 Eager Loading & N+1 Prevention
+
+The starter kit **automatically prevents N+1 queries** in development using Laravel's native features:
+
+```php
+// Enabled in AppServiceProvider (development only)
+Model::preventLazyLoading(!$this->app->isProduction());
+```
+
+### How it works:
+
+```php
+// ❌ This throws exception in development
+$product = Product::find(1);
+echo $product->category->name; // LazyLoadingViolationException
+
+// ✅ Correct - eager load relationships
+$product = Product::with('category')->find(1);
+echo $product->category->name; // Works!
+```
+
+### Default Eager Loading in Models:
+
+```php
+class Product extends Model
+{
+    // Always load these relationships
+    protected $with = ['category', 'brand'];
+}
+```
+
+### In Repositories:
+
+```php
+// All methods support eager loading
+$products = $repository->all(['category', 'images']);
+$product = $repository->find($id, ['category', 'reviews']);
+$products = $repository->paginate(15, ['category', 'brand']);
+```
+
 ## 📦 Module Generation via YAML
 
 In addition to the `php artisan make:module` command, you can now generate multiple modules at once using a YAML configuration file.
