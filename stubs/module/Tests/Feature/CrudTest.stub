@@ -5,12 +5,23 @@ declare(strict_types=1);
 namespace Tests\Feature\Modules\{{module}};
 
 use App\Modules\{{module}}\Infrastructure\Models\{{module}};
+use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
+use Override;
 use Tests\TestCase;
 
 class {{module}}CrudTest extends TestCase
 {
     use RefreshDatabase;
+
+    #[Override]
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+    }
 
     public function test_can_create_{{module_lower}}(): void
     {
@@ -18,8 +29,16 @@ class {{module}}CrudTest extends TestCase
 {{store_data}}
         ];
         $response = $this->postJson('/api/v1/{{module_lower}}s', $payload);
-        $response->assertStatus(200)
-            ->assertJsonStructure(['data' => ['id', 'created_at', 'updated_at']]);
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data' => ['id', 'created_at', 'updated_at'],
+            ])
+            ->assertJson([
+                'status' => 'success',
+                'message' => '{{module}} created successfully',
+            ]);
         $this->assertDatabaseHas('{{table}}', $payload);
     }
 
@@ -28,7 +47,17 @@ class {{module}}CrudTest extends TestCase
         {{module}}::factory()->count(2)->create();
         $response = $this->getJson('/api/v1/{{module_lower}}s');
         $response->assertStatus(200)
-            ->assertJsonStructure(['data' => [['id', 'created_at', 'updated_at']]]);
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data',
+                'meta',
+                'links',
+            ])
+            ->assertJson([
+                'status' => 'success',
+                'message' => '{{module}}s retrieved successfully',
+            ]);
     }
 
     public function test_can_show_{{module_lower}}(): void
@@ -36,7 +65,15 @@ class {{module}}CrudTest extends TestCase
         ${{module_lower}} = {{module}}::factory()->create();
         $response = $this->getJson("/api/v1/{{module_lower}}s/{${{module_lower}}->id}");
         $response->assertStatus(200)
-            ->assertJsonStructure(['data' => ['id', 'created_at', 'updated_at']]);
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data' => ['id', 'created_at', 'updated_at'],
+            ])
+            ->assertJson([
+                'status' => 'success',
+                'message' => '{{module}} retrieved successfully',
+            ]);
     }
 
     public function test_can_update_{{module_lower}}(): void
@@ -47,7 +84,15 @@ class {{module}}CrudTest extends TestCase
         ];
         $response = $this->putJson("/api/v1/{{module_lower}}s/{${{module_lower}}->id}", $payload);
         $response->assertStatus(200)
-            ->assertJsonStructure(['data' => ['id', 'created_at', 'updated_at']]);
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data' => ['id', 'created_at', 'updated_at'],
+            ])
+            ->assertJson([
+                'status' => 'success',
+                'message' => '{{module}} updated successfully',
+            ]);
         $this->assertDatabaseHas('{{table}}', array_merge(['id' => ${{module_lower}}->id], $payload));
     }
 
@@ -56,7 +101,15 @@ class {{module}}CrudTest extends TestCase
         ${{module_lower}} = {{module}}::factory()->create();
         $response = $this->deleteJson("/api/v1/{{module_lower}}s/{${{module_lower}}->id}");
         $response->assertStatus(200)
-            ->assertJson(['message' => '{{module}} deleted']);
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data',
+            ])
+            ->assertJson([
+                'status' => 'success',
+                'message' => '{{module}} deleted successfully',
+            ]);
         $this->assertDatabaseMissing('{{table}}', ['id' => ${{module_lower}}->id]);
     }
 }
