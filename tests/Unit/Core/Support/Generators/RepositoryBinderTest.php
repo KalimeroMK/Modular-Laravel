@@ -6,12 +6,14 @@ namespace Tests\Unit\Core\Support\Generators;
 
 use App\Modules\Core\Support\Generators\RepositoryBinder;
 use Illuminate\Filesystem\Filesystem;
+use Override;
 use Tests\TestCase;
 
 class RepositoryBinderTest extends TestCase
 {
     private Filesystem $files;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

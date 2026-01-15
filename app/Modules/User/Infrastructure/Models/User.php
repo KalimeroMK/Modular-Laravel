@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Override;
 
 class User extends Authenticatable
 {
@@ -50,6 +51,7 @@ class User extends Authenticatable
     /**
      * Get the route key for the model.
      */
+    #[Override]
     public function getRouteKeyName(): string
     {
         return 'id';

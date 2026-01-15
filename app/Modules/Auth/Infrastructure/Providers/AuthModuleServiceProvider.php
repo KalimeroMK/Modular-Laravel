@@ -12,10 +12,12 @@ use App\Modules\Auth\Infrastructure\Repositories\AuthRepository;
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepositoryInterface;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Override;
 use PragmaRX\Google2FA\Google2FA;
 
 class AuthModuleServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         // Bind interfaces to implementations
@@ -24,9 +26,7 @@ class AuthModuleServiceProvider extends ServiceProvider
 
         // Bind 2FA service
         $this->app->bind(ServiceInterface::class, Service::class);
-        $this->app->singleton(Google2FA::class, function () {
-            return new Google2FA();
-        });
+        $this->app->singleton(Google2FA::class, fn () => new Google2FA());
     }
 
     public function boot(): void
@@ -40,7 +40,7 @@ class AuthModuleServiceProvider extends ServiceProvider
         $routeFile = __DIR__.'/../Routes/auth.php';
 
         if (file_exists($routeFile)) {
-            Route::group([], function () use ($routeFile) {
+            Route::group([], function () use ($routeFile): void {
                 require $routeFile;
             });
         }

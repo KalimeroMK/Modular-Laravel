@@ -12,11 +12,6 @@ use App\Modules\Role\Infrastructure\Models\Role;
  */
 class RoleRepository extends EloquentRepository implements RoleRepositoryInterface
 {
-    public function __construct(Role $model)
-    {
-        parent::__construct($model);
-    }
-
     public function findByName(string $name): ?Role
     {
         /** @var Role|null $result */

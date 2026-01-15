@@ -239,7 +239,7 @@ class StubFileGenerator
         }
 
         // Add composite index for foreign key + status if both exist
-        if ($hasForeignKeys && ! empty($indexableFields)) {
+        if ($hasForeignKeys && $indexableFields !== []) {
             foreach ($indexableFields as $fkField) {
                 // Check if there's a status field
                 foreach ($fields as $field) {
@@ -249,11 +249,6 @@ class StubFileGenerator
                     }
                 }
             }
-        }
-
-        // If no specific indexes, return at least timestamps
-        if (count($indexes) <= 2) {
-            return implode("\n", $indexes);
         }
 
         return implode("\n", $indexes);
@@ -320,7 +315,7 @@ class StubFileGenerator
                 'float', 'double', 'decimal' => 'float',
                 'int', 'integer', 'bigint', 'tinyInteger', 'smallInteger', 'mediumInteger', 'unsignedBigInteger' => 'int',
                 'bool', 'boolean' => 'bool',
-                'date', 'datetime', 'timestamp', 'time', 'year' => '\Illuminate\Support\Carbon',
+                'date', 'datetime', 'timestamp', 'time', 'year' => \Illuminate\Support\Carbon::class,
                 'array', 'json' => 'array',
                 default => 'mixed',
             };
@@ -368,7 +363,7 @@ class StubFileGenerator
      */
     protected function extractRelationshipMethods(string $relationships): string
     {
-        if (empty($relationships)) {
+        if ($relationships === '' || $relationships === '0') {
             return '';
         }
 
@@ -421,7 +416,7 @@ class StubFileGenerator
      */
     protected function extractRelationshipImports(string $relationships): string
     {
-        if (empty($relationships)) {
+        if ($relationships === '' || $relationships === '0') {
             return '';
         }
 

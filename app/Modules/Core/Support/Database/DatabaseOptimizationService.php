@@ -13,12 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseOptimizationService
 {
-    protected QueryMonitor $queryMonitor;
-
-    public function __construct(QueryMonitor $queryMonitor)
-    {
-        $this->queryMonitor = $queryMonitor;
-    }
+    public function __construct(protected QueryMonitor $queryMonitor) {}
 
     /**
      * Optimize query with proper indexing hints
@@ -29,9 +24,9 @@ class DatabaseOptimizationService
      */
     public function optimizeQuery(Builder $query, array $indexes = []): Builder
     {
-        if (! empty($indexes)) {
+        if ($indexes !== []) {
             // Use first index from array
-            $index = (string) $indexes[0];
+            $index = $indexes[0];
             if ($index !== '') {
                 $query->useIndex($index);
             }
@@ -66,7 +61,7 @@ class DatabaseOptimizationService
                 // Fallback for non-Redis stores
                 Cache::forget($pattern);
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             // Silently fail for unsupported cache stores
         }
     }
@@ -220,7 +215,7 @@ class DatabaseOptimizationService
                     'Index_MB' => (float) $row->Index_MB,
                 ];
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             // Fallback for databases that don't support information_schema queries
         }
 

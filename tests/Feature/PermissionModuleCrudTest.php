@@ -8,12 +8,14 @@ use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Override;
 use Tests\TestCase;
 
 class PermissionModuleCrudTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

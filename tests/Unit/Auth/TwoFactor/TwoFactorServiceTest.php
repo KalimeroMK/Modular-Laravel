@@ -8,6 +8,7 @@ use App\Modules\Auth\Application\Services\TwoFactor\Service;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use Override;
 use PragmaRX\Google2FA\Google2FA;
 use Tests\TestCase;
 
@@ -19,6 +20,7 @@ class TwoFactorServiceTest extends TestCase
 
     protected Service $service;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,6 +28,7 @@ class TwoFactorServiceTest extends TestCase
         $this->service = new Service($this->google2fa);
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();
@@ -54,7 +57,7 @@ class TwoFactorServiceTest extends TestCase
         // Assert
         $this->assertIsString($qrCodeUrl);
         $this->assertStringContainsString('otpauth://totp/', $qrCodeUrl);
-        $this->assertStringContainsString(urlencode($user->email), $qrCodeUrl);
+        $this->assertStringContainsString(urlencode((string) $user->email), $qrCodeUrl);
     }
 
     public function test_generate_recovery_codes(): void

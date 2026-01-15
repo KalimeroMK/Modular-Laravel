@@ -10,10 +10,12 @@ use App\Modules\Role\Application\DTO\UpdateRoleDTO;
 use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class UpdateRoleActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();
@@ -42,10 +44,8 @@ class UpdateRoleActionTest extends TestCase
         $roleRepository = Mockery::mock(RoleRepositoryInterface::class);
         $roleRepository->shouldReceive('findOrFail')->with($roleId)->andReturn($role);
         $roleRepository->shouldReceive('update')
-            ->with($roleId, Mockery::on(function ($data) use ($name, $guardName) {
-                return $data['name'] === $name
-                    && $data['guard_name'] === $guardName;
-            }))
+            ->with($roleId, Mockery::on(fn ($data) => $data['name'] === $name
+                && $data['guard_name'] === $guardName))
             ->andReturn($updatedRole);
 
         $action = new UpdateRoleAction($roleRepository);

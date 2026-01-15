@@ -24,14 +24,10 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Handle custom BaseException classes
-        $exceptions->render(function (BaseException $e) {
-            return $e->render();
-        });
+        $exceptions->render(fn (BaseException $e) => $e->render());
 
         // Handle ModelNotFoundException - map it before it gets converted to NotFoundHttpException
-        $exceptions->map(function (ModelNotFoundException $e) {
-            return new NotFoundHttpException('Resource not found', $e);
-        });
+        $exceptions->map(fn (ModelNotFoundException $e) => new NotFoundHttpException('Resource not found', $e));
 
         // Handle NotFoundHttpException for API requests (which includes ModelNotFoundException)
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
@@ -48,14 +44,12 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         // Handle Laravel ValidationException
-        $exceptions->render(function (LaravelValidationException $e) {
-            return response()->json([
-                'status' => 'error',
-                'error_code' => 'VALIDATION_ERROR',
-                'message' => 'Validation failed',
-                'errors' => $e->errors(),
-            ], 422);
-        });
+        $exceptions->render(fn (LaravelValidationException $e) => response()->json([
+            'status' => 'error',
+            'error_code' => 'VALIDATION_ERROR',
+            'message' => 'Validation failed',
+            'errors' => $e->errors(),
+        ], 422));
     })
     ->withProviders([
         App\Modules\Auth\Infrastructure\Providers\AuthModuleServiceProvider::class,

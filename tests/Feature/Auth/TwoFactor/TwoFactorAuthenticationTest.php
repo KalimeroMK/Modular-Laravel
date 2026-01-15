@@ -7,12 +7,16 @@ namespace Tests\Feature\Auth\TwoFactor;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Override;
 use Tests\TestCase;
 
 class TwoFactorAuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public $user;
+
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -83,7 +87,7 @@ class TwoFactorAuthenticationTest extends TestCase
     {
         // Arrange - Setup 2FA first
         $setupResponse = $this->postJson('/api/v1/auth/2fa/setup');
-        $recoveryCodes = explode(',', $setupResponse->json('recovery_codes'));
+        $recoveryCodes = explode(',', (string) $setupResponse->json('recovery_codes'));
 
         // Act - Verify with recovery code
         $response = $this->postJson('/api/v1/auth/2fa/verify', [
@@ -106,7 +110,7 @@ class TwoFactorAuthenticationTest extends TestCase
     {
         // Arrange - Setup and enable 2FA first
         $setupResponse = $this->postJson('/api/v1/auth/2fa/setup');
-        $recoveryCodes = explode(',', $setupResponse->json('recovery_codes'));
+        $recoveryCodes = explode(',', (string) $setupResponse->json('recovery_codes'));
         // Verify to enable 2FA
         $this->postJson('/api/v1/auth/2fa/verify', [
             'recovery_code' => $recoveryCodes[0],
@@ -128,7 +132,7 @@ class TwoFactorAuthenticationTest extends TestCase
     {
         // Arrange - Setup and enable 2FA first
         $setupResponse = $this->postJson('/api/v1/auth/2fa/setup');
-        $recoveryCodes = explode(',', $setupResponse->json('recovery_codes'));
+        $recoveryCodes = explode(',', (string) $setupResponse->json('recovery_codes'));
         // Verify to enable 2FA
         $this->postJson('/api/v1/auth/2fa/verify', [
             'recovery_code' => $recoveryCodes[0],
@@ -199,7 +203,7 @@ class TwoFactorAuthenticationTest extends TestCase
             ->assertJson(['enabled' => false]);
 
         // Step 4: Verify with recovery code (enables 2FA)
-        $recoveryCodes = explode(',', $setupResponse->json('recovery_codes'));
+        $recoveryCodes = explode(',', (string) $setupResponse->json('recovery_codes'));
         $verifyResponse = $this->postJson('/api/v1/auth/2fa/verify', [
             'recovery_code' => $recoveryCodes[0],
         ]);

@@ -44,7 +44,7 @@ class QueryMonitor
             return;
         }
 
-        DB::listen(function (QueryExecuted $query) {
+        DB::listen(function (QueryExecuted $query): void {
             $this->queries[] = [
                 'sql' => $query->sql,
                 'bindings' => $query->bindings,
@@ -90,16 +90,14 @@ class QueryMonitor
      */
     public function getSlowQueries(float $threshold = 100): array
     {
-        return array_filter($this->queries, function ($query) use ($threshold) {
-            return $query['time'] > $threshold;
-        });
+        return array_filter($this->queries, fn ($query) => $query['time'] > $threshold);
     }
 
     public function logSlowQueries(float $threshold = 100): void
     {
         $slowQueries = $this->getSlowQueries($threshold);
 
-        if (! empty($slowQueries)) {
+        if ($slowQueries !== []) {
             Log::warning('Slow database queries detected', [
                 'count' => count($slowQueries),
                 'threshold' => $threshold,

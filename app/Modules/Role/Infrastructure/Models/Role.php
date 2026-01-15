@@ -10,6 +10,7 @@ use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Override;
 
 /**
  * @property int $id
@@ -44,6 +45,7 @@ class Role extends Model
     /**
      * Get the route key for the model.
      */
+    #[Override]
     public function getRouteKeyName(): string
     {
         return 'id';

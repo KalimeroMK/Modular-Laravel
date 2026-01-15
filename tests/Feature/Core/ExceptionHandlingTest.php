@@ -14,12 +14,16 @@ use App\Modules\Core\Exceptions\ValidationException;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Override;
 use Tests\TestCase;
 
 class ExceptionHandlingTest extends TestCase
 {
     use RefreshDatabase;
 
+    public $user;
+
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

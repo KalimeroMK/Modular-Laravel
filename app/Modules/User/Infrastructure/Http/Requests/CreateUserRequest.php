@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\User\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 class CreateUserRequest extends FormRequest
 {
@@ -28,6 +29,7 @@ class CreateUserRequest extends FormRequest
     /**
      * @return array<string, string>
      */
+    #[Override]
     public function messages(): array
     {
         return [

@@ -12,10 +12,12 @@ use App\Modules\User\Infrastructure\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class RegisterUserActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();
@@ -38,11 +40,9 @@ class RegisterUserActionTest extends TestCase
 
         $authRepository = Mockery::mock(AuthRepositoryInterface::class);
         $authRepository->shouldReceive('create')
-            ->with(Mockery::on(function ($data) use ($name, $email) {
-                return $data['name'] === $name
-                    && $data['email'] === $email
-                    && isset($data['password']);
-            }))
+            ->with(Mockery::on(fn ($data) => $data['name'] === $name
+                && $data['email'] === $email
+                && isset($data['password'])))
             ->andReturn($user);
 
         $tokenService = Mockery::mock(IssueTokenServiceInterface::class);

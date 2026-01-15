@@ -10,10 +10,12 @@ use App\Modules\Permission\Application\DTO\UpdatePermissionDTO;
 use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class UpdatePermissionActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();
@@ -42,10 +44,8 @@ class UpdatePermissionActionTest extends TestCase
         $permissionRepository = Mockery::mock(PermissionRepositoryInterface::class);
         $permissionRepository->shouldReceive('findOrFail')->with($permissionId)->andReturn($permission);
         $permissionRepository->shouldReceive('update')
-            ->with($permissionId, Mockery::on(function ($data) use ($name, $guardName) {
-                return $data['name'] === $name
-                    && $data['guard_name'] === $guardName;
-            }))
+            ->with($permissionId, Mockery::on(fn ($data) => $data['name'] === $name
+                && $data['guard_name'] === $guardName))
             ->andReturn($updatedPermission);
 
         $action = new UpdatePermissionAction($permissionRepository);

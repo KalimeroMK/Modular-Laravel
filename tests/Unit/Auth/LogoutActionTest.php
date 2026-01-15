@@ -9,10 +9,12 @@ use App\Modules\Auth\Application\Services\IssueTokenServiceInterface;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Http\Request;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class LogoutActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

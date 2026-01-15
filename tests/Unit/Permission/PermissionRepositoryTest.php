@@ -8,6 +8,7 @@ use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Override;
 use Tests\TestCase;
 
 class PermissionRepositoryTest extends TestCase
@@ -16,6 +17,7 @@ class PermissionRepositoryTest extends TestCase
 
     protected PermissionRepository $repository;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

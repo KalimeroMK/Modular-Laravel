@@ -18,21 +18,16 @@ use Illuminate\Support\Collection;
 abstract class EloquentRepository
 {
     /**
-     * The model instance.
-     *
-     * @var TModel
-     */
-    protected Model $model;
-
-    /**
      * Create a new repository instance.
      *
      * @param  TModel  $model  The model instance
      */
-    public function __construct(Model $model)
-    {
-        $this->model = $model;
-    }
+    public function __construct(
+        /**
+         * The model instance.
+         */
+        protected Model $model
+    ) {}
 
     /**
      * Get all records.
@@ -43,7 +38,7 @@ abstract class EloquentRepository
     final public function all(array $with = []): Collection
     {
         $query = $this->query();
-        if (! empty($with)) {
+        if ($with !== []) {
             $query->with($with);
         }
 
@@ -57,7 +52,7 @@ abstract class EloquentRepository
     final public function find(int $id, array $with = []): ?Model
     {
         $query = $this->query();
-        if (! empty($with)) {
+        if ($with !== []) {
             $query->with($with);
         }
 
@@ -70,7 +65,7 @@ abstract class EloquentRepository
     final public function findOrFail(int $id, array $with = []): Model
     {
         $query = $this->query();
-        if (! empty($with)) {
+        if ($with !== []) {
             $query->with($with);
         }
 
@@ -83,7 +78,7 @@ abstract class EloquentRepository
     final public function findBy(string $column, mixed $value, array $with = []): ?Model
     {
         $query = $this->query()->where($column, $value);
-        if (! empty($with)) {
+        if ($with !== []) {
             $query->with($with);
         }
 
@@ -122,9 +117,9 @@ abstract class EloquentRepository
     final public function delete(int $id): bool
     {
         // Use direct DB deletion to ensure it works with all database drivers including SQLite
-            $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
+        $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
 
-            return $deletedRows > 0;
+        return $deletedRows > 0;
     }
 
     final public function restore(int $id): ?Model
@@ -158,7 +153,7 @@ abstract class EloquentRepository
     final public function paginate(int $perPage = 15, array $with = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         $query = $this->query();
-        if (! empty($with)) {
+        if ($with !== []) {
             $query->with($with);
         }
 
@@ -177,9 +172,7 @@ abstract class EloquentRepository
     {
         $cacheKey = $this->getCacheKey('all', $with);
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, function () use ($with) {
-            return $this->all($with);
-        });
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, fn () => $this->all($with));
     }
 
     /**
@@ -192,9 +185,7 @@ abstract class EloquentRepository
     {
         $cacheKey = $this->getCacheKey('find', $with, $id);
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, function () use ($id, $with) {
-            return $this->find($id, $with);
-        });
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, fn () => $this->find($id, $with));
     }
 
     /**
@@ -222,7 +213,7 @@ abstract class EloquentRepository
     protected function getCacheKey(string $method, array $with = [], ?int $id = null): string
     {
         $modelName = class_basename($this->model);
-        $withString = ! empty($with) ? '_'.implode('_', $with) : '';
+        $withString = $with === [] ? '' : '_'.implode('_', $with);
         $idString = $id ? "_$id" : '';
 
         return "repository_{$modelName}_{$method}{$withString}{$idString}";

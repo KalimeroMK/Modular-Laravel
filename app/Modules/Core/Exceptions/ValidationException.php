@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Exceptions;
 
+use Override;
 use Throwable;
 
 class ValidationException extends BaseException
@@ -26,6 +27,7 @@ class ValidationException extends BaseException
     /**
      * @return array<string, array<int, string>>
      */
+    #[Override]
     protected function getErrors(): array
     {
         return $this->errors;

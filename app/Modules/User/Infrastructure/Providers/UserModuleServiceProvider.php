@@ -11,9 +11,11 @@ use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 class UserModuleServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         // Bind interfaces to implementations
@@ -36,7 +38,7 @@ class UserModuleServiceProvider extends ServiceProvider
         $routeFile = __DIR__.'/../Routes/users.php';
 
         if (file_exists($routeFile)) {
-            Route::group([], function () use ($routeFile) {
+            Route::group([], function () use ($routeFile): void {
                 require $routeFile;
             });
         }

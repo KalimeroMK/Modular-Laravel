@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\Core\ValueObjects;
 
 use InvalidArgumentException;
+use Stringable;
 
-readonly class Password
+readonly class Password implements Stringable
 {
     private const int MIN_LENGTH = 8;
 
@@ -40,7 +41,7 @@ readonly class Password
         return mb_strlen($this->value) >= self::MIN_LENGTH
             && preg_match('/[A-Z]/', $this->value) // Has uppercase
             && preg_match('/[a-z]/', $this->value) // Has lowercase
-            && preg_match('/[0-9]/', $this->value) // Has number
+            && preg_match('/\d/', $this->value) // Has number
             && preg_match('/[^A-Za-z0-9]/', $this->value); // Has special char
     }
 
@@ -60,7 +61,7 @@ readonly class Password
         if (preg_match('/[a-z]/', $this->value)) {
             $score++;
         }
-        if (preg_match('/[0-9]/', $this->value)) {
+        if (preg_match('/\d/', $this->value)) {
             $score++;
         }
         if (preg_match('/[^A-Za-z0-9]/', $this->value)) {

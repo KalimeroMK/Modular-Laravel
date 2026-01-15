@@ -8,10 +8,12 @@ use App\Modules\Role\Application\Actions\DeleteRoleAction;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class DeleteRoleActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

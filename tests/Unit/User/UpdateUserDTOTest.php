@@ -69,7 +69,7 @@ class UpdateUserDTOTest extends TestCase
         $email = 'updated@example.com';
 
         // Act
-        $dto = new UpdateUserDTO($name, $email, null);
+        $dto = new UpdateUserDTO($name, $email);
 
         // Assert
         $this->assertEquals($name, $dto->name);

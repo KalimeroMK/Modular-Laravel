@@ -11,9 +11,11 @@ use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInter
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 class PermissionModuleServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         // Bind interfaces to implementations
@@ -36,7 +38,7 @@ class PermissionModuleServiceProvider extends ServiceProvider
         $routeFile = __DIR__.'/../Routes/permissions.php';
 
         if (file_exists($routeFile)) {
-            Route::group([], function () use ($routeFile) {
+            Route::group([], function () use ($routeFile): void {
                 require $routeFile;
             });
         }

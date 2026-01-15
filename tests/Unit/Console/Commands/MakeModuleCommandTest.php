@@ -22,7 +22,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
-        $method->setAccessible(true);
 
         $result = $method->invoke($this->command, 'user:belongsTo:User,categories:belongsToMany:Category');
 
@@ -36,7 +35,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
-        $method->setAccessible(true);
 
         $result = $method->invoke($this->command, 'owner', 'morphTo', 'Owner', ['owner', 'morphTo']);
 
@@ -48,7 +46,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
-        $method->setAccessible(true);
 
         $result = $method->invoke($this->command, 'comments', 'morphMany', 'Comment', ['comments', 'morphMany', 'Comment', 'commentable']);
 
@@ -60,7 +57,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
-        $method->setAccessible(true);
 
         $result = $method->invoke($this->command, 'avatar', 'morphOne', 'Avatar', ['avatar', 'morphOne', 'Avatar', 'imageable']);
 
@@ -72,7 +68,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
-        $method->setAccessible(true);
 
         $result = $method->invoke($this->command, 'tags', 'morphToMany', 'Tag', ['tags', 'morphToMany', 'Tag', 'taggable']);
 
@@ -84,7 +79,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
-        $method->setAccessible(true);
 
         // When no morph name is provided, it should use the relation name
         $result = $method->invoke($this->command, 'comments', 'morphMany', 'Comment', ['comments', 'morphMany', 'Comment']);
@@ -97,7 +91,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
-        $method->setAccessible(true);
 
         $relations = 'user:belongsTo:User,comments:morphMany:Comment:commentable,tags:morphToMany:Tag:taggable,owner:morphTo';
         $result = $method->invoke($this->command, $relations);
@@ -123,7 +116,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
-        $method->setAccessible(true);
 
         $result = $method->invoke($this->command, '');
 
@@ -134,7 +126,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
-        $method->setAccessible(true);
 
         // Relations without proper format should be skipped
         $result = $method->invoke($this->command, 'invalid,user:belongsTo:User');
@@ -148,7 +139,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
-        $method->setAccessible(true);
 
         $result = $method->invoke($this->command, 'test', 'unknownType', 'TestModel', ['test', 'unknownType', 'TestModel']);
 
@@ -160,7 +150,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('parseFields');
-        $method->setAccessible(true);
 
         $result = $method->invoke($this->command, 'name:string,age:int,active:bool');
 
@@ -177,7 +166,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('parseFields');
-        $method->setAccessible(true);
 
         $result = $method->invoke($this->command, '');
 
@@ -188,7 +176,6 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
-        $method->setAccessible(true);
 
         $result = $method->invoke($this->command, 'comments:morphMany:Comment:commentable');
 
@@ -203,13 +190,12 @@ class MakeModuleCommandTest extends TestCase
     {
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
-        $method->setAccessible(true);
 
         $relations = 'commentable:morphTo,comments:morphMany:Comment:commentable,tags:morphToMany:Tag:taggable,avatar:morphOne:Avatar:imageable';
         $result = $method->invoke($this->command, $relations);
 
         // Verify all polymorphic relationships are built correctly
-        $lines = explode("\n", $result);
+        $lines = explode("\n", (string) $result);
         $methodCount = 0;
 
         foreach ($lines as $line) {

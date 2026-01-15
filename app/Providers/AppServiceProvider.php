@@ -8,18 +8,18 @@ use App\Modules\Core\Support\Generators\ModuleGenerationTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
+    #[Override]
     public function register(): void
     {
         // Register ModuleGenerationTracker as singleton for tracking generated files
-        $this->app->singleton(ModuleGenerationTracker::class, function ($app) {
-            return new ModuleGenerationTracker($app->make(Filesystem::class));
-        });
+        $this->app->singleton(ModuleGenerationTracker::class, fn ($app) => new ModuleGenerationTracker($app->make(Filesystem::class)));
     }
 
     /**

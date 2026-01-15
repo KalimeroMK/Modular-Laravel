@@ -7,6 +7,7 @@ namespace Tests\Unit\Auth;
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepository;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Override;
 use Tests\TestCase;
 
 class AuthRepositoryTest extends TestCase
@@ -15,6 +16,7 @@ class AuthRepositoryTest extends TestCase
 
     protected AuthRepository $repository;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

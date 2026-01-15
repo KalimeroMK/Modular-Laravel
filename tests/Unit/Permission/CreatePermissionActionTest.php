@@ -10,10 +10,12 @@ use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Exception;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class CreatePermissionActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();
@@ -35,10 +37,8 @@ class CreatePermissionActionTest extends TestCase
 
         $permissionRepository = Mockery::mock(PermissionRepositoryInterface::class);
         $permissionRepository->shouldReceive('create')
-            ->with(Mockery::on(function ($data) use ($name, $guardName) {
-                return $data['name'] === $name
-                    && $data['guard_name'] === $guardName;
-            }))
+            ->with(Mockery::on(fn ($data) => $data['name'] === $name
+                && $data['guard_name'] === $guardName))
             ->andReturn($permission);
 
         $action = new CreatePermissionAction($permissionRepository);

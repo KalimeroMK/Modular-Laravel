@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Auth\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 class TwoFactorVerifyRequest extends FormRequest
 {
@@ -34,6 +35,7 @@ class TwoFactorVerifyRequest extends FormRequest
      *
      * @return array<string, string>
      */
+    #[Override]
     public function messages(): array
     {
         return [

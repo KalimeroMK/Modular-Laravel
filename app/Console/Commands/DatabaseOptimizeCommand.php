@@ -28,12 +28,9 @@ class DatabaseOptimizeCommand extends Command
      */
     protected $description = 'Optimize database performance and analyze queries';
 
-    protected DatabaseOptimizationService $optimizationService;
-
-    public function __construct(DatabaseOptimizationService $optimizationService)
+    public function __construct(protected DatabaseOptimizationService $optimizationService)
     {
         parent::__construct();
-        $this->optimizationService = $optimizationService;
     }
 
     /**
@@ -91,7 +88,7 @@ class DatabaseOptimizeCommand extends Command
                     $size['Index_MB'],
                     $analysis['status'],
                 ];
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $rows[] = [$table, 'Error', '-', '-', '-', 'Failed'];
             }
         }
@@ -108,7 +105,7 @@ class DatabaseOptimizeCommand extends Command
         try {
             $slowQueries = $this->optimizationService->getSlowQueries(10);
 
-            if (empty($slowQueries)) {
+            if ($slowQueries === []) {
                 $this->warn('No slow queries found or performance_schema not available.');
 
                 return;

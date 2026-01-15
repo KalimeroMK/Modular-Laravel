@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Override;
 use Throwable;
 
 class ModularServiceProvider extends ServiceProvider
@@ -36,14 +37,12 @@ class ModularServiceProvider extends ServiceProvider
         $ttl = app()->environment('production') ? null : now()->addMinutes(5);
 
         $modules = Cache::remember($cacheKey, $ttl, function () use ($basePath) {
-            $dirs = array_filter(scandir($basePath) ?: [], function ($d) use ($basePath) {
-                return $d !== '.'
-                    && $d !== '..'
-                    && is_dir("{$basePath}/{$d}")
-                    && ! str_starts_with($d, 'NonExistent')
-                    && ! str_starts_with($d, 'Test')
-                    && ! str_contains($d, 'Test');
-            });
+            $dirs = array_filter(scandir($basePath) ?: [], fn ($d) => $d !== '.'
+                && $d !== '..'
+                && is_dir("{$basePath}/{$d}")
+                && ! str_starts_with($d, 'NonExistent')
+                && ! str_starts_with($d, 'Test')
+                && ! str_contains($d, 'Test'));
 
             return array_values($dirs);
         });
@@ -67,6 +66,7 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
+    #[Override]
     public function register(): void {}
 
     protected function isModuleEnabled(string $module): bool
@@ -104,7 +104,7 @@ class ModularServiceProvider extends ServiceProvider
         Route::group(array_filter([
             'middleware' => $opt['middleware'] ?? ['api'],
             'namespace' => $nsControllers, // Optional if you use FQCN in routes; keep for convenience
-        ]), static function () use ($routeFile) {
+        ]), static function () use ($routeFile): void {
             require $routeFile;
         });
     }

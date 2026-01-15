@@ -94,7 +94,7 @@ return [
             /*
              * Edit to set the api's base path
              */
-            'base' => env('L5_SWAGGER_BASE_PATH', null),
+            'base' => env('L5_SWAGGER_BASE_PATH'),
 
             /*
              * Absolute path to directories that should be excluded from scanning
@@ -264,7 +264,7 @@ return [
          * 'method' (sort by HTTP method).
          * Default is the order returned by the server unchanged.
          */
-        'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', null),
+        'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT'),
 
         /*
          * Pass the validatorUrl parameter to SwaggerUi init on the JS side.

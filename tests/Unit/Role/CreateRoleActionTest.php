@@ -10,10 +10,12 @@ use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use Exception;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class CreateRoleActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();
@@ -35,10 +37,8 @@ class CreateRoleActionTest extends TestCase
 
         $roleRepository = Mockery::mock(RoleRepositoryInterface::class);
         $roleRepository->shouldReceive('create')
-            ->with(Mockery::on(function ($data) use ($name, $guardName) {
-                return $data['name'] === $name
-                    && $data['guard_name'] === $guardName;
-            }))
+            ->with(Mockery::on(fn ($data) => $data['name'] === $name
+                && $data['guard_name'] === $guardName))
             ->andReturn($role);
 
         $action = new CreateRoleAction($roleRepository);

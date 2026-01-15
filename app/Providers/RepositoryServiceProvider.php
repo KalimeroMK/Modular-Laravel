@@ -13,6 +13,7 @@ use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use App\Modules\User\Infrastructure\Repositories\UserRepository;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
+use Override;
 use ReflectionClass;
 use ReflectionNamedType;
 
@@ -32,6 +33,7 @@ class RepositoryServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
+    #[Override]
     public function register(): void
     {
 

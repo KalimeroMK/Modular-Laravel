@@ -9,10 +9,12 @@ use App\Modules\Auth\Application\Services\IssueTokenService;
 use App\Modules\User\Infrastructure\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class IssueTokenServiceTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

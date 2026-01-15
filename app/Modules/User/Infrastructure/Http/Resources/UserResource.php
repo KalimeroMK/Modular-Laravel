@@ -7,6 +7,7 @@ namespace App\Modules\User\Infrastructure\Http\Resources;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Override;
 
 /**
  * @mixin User
@@ -19,6 +20,7 @@ class UserResource extends JsonResource
      * @param  Request  $request
      * @return array<string, mixed>
      */
+    #[Override]
     public function toArray($request): array
     {
         return [

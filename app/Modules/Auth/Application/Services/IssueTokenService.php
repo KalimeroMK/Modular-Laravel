@@ -16,8 +16,7 @@ class IssueTokenService implements IssueTokenServiceInterface
 
         return new SessionTokenDTO(
             token: $token->plainTextToken,
-            type: 'Bearer',
-            expiresIn: null // Sanctum tokens don't expire by default
+            type: 'Bearer' // Sanctum tokens don't expire by default
         );
     }
 

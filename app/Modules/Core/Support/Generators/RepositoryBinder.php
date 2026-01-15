@@ -54,22 +54,20 @@ class RepositoryBinder
         // Check if already exists
         if (Str::contains($content, "use {$interfaceClass};") || Str::contains($content, "use {$repositoryClass};")) {
             // Use statements already exist, skip adding them
-        } else {
+        } elseif ($lastUsePosition > 0) {
             // Find position after last use statement
-            if ($lastUsePosition > 0) {
-                // Find end of line after last use
-                $nextLinePos = mb_strpos($content, "\n", $lastUsePosition);
-                if ($nextLinePos !== false) {
-                    $content = substr_replace($content, "\n".$newUseStatements, $nextLinePos, 0);
-                } else {
-                    $content = $content."\n".$newUseStatements;
-                }
+            // Find end of line after last use
+            $nextLinePos = mb_strpos($content, "\n", $lastUsePosition);
+            if ($nextLinePos !== false) {
+                $content = substr_replace($content, "\n".$newUseStatements, $nextLinePos, 0);
             } else {
-                // No use statements found, add before class
-                $classPos = mb_strpos($content, 'class RepositoryServiceProvider');
-                if ($classPos !== false) {
-                    $content = substr_replace($content, $newUseStatements."\n", $classPos, 0);
-                }
+                $content = $content."\n".$newUseStatements;
+            }
+        } else {
+            // No use statements found, add before class
+            $classPos = mb_strpos($content, 'class RepositoryServiceProvider');
+            if ($classPos !== false) {
+                $content = substr_replace($content, $newUseStatements."\n", $classPos, 0);
             }
         }
 
@@ -84,7 +82,7 @@ class RepositoryBinder
                 return;
             }
 
-            $updatedEntries = $existingEntries ? "$existingEntries\n$newEntry" : $newEntry;
+            $updatedEntries = $existingEntries !== '' && $existingEntries !== '0' ? "$existingEntries\n$newEntry" : $newEntry;
             $replacement = 'protected array $repositories = ['."\n".$updatedEntries."\n];";
             $content = preg_replace($arrayPattern, $replacement, $content);
 

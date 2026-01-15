@@ -8,6 +8,7 @@ use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Override;
 use Tests\TestCase;
 
 class RoleRepositoryTest extends TestCase
@@ -16,6 +17,7 @@ class RoleRepositoryTest extends TestCase
 
     protected RoleRepository $repository;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

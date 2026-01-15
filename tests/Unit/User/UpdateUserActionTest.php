@@ -11,10 +11,12 @@ use App\Modules\User\Infrastructure\Models\User;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class UpdateUserActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();
@@ -44,11 +46,9 @@ class UpdateUserActionTest extends TestCase
         $userRepository = Mockery::mock(UserRepositoryInterface::class);
         $userRepository->shouldReceive('findOrFail')->with($userId)->andReturn($user);
         $userRepository->shouldReceive('update')
-            ->with($userId, Mockery::on(function ($data) use ($name, $email) {
-                return $data['name'] === $name
-                    && $data['email'] === $email
-                    && isset($data['password']);
-            }))
+            ->with($userId, Mockery::on(fn ($data) => $data['name'] === $name
+                && $data['email'] === $email
+                && isset($data['password'])))
             ->andReturn($updatedUser);
 
         Hash::shouldReceive('make')

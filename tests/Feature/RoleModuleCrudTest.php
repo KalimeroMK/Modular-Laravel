@@ -8,12 +8,14 @@ use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Override;
 use Tests\TestCase;
 
 class RoleModuleCrudTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

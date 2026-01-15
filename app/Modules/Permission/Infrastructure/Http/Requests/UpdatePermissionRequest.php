@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 class UpdatePermissionRequest extends FormRequest
 {
@@ -29,6 +30,7 @@ class UpdatePermissionRequest extends FormRequest
     /**
      * @return array<string, string>
      */
+    #[Override]
     public function messages(): array
     {
         return [

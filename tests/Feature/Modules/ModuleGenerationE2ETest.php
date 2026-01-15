@@ -6,6 +6,7 @@ namespace Tests\Feature\Modules;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
+use Override;
 use Tests\TestCase;
 
 class ModuleGenerationE2ETest extends TestCase
@@ -14,12 +15,14 @@ class ModuleGenerationE2ETest extends TestCase
 
     private string $testModuleName = 'E2ETestModule';
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
         $this->files = new Filesystem;
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         // Cleanup test module
@@ -39,7 +42,7 @@ class ModuleGenerationE2ETest extends TestCase
         if ($this->files->exists($providerPath)) {
             $content = $this->files->get($providerPath);
             $content = preg_replace('/use App\\\\Modules\\\\E2ETestModule.*?;/', '', $content);
-            $content = preg_replace('/E2ETestModuleRepositoryInterface::class.*?E2ETestModuleRepository::class,?\s*/', '', $content);
+            $content = preg_replace('/E2ETestModuleRepositoryInterface::class.*?E2ETestModuleRepository::class,?\s*/', '', (string) $content);
             $this->files->put($providerPath, $content);
         }
 

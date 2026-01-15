@@ -39,10 +39,10 @@ class ServiceProviderBinder
         // Pattern to match: ->withProviders([...])->create()
         $pattern = '/->withProviders\(\[(.*?)\]\)->create\(\)/s';
         if (preg_match($pattern, $content, $matches)) {
-            $existingProviders = trim($matches[1]);
+            $existingProviders = mb_trim($matches[1]);
 
             // Add new provider before the closing bracket (at the end of the array)
-            if (empty($existingProviders)) {
+            if ($existingProviders === '' || $existingProviders === '0') {
                 // Empty array, add first provider
                 $newContent = str_replace(
                     '->withProviders([',

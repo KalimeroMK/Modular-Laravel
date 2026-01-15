@@ -8,10 +8,12 @@ use App\Modules\User\Application\Actions\GetUserByIdAction;
 use App\Modules\User\Infrastructure\Models\User;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class GetUserByIdActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

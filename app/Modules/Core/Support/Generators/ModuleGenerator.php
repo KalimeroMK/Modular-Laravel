@@ -180,12 +180,12 @@ class ModuleGenerator
 
         // Format module files
         if (is_dir($modulePath)) {
-            exec("cd ".base_path()." && {$pintPath} {$modulePath} --quiet 2>&1", $output, $returnCode);
+            exec('cd '.base_path()." && {$pintPath} {$modulePath} --quiet 2>&1", $output, $returnCode);
         }
 
         // Format test files
         if (is_dir($testPath)) {
-            exec("cd ".base_path()." && {$pintPath} {$testPath} --quiet 2>&1", $output, $returnCode);
+            exec('cd '.base_path()." && {$pintPath} {$testPath} --quiet 2>&1", $output, $returnCode);
         }
     }
 }

@@ -79,7 +79,7 @@ class AuthFlowIntegrationTest extends TestCase
         $logoutResponse->assertStatus(200);
 
         // 5. Verify token is invalidated (logout might not invalidate token immediately)
-        $meAfterLogoutResponse = $this->withHeaders([
+        $this->withHeaders([
             'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/v1/auth/me');
 
@@ -90,7 +90,7 @@ class AuthFlowIntegrationTest extends TestCase
     public function test_password_reset_flow(): void
     {
         // Create a user first
-        $user = User::factory()->create([
+        User::factory()->create([
             'email' => 'test@example.com',
         ]);
 

@@ -7,10 +7,12 @@ namespace Tests\Unit\User;
 use App\Modules\User\Application\Actions\DeleteUserAction;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class DeleteUserActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

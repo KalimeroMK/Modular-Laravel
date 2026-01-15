@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Role\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 class CreateRoleRequest extends FormRequest
 {
@@ -27,6 +28,7 @@ class CreateRoleRequest extends FormRequest
     /**
      * @return array<string, string>
      */
+    #[Override]
     public function messages(): array
     {
         return [

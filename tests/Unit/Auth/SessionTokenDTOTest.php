@@ -50,7 +50,7 @@ class SessionTokenDTOTest extends TestCase
         $type = 'Bearer';
 
         // Act
-        $dto = new SessionTokenDTO($token, $type, null);
+        $dto = new SessionTokenDTO($token, $type);
 
         // Assert
         $this->assertEquals($token, $dto->token);

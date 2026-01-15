@@ -11,10 +11,12 @@ use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class CreateUserActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();
@@ -37,11 +39,9 @@ class CreateUserActionTest extends TestCase
 
         $userRepository = Mockery::mock(UserRepositoryInterface::class);
         $userRepository->shouldReceive('create')
-            ->with(Mockery::on(function ($data) use ($name, $email) {
-                return $data['name'] === $name
-                    && $data['email'] === $email
-                    && isset($data['password']);
-            }))
+            ->with(Mockery::on(fn ($data) => $data['name'] === $name
+                && $data['email'] === $email
+                && isset($data['password'])))
             ->andReturn($user);
 
         Hash::shouldReceive('make')

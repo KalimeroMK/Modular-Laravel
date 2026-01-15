@@ -8,10 +8,12 @@ use App\Modules\Role\Application\Actions\GetRoleByIdAction;
 use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class GetRoleByIdActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

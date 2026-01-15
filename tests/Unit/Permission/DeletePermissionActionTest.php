@@ -8,10 +8,12 @@ use App\Modules\Permission\Application\Actions\DeletePermissionAction;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class DeletePermissionActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

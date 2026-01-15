@@ -7,6 +7,7 @@ namespace Tests\Unit\Core;
 use App\Modules\User\Infrastructure\Models\User;
 use App\Modules\User\Infrastructure\Repositories\UserRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Override;
 use Tests\TestCase;
 
 class EloquentRepositoryTest extends TestCase
@@ -15,6 +16,7 @@ class EloquentRepositoryTest extends TestCase
 
     protected UserRepository $repository;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -107,7 +107,7 @@ class FeatureTestGenerator
             }
         }
 
-        if (empty($lines)) {
+        if ($lines === []) {
             return '[]';
         }
 

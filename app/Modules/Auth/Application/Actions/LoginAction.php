@@ -29,7 +29,7 @@ class LoginAction
 
         $user = $this->authRepository->findByEmail($dto->email);
 
-        if ($user === null) {
+        if (! $user instanceof \App\Modules\User\Infrastructure\Models\User) {
             throw ValidationException::withMessages(['email' => __('auth.user_not_found')]);
         }
 

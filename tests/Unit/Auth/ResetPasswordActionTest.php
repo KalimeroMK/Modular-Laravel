@@ -8,10 +8,12 @@ use App\Modules\Auth\Application\Actions\ResetPasswordAction;
 use App\Modules\Auth\Infrastructure\Http\Requests\ResetPasswordRequest;
 use Illuminate\Support\Facades\Password;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class ResetPasswordActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

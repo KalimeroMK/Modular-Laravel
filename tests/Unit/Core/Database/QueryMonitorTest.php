@@ -7,6 +7,7 @@ namespace Tests\Unit\Core\Database;
 use App\Modules\Core\Support\Database\QueryMonitor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Override;
 use Tests\TestCase;
 
 class QueryMonitorTest extends TestCase
@@ -15,6 +16,7 @@ class QueryMonitorTest extends TestCase
 
     protected QueryMonitor $monitor;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -15,7 +15,7 @@ use PragmaRX\Google2FA\Google2FA;
 class Service implements ServiceInterface
 {
     public function __construct(
-        private Google2FA $google2fa,
+        private readonly Google2FA $google2fa,
     ) {}
 
     public function generateSecretKey(): string

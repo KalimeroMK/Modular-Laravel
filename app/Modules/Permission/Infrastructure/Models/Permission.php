@@ -10,15 +10,16 @@ use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @property int $id
  * @property string $name
  * @property string $guard_name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
- * @method static PermissionFactory factory()
  */
 class Permission extends Model
 {
@@ -44,6 +45,7 @@ class Permission extends Model
     /**
      * Get the route key for the model.
      */
+    #[Override]
     public function getRouteKeyName(): string
     {
         return 'id';

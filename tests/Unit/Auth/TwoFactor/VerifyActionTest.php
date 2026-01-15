@@ -11,12 +11,14 @@ use App\Modules\User\Infrastructure\Models\User;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class VerifyActionTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

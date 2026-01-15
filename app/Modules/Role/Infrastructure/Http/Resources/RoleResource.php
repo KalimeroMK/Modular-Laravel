@@ -7,6 +7,7 @@ namespace App\Modules\Role\Infrastructure\Http\Resources;
 use App\Modules\Role\Infrastructure\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Override;
 
 /**
  * @mixin Role
@@ -19,6 +20,7 @@ class RoleResource extends JsonResource
      * @param  Request  $request
      * @return array<string, mixed>
      */
+    #[Override]
     public function toArray($request): array
     {
         return [

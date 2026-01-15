@@ -13,11 +13,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class UserRepository extends EloquentRepository implements UserRepositoryInterface
 {
-    public function __construct(User $model)
-    {
-        parent::__construct($model);
-    }
-
     public function findByEmail(string $email): ?User
     {
         /** @var User|null $result */
@@ -61,8 +56,6 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
     {
         $cacheKey = "users_paginated_{$perPage}";
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, function () use ($perPage) {
-            return $this->paginate($perPage);
-        });
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, fn () => $this->paginate($perPage));
     }
 }

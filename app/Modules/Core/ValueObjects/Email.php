@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\Core\ValueObjects;
 
 use InvalidArgumentException;
+use Stringable;
 
-readonly class Email
+readonly class Email implements Stringable
 {
     public function __construct(
         public string $value

@@ -73,21 +73,19 @@ class MakeModuleCommand extends Command
                 hint: 'Format: relation_name:relationship_type:ModelName (e.g., user:belongsTo:User)',
                 name: 'relations'
             )
-            ->add(function ($responses) {
-                return multiselect(
-                    label: 'Select additional features to generate',
-                    options: [
-                        'exceptions' => 'Exception classes',
-                        'observers' => 'Observer stubs',
-                        'policies' => 'Policy stubs',
-                        'events' => 'Event and Listener classes',
-                        'enum' => 'Enum class',
-                        'notifications' => 'Notification classes',
-                    ],
-                    default: [],
-                    name: 'features'
-                );
-            })
+            ->add(fn ($responses) => multiselect(
+                label: 'Select additional features to generate',
+                options: [
+                    'exceptions' => 'Exception classes',
+                    'observers' => 'Observer stubs',
+                    'policies' => 'Policy stubs',
+                    'events' => 'Event and Listener classes',
+                    'enum' => 'Enum class',
+                    'notifications' => 'Notification classes',
+                ],
+                default: [],
+                name: 'features'
+            ))
             ->submit();
 
         $name = Str::studly($responses['name']);
@@ -176,7 +174,7 @@ class MakeModuleCommand extends Command
      */
     protected function parseTextareaFields(string $input): array
     {
-        if (empty($input)) {
+        if ($input === '' || $input === '0') {
             return [];
         }
 
@@ -185,7 +183,7 @@ class MakeModuleCommand extends Command
 
         foreach ($lines as $line) {
             $line = mb_trim($line);
-            if (! empty($line)) {
+            if ($line !== '' && $line !== '0') {
                 $fields[] = $line;
             }
         }
@@ -210,7 +208,7 @@ class MakeModuleCommand extends Command
      */
     protected function parseFields(string $model): array
     {
-        if (empty($model)) {
+        if ($model === '' || $model === '0') {
             return [];
         }
 
@@ -226,7 +224,7 @@ class MakeModuleCommand extends Command
 
     protected function buildRelationships(string $relations): string
     {
-        if (empty($relations)) {
+        if ($relations === '' || $relations === '0') {
             return '';
         }
 

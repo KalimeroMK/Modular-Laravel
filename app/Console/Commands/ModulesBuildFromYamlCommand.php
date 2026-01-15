@@ -19,11 +19,6 @@ class ModulesBuildFromYamlCommand extends Command
 
     protected ?ModuleGenerationTracker $tracker = null;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function handle(): void
     {
         $path = base_path($this->argument('file'));
@@ -65,7 +60,7 @@ class ModulesBuildFromYamlCommand extends Command
                 $fields = array_map(function ($field) {
                     [$name, $type] = explode(':', $field);
 
-                    return ['name' => trim($name), 'type' => trim($type)];
+                    return ['name' => mb_trim($name), 'type' => mb_trim($type)];
                 }, $definition['fields']);
 
                 /** @var array{relations: string, exceptions: mixed, observers: mixed, policies: mixed, events: mixed, enum: mixed, notifications: mixed, repositories: array{}, table?: string, relationships?: string, tracker?: mixed} $options */
@@ -140,7 +135,7 @@ class ModulesBuildFromYamlCommand extends Command
 
     protected function getTracker(): ModuleGenerationTracker
     {
-        if ($this->tracker === null) {
+        if (! $this->tracker instanceof ModuleGenerationTracker) {
             $this->tracker = app(ModuleGenerationTracker::class);
         }
 
@@ -235,8 +230,8 @@ class ModulesBuildFromYamlCommand extends Command
             if (count($parts) < 2) {
                 continue;
             }
-            $relName = trim($parts[0]);
-            $relType = trim($parts[1]);
+            $relName = mb_trim($parts[0]);
+            $relType = mb_trim($parts[1]);
             $relModel = $parts[2] ?? ucfirst($relName);
 
             // Handle polymorphic relationships
@@ -244,9 +239,9 @@ class ModulesBuildFromYamlCommand extends Command
                 $morphName = $parts[3] ?? $relName;
                 $lines[] = $this->buildPolymorphicRelationship($relName, $relType, $relModel, $parts);
             } else {
-            // Add import for the related model
-            $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
-            $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
+                // Add import for the related model
+                $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
+                $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
             }
         }
 

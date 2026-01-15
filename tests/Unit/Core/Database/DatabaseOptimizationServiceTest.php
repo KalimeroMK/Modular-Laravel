@@ -9,6 +9,7 @@ use App\Modules\Core\Support\Database\QueryMonitor;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Override;
 use Tests\TestCase;
 
 class DatabaseOptimizationServiceTest extends TestCase
@@ -19,6 +20,7 @@ class DatabaseOptimizationServiceTest extends TestCase
 
     protected QueryMonitor $queryMonitor;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,9 +35,7 @@ class DatabaseOptimizationServiceTest extends TestCase
         $expectedData = ['test' => 'data'];
 
         // Act
-        $result = $this->service->cacheQuery($key, function () use ($expectedData) {
-            return $expectedData;
-        }, 60);
+        $result = $this->service->cacheQuery($key, fn () => $expectedData, 60);
 
         // Assert
         $this->assertEquals($expectedData, $result);

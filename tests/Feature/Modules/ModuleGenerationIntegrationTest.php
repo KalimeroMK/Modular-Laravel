@@ -7,6 +7,7 @@ namespace Tests\Feature\Modules;
 use App\Modules\Core\Support\Generators\ModuleGenerationTracker;
 use App\Modules\Core\Support\Generators\ModuleGenerator;
 use Illuminate\Filesystem\Filesystem;
+use Override;
 use Tests\TestCase;
 
 class ModuleGenerationIntegrationTest extends TestCase
@@ -17,6 +18,7 @@ class ModuleGenerationIntegrationTest extends TestCase
 
     private string $testModuleName = 'IntegrationTestModule';
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,6 +26,7 @@ class ModuleGenerationIntegrationTest extends TestCase
         $this->tracker = new ModuleGenerationTracker($this->files);
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         // Cleanup test module

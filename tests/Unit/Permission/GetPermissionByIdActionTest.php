@@ -8,10 +8,12 @@ use App\Modules\Permission\Application\Actions\GetPermissionByIdAction;
 use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class GetPermissionByIdActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

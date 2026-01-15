@@ -12,10 +12,12 @@ use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class LoginActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

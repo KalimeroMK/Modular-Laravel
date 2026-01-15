@@ -9,12 +9,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class YamlModuleParser
 {
-    protected string $file;
-
-    public function __construct(string $file)
-    {
-        $this->file = $file;
-    }
+    public function __construct(protected string $file) {}
 
     /**
      * @return array<string, array<string, mixed>>
@@ -48,9 +43,9 @@ class YamlModuleParser
                 if (is_string($relationConfig) && str_contains($relationConfig, ':')) {
                     $parts = explode(':', $relationConfig);
                     if (count($parts) >= 2) {
-                        $relationType = trim($parts[0]);
-                        $relModel = trim($parts[1] ?? '');
-                        $morphName = trim($parts[2] ?? $relationKey);
+                        $relationType = mb_trim($parts[0]);
+                        $relModel = mb_trim($parts[1] ?? '');
+                        $morphName = mb_trim($parts[2] ?? $relationKey);
                         if (in_array($relationType, ['morphTo', 'morphMany', 'morphOne', 'morphToMany']) && $morphName) {
                             $relations[] = "{$relationKey}:{$relationType}:{$relModel}:{$morphName}";
                         } else {
@@ -77,11 +72,7 @@ class YamlModuleParser
                         foreach ($relationConfig as $rel) {
                             $model = $rel['model'] ?? '';
                             $morphName = $rel['morph_name'] ?? $rel['name'] ?? '';
-                            if ($morphName) {
-                                $relations[] = "{$model}:{$relationKey}:{$model}:{$morphName}";
-                            } else {
-                                $relations[] = "{$model}:{$relationKey}";
-                            }
+                            $relations[] = $morphName ? "{$model}:{$relationKey}:{$model}:{$morphName}" : "{$model}:{$relationKey}";
                         }
                     } elseif (is_string($relationConfig[0] ?? null)) {
                         // Format: 'belongsToMany' => ['Category', 'Tag']

@@ -9,10 +9,12 @@ use App\Modules\Auth\Infrastructure\Http\Requests\SendPasswordResetLinkRequest;
 use Exception;
 use Illuminate\Support\Facades\Password;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class SendPasswordResetLinkActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();

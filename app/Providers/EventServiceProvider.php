@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Override;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,7 @@ class EventServiceProvider extends ServiceProvider
      *
      * @return void
      */
+    #[Override]
     public function boot()
     {
         //
@@ -37,6 +39,7 @@ class EventServiceProvider extends ServiceProvider
      *
      * @return bool
      */
+    #[Override]
     public function shouldDiscoverEvents()
     {
         return false;

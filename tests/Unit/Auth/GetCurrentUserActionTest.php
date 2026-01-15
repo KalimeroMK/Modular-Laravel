@@ -11,10 +11,12 @@ use App\Modules\User\Infrastructure\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Mockery;
+use Override;
 use Tests\TestCase;
 
 class GetCurrentUserActionTest extends TestCase
 {
+    #[Override]
     protected function tearDown(): void
     {
         Mockery::close();
@@ -26,16 +28,14 @@ class GetCurrentUserActionTest extends TestCase
         // Arrange
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
-        $user->shouldReceive('getAttribute')->andReturnUsing(function ($key) {
-            return match ($key) {
-                'id' => 1,
-                'name' => 'Test User',
-                'email' => 'test@example.com',
-                'email_verified_at' => '2023-01-01T00:00:00.000000Z',
-                'created_at' => '2023-01-01T00:00:00.000000Z',
-                'updated_at' => '2023-01-01T00:00:00.000000Z',
-                default => null
-            };
+        $user->shouldReceive('getAttribute')->andReturnUsing(fn ($key) => match ($key) {
+            'id' => 1,
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'email_verified_at' => '2023-01-01T00:00:00.000000Z',
+            'created_at' => '2023-01-01T00:00:00.000000Z',
+            'updated_at' => '2023-01-01T00:00:00.000000Z',
+            default => null
         });
         $user->id = 1;
         $user->name = 'Test User';
