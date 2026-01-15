@@ -16,10 +16,10 @@ class Delete{{class}}Action
     public function execute(int $id): bool
     {
         // Validate that the {{moduleVar}} exists
-        $this->{{moduleVar}}Repository->findOrFail($id);
-        
+        ${{moduleVar}} = $this->{{moduleVar}}Repository->findOrFail($id);
+
         {{event_dispatch_deleted}}
-        
+
         return $this->{{moduleVar}}Repository->delete($id);
     }
 }

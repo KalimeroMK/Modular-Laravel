@@ -86,7 +86,7 @@ class {{module}}Controller extends Controller
      * Get a specific {{moduleVar}} by ID.
      *
      * @param int $id The {{moduleVar}} ID
-     * @param Get{{module}}ByIdAction $action Action to retrieve {{moduleVar}} by ID
+     * @param GetById{{module}}Action $action Action to retrieve {{moduleVar}} by ID
      * @return JsonResponse {{moduleVar}} details
      * 
      * @OA\Get(

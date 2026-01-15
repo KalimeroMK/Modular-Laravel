@@ -86,6 +86,9 @@ class ModuleGenerator
 
         $this->repositoryBinder->bind($moduleName);
         $this->serviceProviderBinder->bind($moduleName);
+
+        // Run Laravel Pint to format generated code
+        $this->formatGeneratedCode($moduleName);
     }
 
     /**
@@ -158,6 +161,31 @@ class ModuleGenerator
         $notifications = ['Created', 'Updated', 'Deleted'];
         foreach ($notifications as $eventType) {
             $this->trackFile($tracker, $moduleName, "Application/Notifications/{$moduleName}{$eventType}Notification.php");
+        }
+    }
+
+    /**
+     * Format generated code using Laravel Pint.
+     */
+    protected function formatGeneratedCode(string $moduleName): void
+    {
+        $modulePath = app_path("Modules/{$moduleName}");
+        $testPath = base_path("tests/Feature/Modules/{$moduleName}");
+
+        // Check if Pint is available
+        $pintPath = base_path('vendor/bin/pint');
+        if (! file_exists($pintPath)) {
+            return;
+        }
+
+        // Format module files
+        if (is_dir($modulePath)) {
+            exec("cd ".base_path()." && {$pintPath} {$modulePath} --quiet 2>&1", $output, $returnCode);
+        }
+
+        // Format test files
+        if (is_dir($testPath)) {
+            exec("cd ".base_path()." && {$pintPath} {$testPath} --quiet 2>&1", $output, $returnCode);
         }
     }
 }

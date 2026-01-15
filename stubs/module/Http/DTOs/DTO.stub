@@ -8,15 +8,13 @@ use Illuminate\Http\Request;
 
 /**
  * Data Transfer Object for {{module}} operations.
- * 
+ *
  * This DTO is used to transfer {{moduleVar}} data between layers of the application.
  */
 readonly class {{module}}DTO
 {
     /**
      * Create a new {{module}}DTO instance.
-     *
-     * @param {{constructor_args}}
      */
     public function __construct(
         {{constructor_args}}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Infrastructure\Providers;
 
+use App\Modules\{{module}}\Infrastructure\Models\{{module}};
 use App\Modules\{{module}}\Infrastructure\Repositories\{{module}}Repository;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{module}}RepositoryInterface;
 use Illuminate\Filesystem\Filesystem;
