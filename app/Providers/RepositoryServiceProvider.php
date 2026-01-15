@@ -27,7 +27,6 @@ class RepositoryServiceProvider extends ServiceProvider
         AuthRepositoryInterface::class => AuthRepository::class,
         RoleRepositoryInterface::class => RoleRepository::class,
         PermissionRepositoryInterface::class => PermissionRepository::class,
-
     ];
 
     /**

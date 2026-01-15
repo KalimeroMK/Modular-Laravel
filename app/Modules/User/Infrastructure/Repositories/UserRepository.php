@@ -13,6 +13,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class UserRepository extends EloquentRepository implements UserRepositoryInterface
 {
+    public function __construct(User $model)
+    {
+        parent::__construct($model);
+    }
+
     public function findByEmail(string $email): ?User
     {
         /** @var User|null $result */

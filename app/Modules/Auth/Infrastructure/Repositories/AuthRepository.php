@@ -12,6 +12,11 @@ use App\Modules\User\Infrastructure\Models\User;
  */
 class AuthRepository extends EloquentRepository implements AuthRepositoryInterface
 {
+    public function __construct(User $model)
+    {
+        parent::__construct($model);
+    }
+
     public function findByEmail(string $email): ?User
     {
         /** @var User|null $result */

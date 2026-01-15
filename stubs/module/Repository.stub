@@ -22,7 +22,7 @@ final class {{module}}Repository extends EloquentRepository implements {{module}
      *
      * @param {{module}} $model The {{moduleVar}} model instance
      */
-    public function __construct(readonly {{module}} $model)
+    public function __construct({{module}} $model)
     {
         parent::__construct($model);
     }
