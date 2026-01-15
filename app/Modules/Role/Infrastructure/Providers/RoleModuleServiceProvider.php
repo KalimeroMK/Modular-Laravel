@@ -24,8 +24,21 @@ class RoleModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Check if module is enabled before loading
+        if (! $this->isModuleEnabled()) {
+            return;
+        }
+
         $this->registerPolicies();
         $this->loadRoutes();
+    }
+
+    /**
+     * Check if this module is enabled in config/modules.php
+     */
+    protected function isModuleEnabled(): bool
+    {
+        return (bool) config('modules.specific.Role.enabled', true);
     }
 
     protected function registerPolicies(): void
@@ -37,10 +50,11 @@ class RoleModuleServiceProvider extends ServiceProvider
     {
         $routeFile = __DIR__.'/../Routes/roles.php';
 
-        if (file_exists($routeFile)) {
-            Route::group([], function () use ($routeFile): void {
-                require $routeFile;
-            });
+        if (! file_exists($routeFile)) {
+            return;
         }
+
+        // Routes already have prefix and middleware in route files, just require them
+        require $routeFile;
     }
 }

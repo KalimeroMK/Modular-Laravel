@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Modules\Core\Support\Generators\ModuleConfigUpdater;
 use App\Modules\Core\Support\Generators\ModuleGenerationTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
@@ -19,7 +20,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register ModuleGenerationTracker as singleton for tracking generated files
-        $this->app->singleton(ModuleGenerationTracker::class, fn ($app) => new ModuleGenerationTracker($app->make(Filesystem::class)));
+        $this->app->singleton(ModuleGenerationTracker::class, fn ($app) => new ModuleGenerationTracker(
+            $app->make(Filesystem::class),
+            $app->make(ModuleConfigUpdater::class)
+        ));
     }
 
     /**

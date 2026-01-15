@@ -9,11 +9,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Override;
 use Throwable;
 
+/**
+ * ModularServiceProvider handles GLOBAL resources for all modules:
+ * - Factory resolver (global, registered once)
+ * - Migrations (module-specific, but registered globally)
+ * - Helpers (module-specific, but registered globally)
+ *
+ * Module-specific resources (routes, policies, observers, events, repository bindings)
+ * are handled by individual module service providers.
+ */
 class ModularServiceProvider extends ServiceProvider
 {
     protected Filesystem $files;
@@ -47,19 +55,15 @@ class ModularServiceProvider extends ServiceProvider
             return array_values($dirs);
         });
 
+        // Register global factory resolver (once for all modules)
+        $this->registerFactoriesResolver($basePath, $nsBase);
+
+        // Register module-specific resources (migrations, helpers)
+        // Routes, policies, observers, and events are registered by individual module service providers
         foreach ($modules as $module) {
             try {
-                if (! $this->isModuleEnabled($module)) {
-                    continue;
-                }
-
-                $this->registerRoutes($module, $basePath, $nsBase);
                 $this->registerHelpers($module, $basePath);
                 $this->registerMigrations($module, $basePath);
-                $this->registerFactoriesResolver($basePath, $nsBase);
-
-                // Policies, observers, and events are registered by module service providers
-                // No fallback needed - all modules must have their own service provider
             } catch (Throwable $e) {
                 Log::error("Failed to register module '{$module}': ".$e->getMessage());
             }
@@ -69,48 +73,9 @@ class ModularServiceProvider extends ServiceProvider
     #[Override]
     public function register(): void {}
 
-    protected function isModuleEnabled(string $module): bool
-    {
-        return (bool) config("modules.specific.{$module}.enabled", true);
-    }
-
-    /**
-     * API-only route registration with prefix/version/middleware from config.
-     */
-    protected function registerRoutes(string $module, string $basePath, string $nsBase): void
-    {
-        // Route caching check removed for Laravel 12 compatibility
-
-        $structure = config('modules.default.structure', []);
-        $routesDir = $structure['routes'] ?? 'routes';
-        $routeFile = "{$basePath}/{$module}/{$routesDir}/api.php";
-
-        if (! is_file($routeFile)) {
-            return;
-        }
-
-        $opt = config('modules.default.routing_options.api', [
-            'prefix' => 'api',
-            'version' => 'v1',
-            'middleware' => ['api'],
-        ]);
-
-        // Build controller namespace from config structure (no extra "Http" duplication)
-        $controllersRel = $structure['controllers'] ?? 'Http/Controllers';
-        $controllersNS = str_replace('/', '\\', $controllersRel);
-
-        $nsControllers = "{$nsBase}\\{$module}\\{$controllersNS}";
-
-        Route::group(array_filter([
-            'middleware' => $opt['middleware'] ?? ['api'],
-            'namespace' => $nsControllers, // Optional if you use FQCN in routes; keep for convenience
-        ]), static function () use ($routeFile): void {
-            require $routeFile;
-        });
-    }
-
     /**
      * Include module helpers if present.
+     * This is module-specific but registered globally for convenience.
      */
     protected function registerHelpers(string $module, string $basePath): void
     {
@@ -132,6 +97,7 @@ class ModularServiceProvider extends ServiceProvider
 
     /**
      * Register module migrations (safe if path doesn't exist).
+     * This is module-specific but registered globally for convenience.
      */
     protected function registerMigrations(string $module, string $basePath): void
     {
@@ -145,7 +111,9 @@ class ModularServiceProvider extends ServiceProvider
     }
 
     /**
-     * Factory resolver: App\Modules\X\Infrastructure\Models\Post -> App\Modules\X\Database\Factories\PostFactory
+     * Register global factory resolver for all modules.
+     * Maps: App\Modules\X\Infrastructure\Models\Post -> App\Modules\X\Database\Factories\PostFactory
+     * This is a GLOBAL resource, registered once for all modules.
      */
     protected function registerFactoriesResolver(string $basePath, string $nsBase): void
     {

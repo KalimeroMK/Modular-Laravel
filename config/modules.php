@@ -41,16 +41,18 @@ return [
 
     'specific' => [
         'Auth' => [
-            'enabled' => false, // Disabled - using new Clean Architecture structure
+            'enabled' => true, // Disabled - using new Clean Architecture structure
         ],
         'User' => [
-            'enabled' => false, // Disabled - using new Clean Architecture structure
+            'enabled' => true, // Disabled - using new Clean Architecture structure
         ],
         'Role' => [
-            'enabled' => false, // Disabled - using new Clean Architecture structure
+            'enabled' => true, // Disabled - using new Clean Architecture structure
         ],
         'Permission' => [
-            'enabled' => false, // Disabled - using new Clean Architecture structure
+            'enabled' => true, // Disabled - using new Clean Architecture structure
         ],
-    ],
+        'E2ETestModule' => [
+            'enabled' => true,
+        ],    ],
 ];

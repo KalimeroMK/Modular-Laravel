@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\{{module}}\Infrastructure\Providers;
+namespace App\Modules\NonExistentStubModule\Infrastructure\Providers;
 
-use App\Modules\{{module}}\Infrastructure\Models\{{module}};
-use App\Modules\{{module}}\Infrastructure\Repositories\{{module}}Repository;
-use App\Modules\{{module}}\Infrastructure\Repositories\{{module}}RepositoryInterface;
+use App\Modules\NonExistentStubModule\Infrastructure\Models\NonExistentStubModule;
+use App\Modules\NonExistentStubModule\Infrastructure\Repositories\NonExistentStubModuleRepository;
+use App\Modules\NonExistentStubModule\Infrastructure\Repositories\NonExistentStubModuleRepositoryInterface;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
-class {{module}}ModuleServiceProvider extends ServiceProvider
+class NonExistentStubModuleModuleServiceProvider extends ServiceProvider
 {
     /**
      * Register module-specific bindings (repositories, services, etc.)
@@ -21,7 +21,7 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind({{module}}RepositoryInterface::class, {{module}}Repository::class);
+        $this->app->bind(NonExistentStubModuleRepositoryInterface::class, NonExistentStubModuleRepository::class);
     }
 
     /**
@@ -47,24 +47,36 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
      */
     protected function isModuleEnabled(): bool
     {
-        return (bool) config("modules.specific.{{module}}.enabled", true);
+        return (bool) config("modules.specific.NonExistentStubModule.enabled", true);
     }
 
     /**
-     * Load module routes.
+     * Load module routes with prefix and middleware from config.
      * Each module is responsible for loading its own routes.
-     * Routes already have prefix and middleware defined in route files.
      */
     protected function loadRoutes(): void
     {
-        $routeFile = __DIR__.'/../Routes/{{module_lower}}.php';
+        $routeFile = __DIR__.'/../Routes/nonexistentstubmodule.php';
 
         if (! file_exists($routeFile)) {
             return;
         }
 
-        // Routes already have prefix and middleware in route files, just require them
-        require $routeFile;
+        $routingOptions = config('modules.default.routing_options.api', [
+            'prefix' => 'api',
+            'version' => 'v1',
+            'middleware' => ['api'],
+        ]);
+
+        $prefix = ($routingOptions['prefix'] ?? 'api').'/'.($routingOptions['version'] ?? 'v1');
+        $middleware = $routingOptions['middleware'] ?? ['api'];
+
+        Route::group([
+            'prefix' => $prefix,
+            'middleware' => $middleware,
+        ], function () use ($routeFile): void {
+            require $routeFile;
+        });
     }
 
     /**
@@ -73,10 +85,10 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
      */
     protected function registerPolicies(): void
     {
-        $policyClass = "App\\Modules\\{{module}}\\Infrastructure\\Policies\\{{module}}Policy";
+        $policyClass = "App\\Modules\\NonExistentStubModule\\Infrastructure\\Policies\\NonExistentStubModulePolicy";
 
-        if (class_exists($policyClass) && class_exists({{module}}::class)) {
-            Gate::policy({{module}}::class, $policyClass);
+        if (class_exists($policyClass) && class_exists(NonExistentStubModule::class)) {
+            Gate::policy(NonExistentStubModule::class, $policyClass);
         }
     }
 
@@ -86,10 +98,10 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
      */
     protected function registerObservers(): void
     {
-        $observerClass = "App\\Modules\\{{module}}\\Infrastructure\\Observers\\{{module}}Observer";
+        $observerClass = "App\\Modules\\NonExistentStubModule\\Infrastructure\\Observers\\NonExistentStubModuleObserver";
 
-        if (class_exists($observerClass) && class_exists({{module}}::class)) {
-            {{module}}::observe($observerClass);
+        if (class_exists($observerClass) && class_exists(NonExistentStubModule::class)) {
+            NonExistentStubModule::observe($observerClass);
         }
     }
 
@@ -99,7 +111,7 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
      */
     protected function registerEvents(): void
     {
-        $basePath = app_path("Modules/{{module}}");
+        $basePath = app_path("Modules/NonExistentStubModule");
         $eventsPath = "{$basePath}/Application/Events";
         $listenersPath = "{$basePath}/Application/Listeners";
 
@@ -111,14 +123,14 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
 
         foreach ($fs->files($eventsPath) as $eventFile) {
             $eventName = $eventFile->getFilenameWithoutExtension();
-            $eventClass = "App\\Modules\\{{module}}\\Application\\Events\\{$eventName}";
+            $eventClass = "App\\Modules\\NonExistentStubModule\\Application\\Events\\{$eventName}";
 
             if (! class_exists($eventClass)) {
                 continue;
             }
 
             $listenerName = $eventName.'Listener';
-            $listenerClass = "App\\Modules\\{{module}}\\Application\\Listeners\\{$listenerName}";
+            $listenerClass = "App\\Modules\\NonExistentStubModule\\Application\\Listeners\\{$listenerName}";
 
             if (class_exists($listenerClass)) {
                 Event::listen($eventClass, $listenerClass);

@@ -25,6 +25,7 @@ class ModuleGenerator
         protected ServiceProviderBinder $serviceProviderBinder,
         protected FieldParser $fieldParser,
         protected EnumGenerator $enumGenerator,
+        protected ModuleConfigUpdater $configUpdater,
     ) {}
 
     /**
@@ -84,8 +85,12 @@ class ModuleGenerator
         $this->testGenerator->generate($moduleName, $fields, $options);
         $this->trackFile($tracker, $moduleName, "../../../tests/Feature/Modules/{$moduleName}/{$moduleName}CrudTest.php");
 
-        $this->repositoryBinder->bind($moduleName);
+        // Repository bindings are now registered in individual module service providers
+        // No need to bind in RepositoryServiceProvider anymore
         $this->serviceProviderBinder->bind($moduleName);
+
+        // Add module to config/modules.php
+        $this->configUpdater->addModule($moduleName);
 
         // Run Laravel Pint to format generated code
         $this->formatGeneratedCode($moduleName);

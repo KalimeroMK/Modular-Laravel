@@ -31,18 +31,32 @@ class AuthModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Check if module is enabled before loading
+        if (! $this->isModuleEnabled()) {
+            return;
+        }
+
         // Load routes
         $this->loadRoutes();
+    }
+
+    /**
+     * Check if this module is enabled in config/modules.php
+     */
+    protected function isModuleEnabled(): bool
+    {
+        return (bool) config('modules.specific.Auth.enabled', true);
     }
 
     protected function loadRoutes(): void
     {
         $routeFile = __DIR__.'/../Routes/auth.php';
 
-        if (file_exists($routeFile)) {
-            Route::group([], function () use ($routeFile): void {
-                require $routeFile;
-            });
+        if (! file_exists($routeFile)) {
+            return;
         }
+
+        // Routes already have prefix and middleware in route files, just require them
+        require $routeFile;
     }
 }

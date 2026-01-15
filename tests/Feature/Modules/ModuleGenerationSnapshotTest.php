@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Modules;
 
+use App\Modules\Core\Support\Generators\ModuleConfigUpdater;
 use App\Modules\Core\Support\Generators\ModuleGenerationTracker;
 use App\Modules\Core\Support\Generators\ModuleGenerator;
 use Illuminate\Filesystem\Filesystem;
@@ -23,7 +24,7 @@ class ModuleGenerationSnapshotTest extends TestCase
     {
         parent::setUp();
         $this->files = new Filesystem;
-        $this->tracker = new ModuleGenerationTracker($this->files);
+        $this->tracker = new ModuleGenerationTracker($this->files, new ModuleConfigUpdater);
     }
 
     #[Override]

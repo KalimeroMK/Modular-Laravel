@@ -7,12 +7,25 @@ namespace App\Modules\Core\Support\Generators;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
+/**
+ * @deprecated Repository bindings are now registered in individual module service providers.
+ * This class is kept for backward compatibility but does nothing.
+ */
 class RepositoryBinder
 {
     public function __construct(protected Filesystem $files) {}
 
+    /**
+     * @deprecated Repository bindings are now registered in module service providers.
+     * This method does nothing and can be removed.
+     */
     public function bind(string $moduleName): void
     {
+        // Repository bindings are now handled by individual module service providers
+        // No need to modify RepositoryServiceProvider anymore
+        return;
+
+        // Legacy code below (kept for reference, never executed)
         $providerPath = app_path('Providers/RepositoryServiceProvider.php');
         $interfaceClass = "App\\Modules\\{$moduleName}\\Infrastructure\\Repositories\\{$moduleName}RepositoryInterface";
         $repositoryClass = "App\\Modules\\{$moduleName}\\Infrastructure\\Repositories\\{$moduleName}Repository";

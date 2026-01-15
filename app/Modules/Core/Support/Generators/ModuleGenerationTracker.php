@@ -21,7 +21,10 @@ class ModuleGenerationTracker
      */
     protected array $modifiedFiles = [];
 
-    public function __construct(protected Filesystem $files) {}
+    public function __construct(
+        protected Filesystem $files,
+        protected ModuleConfigUpdater $configUpdater
+    ) {}
 
     /**
      * Track a generated file.
@@ -99,6 +102,9 @@ class ModuleGenerationTracker
         if ($this->files->exists($testPath)) {
             $this->files->deleteDirectory($testPath);
         }
+
+        // Remove module from config/modules.php
+        $this->configUpdater->removeModule($moduleName);
 
         unset($this->generatedFiles[$moduleName]);
     }

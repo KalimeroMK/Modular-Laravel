@@ -199,7 +199,7 @@ Contains external concerns and implementations:
 -   **Repositories/** - Data access implementations
 -   **Http/** - Web layer (Controllers, Requests, Resources)
     -   **Resources/** - API response transformation (output to clients)
--   **Providers/** - Service providers for dependency injection
+-   **Providers/** - Module service providers for dependency injection, routes, policies, observers, and events
 -   **Routes/** - API route definitions
 
 ### 🔄 Dependency Flow
@@ -240,6 +240,86 @@ Action → Model → Resource → JSON Response
 -   **Resources** are used **only** for API responses (formatted output to clients)
 -   **Actions** return **Eloquent models**, not DTOs or Resources
 -   **Controllers** transform models to Resources for API responses
+
+## 🔧 Service Provider Architecture
+
+The application uses a **simplified service provider structure** where each module is responsible for its own resources:
+
+### 📦 Module Service Providers (Individual)
+
+Each module has its own service provider (`{Module}ModuleServiceProvider`) that handles:
+
+-   **Repository Bindings** - Registered in `register()` method
+-   **Routes** - Loaded in `boot()` method (routes already have prefix/middleware in route files)
+-   **Policies** - Registered in `boot()` method
+-   **Observers** - Registered in `boot()` method (if they exist)
+-   **Events & Listeners** - Registered in `boot()` method (if they exist)
+-   **Enable/Disable** - Checks `config/modules.php` before loading resources
+
+**Example:**
+```php
+class ProductModuleServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        // Repository bindings
+        $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
+    }
+
+    public function boot(): void
+    {
+        // Check if module is enabled
+        if (! $this->isModuleEnabled()) {
+            return;
+        }
+
+        // Register module-specific resources
+        $this->registerPolicies();
+        $this->registerObservers();
+        $this->registerEvents();
+        $this->loadRoutes();
+    }
+}
+```
+
+### 🌐 ModularServiceProvider (Global)
+
+The `ModularServiceProvider` handles **global resources** for all modules:
+
+-   **Factory Resolver** - Global factory naming convention (registered once)
+-   **Migrations** - Loads migrations from all modules
+-   **Helpers** - Loads helper files from modules (if they exist)
+
+**Note:** `ModularServiceProvider` does NOT register routes, policies, observers, or events - these are handled by individual module service providers.
+
+### ⚙️ Module Enable/Disable
+
+Modules can be enabled or disabled via `config/modules.php`:
+
+```php
+'specific' => [
+    'Product' => [
+        'enabled' => true,  // Module is active
+    ],
+    'Category' => [
+        'enabled' => false, // Module is disabled
+    ],
+],
+```
+
+When a module is disabled:
+-   Routes are not loaded
+-   Policies are not registered
+-   Observers are not registered
+-   Events are not registered
+-   Repository bindings are still available (for dependency injection)
+
+### 🔄 Automatic Registration
+
+When a new module is generated:
+1.   Service provider is automatically registered in `bootstrap/app.php`
+2.   Module is added to `config/modules.php` with `enabled => true`
+3.   All module-specific resources are ready to use
 
 ## 🔄 Automatic Relationship Sync
 
@@ -635,7 +715,6 @@ The YAML module generation includes a comprehensive rollback mechanism:
 
 -   **Automatic Rollback**: If a module fails to generate, all changes are automatically rolled back
 -   **File Tracking**: All generated files are tracked for easy rollback
--   **Modified Files**: Modified files (like `RepositoryServiceProvider`) are backed up and restored on failure
 -   **Clean State**: Ensures your codebase remains in a clean state even if generation fails
 
 ### 📊 Generation Statistics
