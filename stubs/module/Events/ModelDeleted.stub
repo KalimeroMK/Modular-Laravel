@@ -9,12 +9,18 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class {{module}}Deleted
+/**
+ * Event fired when a {{module}} is deleted.
+ */
+final class {{module}}Deleted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    /**
+     * Create a new event instance.
+     */
     public function __construct(
-        public {{module}} ${{model}}
+        public readonly {{module}} ${{model}}
     ) {}
 }
 

@@ -8,7 +8,10 @@ use App\Modules\{{module}}\Application\Events\{{module}}Updated;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class {{module}}UpdatedListener implements ShouldQueue
+/**
+ * Listener for {{module}} updated events.
+ */
+final class {{module}}UpdatedListener implements ShouldQueue
 {
     use InteractsWithQueue;
 
@@ -17,7 +20,7 @@ class {{module}}UpdatedListener implements ShouldQueue
      */
     public function handle({{module}}Updated $event): void
     {
-        // Handle {{module}} updated event
+        // TODO: Handle {{module}} updated event
         // Example: Invalidate cache, send notification, etc.
     }
 }

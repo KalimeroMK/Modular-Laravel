@@ -10,19 +10,19 @@ use App\Modules\{{module}}\Infrastructure\Models\{{module}};
 
 /**
  * Repository implementation for {{module}} operations.
- * 
+ *
  * Provides database access methods for {{moduleVar}} models.
- * 
+ *
  * @extends EloquentRepository<{{module}}>
  */
-class {{module}}Repository extends EloquentRepository implements {{module}}RepositoryInterface
+final class {{module}}Repository extends EloquentRepository implements {{module}}RepositoryInterface
 {
     /**
      * Create a new repository instance.
      *
      * @param {{module}} $model The {{moduleVar}} model instance
      */
-    public function __construct({{module}} $model)
+    public function __construct(readonly {{module}} $model)
     {
         parent::__construct($model);
     }

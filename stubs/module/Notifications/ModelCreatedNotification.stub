@@ -10,12 +10,18 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class {{module}}CreatedNotification extends Notification implements ShouldQueue
+/**
+ * Notification sent when a {{module}} is created.
+ */
+final class {{module}}CreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    /**
+     * Create a new notification instance.
+     */
     public function __construct(
-        public {{module}} ${{moduleVar}}
+        public readonly {{module}} ${{moduleVar}}
     ) {}
 
     /**
