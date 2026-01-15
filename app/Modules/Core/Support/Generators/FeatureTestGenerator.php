@@ -137,13 +137,13 @@ class FeatureTestGenerator
         // Check if it's a standard Laravel model first
         $standardModels = ['User', 'Role', 'Permission'];
         if (in_array($modelName, $standardModels)) {
-            return "\\App\\Modules\\{$modelName}\\Models\\{$modelName}";
+            return "\\App\\Modules\\{$modelName}\\Infrastructure\\Models\\{$modelName}";
         }
 
         // Check if the model exists in modules
-        $modulePath = app_path("Modules/{$modelName}/Models/{$modelName}.php");
+        $modulePath = app_path("Modules/{$modelName}/Infrastructure/Models/{$modelName}.php");
         if (file_exists($modulePath)) {
-            return "\\App\\Modules\\{$modelName}\\Models\\{$modelName}";
+            return "\\App\\Modules\\{$modelName}\\Infrastructure\\Models\\{$modelName}";
         }
 
         // Fallback to App\Models namespace
