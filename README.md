@@ -859,11 +859,23 @@ Complete guide for setting up Sanctum with Single Page Applications:
 
 ## ✅ Requirements
 
--   PHP 8.3+
+-   PHP 8.4+
 -   Laravel 12+
 -   MySQL 8.0+ / PostgreSQL 13+ / SQLite 3.35+
 -   Composer 2.0+
 -   Docker & Docker Compose (for Docker setup)
+
+## 🚀 PHP 8.4 Optimizations
+
+This starter kit is fully optimized for **PHP 8.4** with modern features:
+
+-   **Strict Type Declarations** - All files use `declare(strict_types=1)`
+-   **Final Classes** - Policy, Observer, Event, Listener, and Notification classes are final by default
+-   **Readonly Properties** - Event and Notification classes use readonly properties
+-   **Latest PDO Constants** - Uses `\Pdo\Mysql::ATTR_SSL_CA` instead of deprecated `PDO::MYSQL_ATTR_SSL_CA`
+-   **Constructor Property Promotion** - Simplified constructor syntax throughout
+-   **Modern Type Hints** - Full type coverage with PHPDoc annotations
+-   **Rector Integration** - Automatic code quality and PHP 8.4 compliance checks
 
 ## 💡 Notes
 
@@ -873,6 +885,7 @@ Complete guide for setting up Sanctum with Single Page Applications:
 -   Clean Architecture ensures maintainable and testable code
 -   Database optimization provides enterprise-level performance
 -   Two-Factor Authentication enhances security for sensitive applications
+-   **PHP 8.4 Ready** - Fully compatible with latest PHP features and best practices
 
 ## 🤝 Contribution
 
