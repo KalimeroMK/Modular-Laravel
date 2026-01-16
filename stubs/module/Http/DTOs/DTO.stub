@@ -24,10 +24,10 @@ readonly class {{module}}DTO
      * Create a {{module}}DTO from a validated request.
      *
      * @param Request $request The HTTP request containing validated data
-     * @param int|null $id Optional {{moduleVar}} ID for update operations
+     * @param int|string|null $id Optional {{moduleVar}} ID for update operations (supports integer IDs, ULIDs, and UUIDs)
      * @return self New {{module}}DTO instance
      */
-    public static function fromRequest(Request $request, ?int $id = null): self
+    public static function fromRequest(Request $request, int|string|null $id = null): self
     {
         $data = $request->validated();
         return new self(

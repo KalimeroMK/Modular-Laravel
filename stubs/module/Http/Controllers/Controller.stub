@@ -85,7 +85,7 @@ class {{module}}Controller extends Controller
     /**
      * Get a specific {{moduleVar}} by ID.
      *
-     * @param int $id The {{moduleVar}} ID
+     * @param int|string $id The {{moduleVar}} ID (supports integer IDs, ULIDs, and UUIDs)
      * @param GetById{{module}}Action $action Action to retrieve {{moduleVar}} by ID
      * @return JsonResponse {{moduleVar}} details
      * 
@@ -99,8 +99,8 @@ class {{module}}Controller extends Controller
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="{{module}} ID",
-     *         @OA\Schema(type="integer", example=1)
+     *         description="{{module}} ID (supports integer IDs, ULIDs, and UUIDs)",
+     *         @OA\Schema(type="string", example="1")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -123,7 +123,7 @@ class {{module}}Controller extends Controller
      *     )
      * )
      */
-    public function show(int $id, GetById{{module}}Action $action): JsonResponse
+    public function show(int|string $id, GetById{{module}}Action $action): JsonResponse
     {
         return ApiResponse::success(new {{module}}Resource($action->execute($id)), '{{module}} retrieved successfully');
     }
@@ -178,7 +178,7 @@ class {{module}}Controller extends Controller
     /**
      * Update an existing {{moduleVar}}.
      *
-     * @param int $id The {{moduleVar}} ID
+     * @param int|string $id The {{moduleVar}} ID (supports integer IDs, ULIDs, and UUIDs)
      * @param Update{{module}}Request $request Validated request containing updated {{moduleVar}} data
      * @param Update{{module}}Action $action Action to update {{moduleVar}}
      * @return JsonResponse Updated {{moduleVar}} details
@@ -194,8 +194,8 @@ class {{module}}Controller extends Controller
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="{{module}} ID",
-     *         @OA\Schema(type="integer", example=1)
+     *         description="{{module}} ID (supports integer IDs, ULIDs, and UUIDs)",
+     *         @OA\Schema(type="string", example="1")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
@@ -229,7 +229,7 @@ class {{module}}Controller extends Controller
      *     )
      * )
      */
-    public function update(int $id, Update{{module}}Request $request, Update{{module}}Action $action): JsonResponse
+    public function update(int|string $id, Update{{module}}Request $request, Update{{module}}Action $action): JsonResponse
     {
         return ApiResponse::success(new {{module}}Resource($action->execute($id, {{module}}DTO::fromRequest($request))), '{{module}} updated successfully');
     }
@@ -237,7 +237,7 @@ class {{module}}Controller extends Controller
     /**
      * Delete a {{moduleVar}}.
      *
-     * @param int $id The {{moduleVar}} ID
+     * @param int|string $id The {{moduleVar}} ID (supports integer IDs, ULIDs, and UUIDs)
      * @param Delete{{module}}Action $action Action to delete {{moduleVar}}
      * @return JsonResponse Success message
      * @throws DeleteException If {{moduleVar}} deletion fails
@@ -252,8 +252,8 @@ class {{module}}Controller extends Controller
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="{{module}} ID",
-     *         @OA\Schema(type="integer", example=1)
+     *         description="{{module}} ID (supports integer IDs, ULIDs, and UUIDs)",
+     *         @OA\Schema(type="string", example="1")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -275,7 +275,7 @@ class {{module}}Controller extends Controller
      *     )
      * )
      */
-    public function destroy(int $id, Delete{{module}}Action $action): JsonResponse
+    public function destroy(int|string $id, Delete{{module}}Action $action): JsonResponse
     {
         $action->execute($id);
         return ApiResponse::success(null, '{{module}} deleted successfully');

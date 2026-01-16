@@ -13,7 +13,13 @@ class Delete{{class}}Action
         protected {{class}}RepositoryInterface ${{moduleVar}}Repository,
     ) {}
 
-    public function execute(int $id): bool
+    /**
+     * Execute the action to delete a {{moduleVar}}.
+     *
+     * @param int|string $id The {{moduleVar}} ID (supports integer IDs, ULIDs, and UUIDs)
+     * @return bool True if deletion was successful
+     */
+    public function execute(int|string $id): bool
     {
         // Validate that the {{moduleVar}} exists
         ${{moduleVar}} = $this->{{moduleVar}}Repository->findOrFail($id);
