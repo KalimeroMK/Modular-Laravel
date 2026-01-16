@@ -28,12 +28,15 @@ interface WritableRepositoryInterface
     /**
      * Update a record by ID.
      *
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      * @param  array<string, mixed>  $data
      */
-    public function update(int $id, array $data): ?Model;
+    public function update(int|string $id, array $data): ?Model;
 
     /**
      * Delete a record by ID.
+     *
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      */
-    public function delete(int $id): bool;
+    public function delete(int|string $id): bool;
 }

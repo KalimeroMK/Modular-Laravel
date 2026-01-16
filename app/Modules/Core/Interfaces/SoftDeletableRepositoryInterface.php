@@ -13,11 +13,15 @@ interface SoftDeletableRepositoryInterface
 {
     /**
      * Restore a soft-deleted record.
+     *
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      */
-    public function restore(int $id): ?Model;
+    public function restore(int|string $id): ?Model;
 
     /**
      * Find a record including soft-deleted ones.
+     *
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      */
-    public function findWithTrashed(int $id): ?Model;
+    public function findWithTrashed(int|string $id): ?Model;
 }

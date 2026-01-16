@@ -37,6 +37,24 @@ class ModuleConfigUpdater
     }
 
     /**
+     * Remove module from config (for rollback)
+     */
+    public function removeModule(string $moduleName): void
+    {
+        if (! file_exists($this->configPath)) {
+            return;
+        }
+
+        $content = file_get_contents($this->configPath);
+
+        // Remove the module entry
+        $pattern = "/\s+'{$moduleName}' => \[\s+.*?\s+\],\n/s";
+        $content = preg_replace($pattern, '', $content);
+
+        file_put_contents($this->configPath, $content);
+    }
+
+    /**
      * Check if module already exists in config
      */
     protected function moduleExists(string $content, string $moduleName): bool
@@ -69,23 +87,5 @@ class ModuleConfigUpdater
         }
 
         return $content;
-    }
-
-    /**
-     * Remove module from config (for rollback)
-     */
-    public function removeModule(string $moduleName): void
-    {
-        if (! file_exists($this->configPath)) {
-            return;
-        }
-
-        $content = file_get_contents($this->configPath);
-
-        // Remove the module entry
-        $pattern = "/\s+'{$moduleName}' => \[\s+.*?\s+\],\n/s";
-        $content = preg_replace($pattern, '', $content);
-
-        file_put_contents($this->configPath, $content);
     }
 }

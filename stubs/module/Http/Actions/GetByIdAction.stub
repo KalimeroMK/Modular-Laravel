@@ -17,10 +17,10 @@ class GetById{{class}}Action
     /**
      * Execute the action to get a {{moduleVar}} by ID.
      *
-     * @param int $id The {{moduleVar}} ID
+     * @param int|string $id The {{moduleVar}} ID (supports integer IDs, ULIDs, and UUIDs)
      * @return {{class}} {{moduleVar}} model
      */
-    public function execute(int $id): {{class}}
+    public function execute(int|string $id): {{class}}
     {
         return $this->repository->findOrFail($id);
     }

@@ -23,16 +23,18 @@ interface ReadableRepositoryInterface
     /**
      * Find a record by ID.
      *
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      * @param  array<int, string>  $with
      */
-    public function find(int $id, array $with = []): ?Model;
+    public function find(int|string $id, array $with = []): ?Model;
 
     /**
      * Find a record by ID or throw exception.
      *
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      * @param  array<int, string>  $with
      */
-    public function findOrFail(int $id, array $with = []): Model;
+    public function findOrFail(int|string $id, array $with = []): Model;
 
     /**
      * Find a record by column and value.

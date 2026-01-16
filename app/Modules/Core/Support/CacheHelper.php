@@ -132,9 +132,9 @@ class CacheHelper
      * Generate cache key for model.
      *
      * @param  string  $model  Model name (e.g., 'User')
-     * @param  int  $id  Model ID
+     * @param  int|string  $id  Model ID (supports integer IDs, ULIDs, and UUIDs)
      */
-    public static function modelKey(string $model, int $id): string
+    public static function modelKey(string $model, int|string $id): string
     {
         return self::key(mb_strtolower($model), (string) $id);
     }

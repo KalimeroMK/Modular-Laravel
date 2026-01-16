@@ -24,10 +24,11 @@ interface CacheableRepositoryInterface
     /**
      * Get cached single record.
      *
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      * @param  array<int, string>  $with
      * @param  int  $ttl  Cache time in seconds
      */
-    public function findCached(int $id, array $with = [], int $ttl = 3600): ?Model;
+    public function findCached(int|string $id, array $with = [], int $ttl = 3600): ?Model;
 
     /**
      * Clear cache for this model.

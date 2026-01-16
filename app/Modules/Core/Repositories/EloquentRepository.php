@@ -47,9 +47,10 @@ abstract class EloquentRepository
     }
 
     /**
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      * @param  array<int, string>  $with
      */
-    final public function find(int $id, array $with = []): ?Model
+    final public function find(int|string $id, array $with = []): ?Model
     {
         $query = $this->query();
         if ($with !== []) {
@@ -60,9 +61,10 @@ abstract class EloquentRepository
     }
 
     /**
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      * @param  array<int, string>  $with
      */
-    final public function findOrFail(int $id, array $with = []): Model
+    final public function findOrFail(int|string $id, array $with = []): Model
     {
         $query = $this->query();
         if ($with !== []) {
@@ -104,9 +106,10 @@ abstract class EloquentRepository
     }
 
     /**
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      * @param  array<string, mixed>  $data
      */
-    final public function update(int $id, array $data): ?Model
+    final public function update(int|string $id, array $data): ?Model
     {
         $model = $this->findOrFail($id);
         $model->fill($data)->save();
@@ -114,7 +117,10 @@ abstract class EloquentRepository
         return $model->fresh();
     }
 
-    final public function delete(int $id): bool
+    /**
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
+     */
+    final public function delete(int|string $id): bool
     {
         // Use direct DB deletion to ensure it works with all database drivers including SQLite
         $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
@@ -122,7 +128,10 @@ abstract class EloquentRepository
         return $deletedRows > 0;
     }
 
-    final public function restore(int $id): ?Model
+    /**
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
+     */
+    final public function restore(int|string $id): ?Model
     {
         if (! method_exists($this->model, 'restore')) {
             return null;
@@ -137,7 +146,10 @@ abstract class EloquentRepository
         return $model;
     }
 
-    final public function findWithTrashed(int $id): ?Model
+    /**
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
+     */
+    final public function findWithTrashed(int|string $id): ?Model
     {
         $query = $this->model->newQuery();
 
@@ -178,10 +190,11 @@ abstract class EloquentRepository
     /**
      * Get cached single record
      *
+     * @param  int|string  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      * @param  array<int, string>  $with
      * @param  int  $ttl  Cache time in seconds
      */
-    final public function findCached(int $id, array $with = [], int $ttl = 3600): ?Model
+    final public function findCached(int|string $id, array $with = [], int $ttl = 3600): ?Model
     {
         $cacheKey = $this->getCacheKey('find', $with, $id);
 
@@ -209,8 +222,9 @@ abstract class EloquentRepository
      * Generate cache key for this model
      *
      * @param  array<int, string>  $with
+     * @param  int|string|null  $id  The record ID (supports integer IDs, ULIDs, and UUIDs)
      */
-    protected function getCacheKey(string $method, array $with = [], ?int $id = null): string
+    protected function getCacheKey(string $method, array $with = [], int|string|null $id = null): string
     {
         $modelName = class_basename($this->model);
         $withString = $with === [] ? '' : '_'.implode('_', $with);
