@@ -6,8 +6,8 @@ namespace App\Modules\Auth\Application\Actions\TwoFactor;
 
 use App\Modules\Auth\Application\DTO\TwoFactor\SetupDTO;
 use App\Modules\Auth\Application\Services\TwoFactor\ServiceInterface;
+use App\Modules\Auth\Infrastructure\Exceptions\TwoFactorAlreadyEnabledException;
 use App\Modules\User\Infrastructure\Models\User;
-use Exception;
 
 class SetupAction
 {
@@ -18,7 +18,7 @@ class SetupAction
     public function execute(User $user): SetupDTO
     {
         if ($this->twoFactorService->isTwoFactorEnabled($user)) {
-            throw new Exception('Two-factor authentication is already enabled for this user.');
+            throw new TwoFactorAlreadyEnabledException();
         }
 
         return $this->twoFactorService->setupTwoFactor($user);

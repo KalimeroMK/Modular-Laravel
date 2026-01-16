@@ -65,22 +65,71 @@ class TwoFactorAuthenticationTest extends TestCase
         $response = $this->postJson('/api/v1/auth/2fa/setup');
 
         // Assert
-        $response->assertStatus(500); // Exception thrown
+        $response->assertStatus(400)
+            ->assertJson([
+                'status' => 'error',
+                'error_code' => 'TWO_FACTOR_ALREADY_ENABLED',
+            ]);
     }
 
     public function test_can_verify_two_factor_code(): void
     {
         // Arrange - Setup 2FA first
-        $this->postJson('/api/v1/auth/2fa/setup');
+        $setupResponse = $this->postJson('/api/v1/auth/2fa/setup');
+        $setupResponse->assertStatus(200);
 
-        // Act - Verify with a code (this will fail in real scenario, but tests the endpoint)
+        // Act - Verify with an invalid code (should fail)
+        $response = $this->postJson('/api/v1/auth/2fa/verify', [
+            'code' => '123456',
+        ]);
+
+        // Assert - Invalid code should return 400
+        $response->assertStatus(400)
+            ->assertJson([
+                'status' => 'error',
+                'error_code' => 'TWO_FACTOR_INVALID_CODE',
+            ]);
+    }
+
+    public function test_cannot_verify_without_setup(): void
+    {
+        // Act - Try to verify without setting up 2FA first
         $response = $this->postJson('/api/v1/auth/2fa/verify', [
             'code' => '123456',
         ]);
 
         // Assert
-        $response->assertStatus(200)
-            ->assertJsonStructure(['verified']);
+        $response->assertStatus(400)
+            ->assertJson([
+                'status' => 'error',
+                'error_code' => 'TWO_FACTOR_SECRET_NOT_SET',
+            ]);
+    }
+
+    public function test_cannot_disable_when_not_enabled(): void
+    {
+        // Act - Try to disable 2FA when it's not enabled
+        $response = $this->deleteJson('/api/v1/auth/2fa/disable');
+
+        // Assert
+        $response->assertStatus(400)
+            ->assertJson([
+                'status' => 'error',
+                'error_code' => 'TWO_FACTOR_NOT_ENABLED',
+            ]);
+    }
+
+    public function test_cannot_generate_recovery_codes_when_not_enabled(): void
+    {
+        // Act - Try to generate recovery codes when 2FA is not enabled
+        $response = $this->postJson('/api/v1/auth/2fa/recovery-codes');
+
+        // Assert
+        $response->assertStatus(400)
+            ->assertJson([
+                'status' => 'error',
+                'error_code' => 'TWO_FACTOR_NOT_ENABLED',
+            ]);
     }
 
     public function test_can_verify_with_recovery_code(): void
