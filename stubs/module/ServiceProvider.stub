@@ -18,9 +18,17 @@ class {{module}}ModuleServiceProvider extends ServiceProvider
     /**
      * Register module-specific bindings (repositories, services, etc.)
      * This is module-specific and should be in individual service providers.
+     * 
+     * Note: If {{module}}Repository uses a model from another module (not {{module}}),
+     * you may need to use explicit binding with closure:
+     * $this->app->bind({{module}}RepositoryInterface::class, function ($app) {
+     *     return new {{module}}Repository($app->make(OtherModuleModel::class));
+     * });
      */
     public function register(): void
     {
+        // Standard binding works when repository uses model from same module
+        // For cross-module dependencies, use explicit closure binding (see AuthRepository example)
         $this->app->bind({{module}}RepositoryInterface::class, {{module}}Repository::class);
     }
 
