@@ -10,6 +10,7 @@ use App\Modules\Auth\Application\Services\TwoFactor\Service;
 use App\Modules\Auth\Application\Services\TwoFactor\ServiceInterface;
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepository;
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepositoryInterface;
+use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -21,7 +22,10 @@ class AuthModuleServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Bind interfaces to implementations
-        $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
+        // AuthRepository requires User model in constructor, so we need explicit binding
+        $this->app->bind(AuthRepositoryInterface::class, function ($app) {
+            return new AuthRepository($app->make(User::class));
+        });
         $this->app->bind(IssueTokenServiceInterface::class, IssueTokenService::class);
 
         // Bind 2FA service
