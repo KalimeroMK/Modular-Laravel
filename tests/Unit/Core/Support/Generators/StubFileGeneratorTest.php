@@ -13,11 +13,27 @@ class StubFileGeneratorTest extends TestCase
 {
     private Filesystem $files;
 
+    private array $testModules = ['TestModule', 'Product'];
+
     #[Override]
     protected function setUp(): void
     {
         parent::setUp();
         $this->files = new Filesystem;
+    }
+
+    #[Override]
+    protected function tearDown(): void
+    {
+        // Cleanup all test modules
+        foreach ($this->testModules as $moduleName) {
+            $modulePath = app_path("Modules/{$moduleName}");
+            if ($this->files->exists($modulePath)) {
+                $this->files->deleteDirectory($modulePath);
+            }
+        }
+
+        parent::tearDown();
     }
 
     public function test_generates_interface_file_when_stub_exists(): void
@@ -41,11 +57,6 @@ class StubFileGeneratorTest extends TestCase
             $this->assertStringContainsString('TestModuleRepositoryInterface', $content);
             $this->assertStringNotContainsString('{{module}}', $content);
         }
-
-        // Cleanup
-        if (is_dir(app_path('Modules/TestModule'))) {
-            $this->files->deleteDirectory(app_path('Modules/TestModule'));
-        }
     }
 
     public function test_replaces_placeholders_correctly(): void
@@ -68,11 +79,6 @@ class StubFileGeneratorTest extends TestCase
             $this->assertStringContainsString('class Product', $content);
             $this->assertStringNotContainsString('{{module}}', $content);
             $this->assertStringNotContainsString('{{table}}', $content);
-        }
-
-        // Cleanup
-        if (is_dir(app_path('Modules/Product'))) {
-            $this->files->deleteDirectory(app_path('Modules/Product'));
         }
     }
 }

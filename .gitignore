@@ -19,3 +19,8 @@ yarn-error.log
 /.docker/dbdata/
 .DS_Store
 homestead
+
+# Test-generated modules (should not be committed)
+/app/Modules/*TestModule*
+/app/Modules/TestModule
+/app/Modules/Product

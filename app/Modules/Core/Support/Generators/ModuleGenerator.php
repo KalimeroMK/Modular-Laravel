@@ -21,7 +21,6 @@ class ModuleGenerator
         protected ListenerGenerator $listenerGenerator,
         protected NotificationGenerator $notificationGenerator,
         protected FeatureTestGenerator $testGenerator,
-        protected RepositoryBinder $repositoryBinder,
         protected ServiceProviderBinder $serviceProviderBinder,
         protected FieldParser $fieldParser,
         protected EnumGenerator $enumGenerator,

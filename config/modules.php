@@ -52,7 +52,5 @@ return [
         'Permission' => [
             'enabled' => true, // Disabled - using new Clean Architecture structure
         ],
-        'E2ETestModule' => [
-            'enabled' => true,
-        ],    ],
+    ],
 ];

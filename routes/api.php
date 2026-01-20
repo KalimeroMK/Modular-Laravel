@@ -7,13 +7,16 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| Global API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| This file is for global/shared API routes that don't belong to any module.
+| Most API routes should be defined in individual module route files:
+| - app/Modules/{Module}/Infrastructure/Routes/api.php
+|
+| Module routes are automatically registered by their service providers.
 |
 */
 
+// Example: Global authenticated user endpoint (can be moved to a module if needed)
 Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());

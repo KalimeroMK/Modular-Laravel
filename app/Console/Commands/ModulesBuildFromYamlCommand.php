@@ -43,20 +43,6 @@ class ModulesBuildFromYamlCommand extends Command
             $this->info("Generating module: $name");
 
             try {
-                // Backup RepositoryServiceProvider before modification (only once)
-                static $providerBackedUp = false;
-                if (! $providerBackedUp) {
-                    $tracker = $this->getTracker();
-                    $providerPath = app_path('Providers/RepositoryServiceProvider.php');
-                    if (file_exists($providerPath) && ! isset($tracker->getModifiedFiles()[$providerPath])) {
-                        $originalContent = file_get_contents($providerPath);
-                        if ($originalContent !== false) {
-                            $tracker->trackModifiedFile($providerPath, $originalContent);
-                            $providerBackedUp = true;
-                        }
-                    }
-                }
-
                 $fields = array_map(function ($field) {
                     [$name, $type] = explode(':', $field);
 

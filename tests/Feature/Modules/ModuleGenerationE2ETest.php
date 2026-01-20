@@ -37,15 +37,6 @@ class ModuleGenerationE2ETest extends TestCase
             $this->files->deleteDirectory($testPath);
         }
 
-        // Cleanup RepositoryServiceProvider changes
-        $providerPath = app_path('Providers/RepositoryServiceProvider.php');
-        if ($this->files->exists($providerPath)) {
-            $content = $this->files->get($providerPath);
-            $content = preg_replace('/use App\\\\Modules\\\\E2ETestModule.*?;/', '', $content);
-            $content = preg_replace('/E2ETestModuleRepositoryInterface::class.*?E2ETestModuleRepository::class,?\s*/', '', (string) $content);
-            $this->files->put($providerPath, $content);
-        }
-
         // Cleanup bootstrap/app.php - remove E2ETestModule provider registration
         $bootstrapPath = base_path('bootstrap/app.php');
         if ($this->files->exists($bootstrapPath)) {
