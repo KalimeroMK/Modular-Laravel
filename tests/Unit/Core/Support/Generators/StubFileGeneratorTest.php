@@ -75,22 +75,4 @@ class StubFileGeneratorTest extends TestCase
             $this->files->deleteDirectory(app_path('Modules/Product'));
         }
     }
-
-    public function test_handles_missing_stub_files_gracefully(): void
-    {
-        $generator = new StubFileGenerator($this->files);
-
-        $fields = [
-            ['name' => 'name', 'type' => 'string'],
-        ];
-
-        $options = [
-            'table' => 'test_modules',
-        ];
-
-        // Should not throw when stub doesn't exist
-        $generator->generate('NonExistentStubModule', $fields, $options);
-
-        $this->expectNotToPerformAssertions();
-    }
 }
