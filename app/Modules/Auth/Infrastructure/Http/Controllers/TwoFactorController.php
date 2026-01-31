@@ -14,9 +14,6 @@ use App\Modules\Auth\Infrastructure\Http\Requests\TwoFactorSetupRequest;
 use App\Modules\Auth\Infrastructure\Http\Requests\TwoFactorVerifyRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use OpenApi\Attributes as OA;
-
-
 class TwoFactorController
 {
     public function __construct(
@@ -27,21 +24,6 @@ class TwoFactorController
         protected GenerateRecoveryCodesAction $generateRecoveryCodesAction,
     ) {}
 
-    
-        new OA\Response(
-            response: 200,
-            description: '2FA setup data generated successfully',
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: 'secret_key', type: 'string', example: 'JBSWY3DPEHPK3PXP'),
-                    new OA\Property(property: 'qr_code_url', type: 'string', example: 'https://api.qrserver.com/v1/create-qr-code/?data=otpauth://totp/...'),
-                    new OA\Property(property: 'recovery_codes', type: 'string', example: 'code1,code2,code3'),
-                ]
-            )
-        ),
-        new OA\Response(response: 400, description: '2FA already enabled'),
-        new OA\Response(response: 401, description: 'Unauthorized'),
-    ])]
     public function setup(TwoFactorSetupRequest $request): JsonResponse
     {
         $user = $request->user();
@@ -53,18 +35,6 @@ class TwoFactorController
         return response()->json($setupData->toArray());
     }
 
-    
-        new OA\Response(
-            response: 200,
-            description: '2FA status retrieved successfully',
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: 'enabled', type: 'boolean', example: true),
-                ]
-            )
-        ),
-        new OA\Response(response: 401, description: 'Unauthorized'),
-    ])]
     public function status(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -76,28 +46,6 @@ class TwoFactorController
         return response()->json($status);
     }
 
-    
-        required: true,
-        content: new OA\JsonContent(
-            required: ['code'],
-            properties: [
-                new OA\Property(property: 'code', description: '6-digit TOTP code', type: 'string', example: '123456'),
-                new OA\Property(property: 'recovery_code', description: '10-character recovery code', type: 'string', example: 'abcd1234ef'),
-            ]
-        )
-    ), tags: ['Two-Factor Authentication'], responses: [
-        new OA\Response(
-            response: 200,
-            description: '2FA code verified successfully',
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: 'verified', type: 'boolean', example: true),
-                ]
-            )
-        ),
-        new OA\Response(response: 400, description: 'Invalid code'),
-        new OA\Response(response: 401, description: 'Unauthorized'),
-    ])]
     public function verify(TwoFactorVerifyRequest $request): JsonResponse
     {
         $user = $request->user();
@@ -111,19 +59,6 @@ class TwoFactorController
         return response()->json(['verified' => $verified]);
     }
 
-    
-        new OA\Response(
-            response: 200,
-            description: '2FA disabled successfully',
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: 'message', type: 'string', example: 'Two-factor authentication disabled successfully'),
-                ]
-            )
-        ),
-        new OA\Response(response: 400, description: '2FA not enabled'),
-        new OA\Response(response: 401, description: 'Unauthorized'),
-    ])]
     public function disable(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -135,19 +70,6 @@ class TwoFactorController
         return response()->json(['message' => 'Two-factor authentication disabled successfully']);
     }
 
-    
-        new OA\Response(
-            response: 200,
-            description: 'New recovery codes generated successfully',
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: 'codes', type: 'array', items: new OA\Items(type: 'string'), example: ['code1', 'code2', 'code3']),
-                ]
-            )
-        ),
-        new OA\Response(response: 400, description: '2FA not enabled'),
-        new OA\Response(response: 401, description: 'Unauthorized'),
-    ])]
     public function generateRecoveryCodes(Request $request): JsonResponse
     {
         $user = $request->user();

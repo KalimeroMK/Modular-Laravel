@@ -21,7 +21,7 @@ cd modular-laravel
 ./docker-setup.sh
 
 # Access the application
-# Web: http://localhost:8080
+# API Base: http://localhost:8080
 # API Docs: http://localhost:8080/api/documentation
 # Database: localhost:3301 (homestead/secret)
 ```
@@ -1019,6 +1019,6 @@ This starter kit includes full support for Docker. You can spin up the app, data
 
 7. **Access the application**:
 
--   **Web**: `http://localhost:8080`
+-   **API Base**: `http://localhost:8080`
 -   **API Documentation**: `http://localhost:8080/api/documentation`
 -   **Health Check**: `http://localhost:8080/api/health`

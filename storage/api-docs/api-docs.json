@@ -3,192 +3,38 @@
     "info": {
         "title": "Modular Laravel API",
         "description": "API documentation for Modular Laravel application",
-        "contact": {
-            "name": "API Support",
-            "email": "admin@example.com"
-        },
-        "license": {
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
-        },
         "version": "1.0.0"
     },
     "servers": [
         {
-            "url": "http://my-default-host.com",
-            "description": "API Server"
+            "url": "/"
         }
     ],
     "paths": {
-        "/api/v1/auth/login": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "User login",
-                "description": "Authenticate user and return access token",
-                "operationId": "fccb1608dc751bc3150111f041e6fb4e",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Login successful",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "user": {
-                                                    "type": "object"
-                                                },
-                                                "token": {
-                                                    "type": "string",
-                                                    "example": "1|abc123..."
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid credentials",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/auth/register": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "User registration",
-                "description": "Register a new user and return access token",
-                "operationId": "35d1d92c86ea8d89a1e144aeda5b6488",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "password",
-                                    "password_confirmation"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
+                "summary": "Register",
+                "operationId": "authRegister",
                 "responses": {
-                    "201": {
-                        "description": "Registration successful",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "user": {
-                                                    "type": "object"
-                                                },
-                                                "token": {
-                                                    "type": "string",
-                                                    "example": "1|abc123..."
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login",
+                "operationId": "authLogin",
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -198,42 +44,13 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "User logout",
-                "description": "Logout user and invalidate token",
-                "operationId": "8684476e1d7d70475bfd1f0de9ec592e",
+                "summary": "Logout",
+                "operationId": "authLogout",
                 "responses": {
                     "200": {
-                        "description": "Logout successful",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
+                        "description": "OK"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/api/v1/auth/me": {
@@ -241,45 +58,13 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Get current user",
-                "description": "Get authenticated user information",
-                "operationId": "d54b962588c4da3acaa112768e775db8",
+                "summary": "Current user",
+                "operationId": "authMe",
                 "responses": {
                     "200": {
-                        "description": "User information retrieved",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
+                        "description": "OK"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/api/v1/auth/forgot-password": {
@@ -287,59 +72,11 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Send password reset link",
-                "description": "Send password reset link to user email",
-                "operationId": "eaa397707bf6e09c2fe572ba6b127845",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
+                "summary": "Forgot password",
+                "operationId": "authForgotPassword",
                 "responses": {
                     "200": {
-                        "description": "Reset link sent",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "We have emailed your password reset link."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
+                        "description": "OK"
                     }
                 }
             }
@@ -350,995 +87,12 @@
                     "Authentication"
                 ],
                 "summary": "Reset password",
-                "description": "Reset user password using token",
-                "operationId": "0dbc21d5b02484941ac2dd8944207bfb",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "token",
-                                    "email",
-                                    "password",
-                                    "password_confirmation"
-                                ],
-                                "properties": {
-                                    "token": {
-                                        "type": "string",
-                                        "example": "reset-token-here"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "newpassword123"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "newpassword123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
+                "operationId": "authResetPassword",
                 "responses": {
                     "200": {
-                        "description": "Password reset successful",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Your password has been reset."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
+                        "description": "OK"
                     }
                 }
-            }
-        },
-        "/api/v1/auth/2fa/setup": {
-            "post": {
-                "tags": [
-                    "Two-Factor Authentication"
-                ],
-                "summary": "Setup 2FA",
-                "description": "Generate secret key and QR code for two-factor authentication setup",
-                "operationId": "b088c58956256fd8a1d3983b2ea3c530",
-                "responses": {
-                    "200": {
-                        "description": "2FA setup data generated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "secret_key": {
-                                            "type": "string",
-                                            "example": "JBSWY3DPEHPK3PXP"
-                                        },
-                                        "qr_code_url": {
-                                            "type": "string",
-                                            "example": "https://api.qrserver.com/v1/create-qr-code/?data=otpauth://totp/..."
-                                        },
-                                        "recovery_codes": {
-                                            "type": "string",
-                                            "example": "code1,code2,code3"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "2FA already enabled"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/api/v1/auth/2fa/status": {
-            "get": {
-                "tags": [
-                    "Two-Factor Authentication"
-                ],
-                "summary": "Get 2FA status",
-                "description": "Get the current two-factor authentication status for the authenticated user",
-                "operationId": "4b70b439f324fa6384b6cb10a0842458",
-                "responses": {
-                    "200": {
-                        "description": "2FA status retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "enabled": {
-                                            "type": "boolean",
-                                            "example": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/api/v1/auth/2fa/verify": {
-            "post": {
-                "tags": [
-                    "Two-Factor Authentication"
-                ],
-                "summary": "Verify 2FA code",
-                "description": "Verify a two-factor authentication code or recovery code",
-                "operationId": "91b812329c43b5d3f418f29301c5d0c6",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "code"
-                                ],
-                                "properties": {
-                                    "code": {
-                                        "description": "6-digit TOTP code",
-                                        "type": "string",
-                                        "example": "123456"
-                                    },
-                                    "recovery_code": {
-                                        "description": "10-character recovery code",
-                                        "type": "string",
-                                        "example": "abcd1234ef"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "2FA code verified successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "verified": {
-                                            "type": "boolean",
-                                            "example": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid code"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/api/v1/auth/2fa/disable": {
-            "delete": {
-                "tags": [
-                    "Two-Factor Authentication"
-                ],
-                "summary": "Disable 2FA",
-                "description": "Disable two-factor authentication for the authenticated user",
-                "operationId": "bf89130266463ae056d52916ad12810a",
-                "responses": {
-                    "200": {
-                        "description": "2FA disabled successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Two-factor authentication disabled successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "2FA not enabled"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/api/v1/auth/2fa/recovery-codes": {
-            "post": {
-                "tags": [
-                    "Two-Factor Authentication"
-                ],
-                "summary": "Generate new recovery codes",
-                "description": "Generate new recovery codes for two-factor authentication",
-                "operationId": "c260fb7b83040faba54223fc159c15b6",
-                "responses": {
-                    "200": {
-                        "description": "New recovery codes generated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "codes": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            },
-                                            "example": [
-                                                "code1",
-                                                "code2",
-                                                "code3"
-                                            ]
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "2FA not enabled"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/api/v1/permissions": {
-            "get": {
-                "tags": [
-                    "Permissions"
-                ],
-                "summary": "List permissions",
-                "description": "Get paginated list of permissions",
-                "operationId": "42a5e825b25764fdcea5cc55f1354e4d",
-                "responses": {
-                    "200": {
-                        "description": "Permissions retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
-                                        },
-                                        "links": {
-                                            "type": "object"
-                                        },
-                                        "meta": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Permissions"
-                ],
-                "summary": "Create permission",
-                "description": "Create a new permission",
-                "operationId": "07becf61ca80ae7de76815cc6db1808c",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "create-users"
-                                    },
-                                    "guard_name": {
-                                        "type": "string",
-                                        "example": "api"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Permission created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/v1/permissions/{id}": {
-            "get": {
-                "tags": [
-                    "Permissions"
-                ],
-                "summary": "Get permission by ID",
-                "description": "Get specific permission information",
-                "operationId": "3b6452fd83db9775ea545d28cfe5efc0",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Permission ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Permission retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Permission not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Permissions"
-                ],
-                "summary": "Update permission",
-                "description": "Update permission information",
-                "operationId": "1f40463049f5151d98072a2100260443",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Permission ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "create-users"
-                                    },
-                                    "guard_name": {
-                                        "type": "string",
-                                        "example": "api"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Permission updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Permission not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Permissions"
-                ],
-                "summary": "Delete permission",
-                "description": "Delete a permission",
-                "operationId": "b41077494011a04c50ec713216d4d0d5",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Permission ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Permission deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Permission deleted"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Permission not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/v1/roles": {
-            "get": {
-                "tags": [
-                    "Roles"
-                ],
-                "summary": "List roles",
-                "description": "Get paginated list of roles",
-                "operationId": "b710e0b5144d0d1fa85baf63eab8e9b7",
-                "responses": {
-                    "200": {
-                        "description": "Roles retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
-                                        },
-                                        "links": {
-                                            "type": "object"
-                                        },
-                                        "meta": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Roles"
-                ],
-                "summary": "Create role",
-                "description": "Create a new role",
-                "operationId": "7441180a80b28a1c55742c030b61edf6",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "admin"
-                                    },
-                                    "guard_name": {
-                                        "type": "string",
-                                        "example": "api"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Role created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/v1/roles/{id}": {
-            "get": {
-                "tags": [
-                    "Roles"
-                ],
-                "summary": "Get role by ID",
-                "description": "Get specific role information",
-                "operationId": "f98f3ecd41f82ed2c3936cb47cbe0557",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Role ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Role retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Role not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Roles"
-                ],
-                "summary": "Update role",
-                "description": "Update role information",
-                "operationId": "8ea3dbcb9e3a7a503ebd8bb77fdc2b58",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Role ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "admin"
-                                    },
-                                    "guard_name": {
-                                        "type": "string",
-                                        "example": "api"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Role updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Role not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Roles"
-                ],
-                "summary": "Delete role",
-                "description": "Delete a role",
-                "operationId": "4b773d4439f54038328486ce2546c30e",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Role ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Role deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Role deleted"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Role not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
             }
         },
         "/api/v1/users": {
@@ -1347,130 +101,12 @@
                     "Users"
                 ],
                 "summary": "List users",
-                "description": "Get paginated list of users",
-                "operationId": "13e2b877acbd9e41b82b36cd25d9ca8c",
+                "operationId": "usersIndex",
                 "responses": {
                     "200": {
-                        "description": "Users retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
-                                        },
-                                        "links": {
-                                            "type": "object"
-                                        },
-                                        "meta": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
+                        "description": "OK"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Create user",
-                "description": "Create a new user",
-                "operationId": "90def4129673bbd5fd57a8afe473934d",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "User created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/api/v1/users/{id}": {
@@ -1478,341 +114,107 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get user by ID",
-                "description": "Get specific user information",
-                "operationId": "30c813ab99e181c193ca2ba8ac6d8a1a",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "User ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
+                "summary": "Get user",
+                "operationId": "usersShow",
                 "responses": {
                     "200": {
-                        "description": "User retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
+                        "description": "OK"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
+                }
+            }
+        },
+        "/api/v1/roles": {
+            "get": {
                 "tags": [
-                    "Users"
+                    "Roles"
                 ],
-                "summary": "Update user",
-                "description": "Update user information",
-                "operationId": "68800b4109336c3c52ad4dafca436ebf",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "User ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
+                "summary": "List roles",
+                "operationId": "rolesIndex",
                 "responses": {
                     "200": {
-                        "description": "User updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
+                        "description": "OK"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
+                }
+            }
+        },
+        "/api/v1/roles/{id}": {
+            "get": {
                 "tags": [
-                    "Users"
+                    "Roles"
                 ],
-                "summary": "Delete user",
-                "description": "Delete a user",
-                "operationId": "f5bcca75d5600d487c6456ec9b8c88aa",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "User ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
+                "summary": "Get role",
+                "operationId": "rolesShow",
                 "responses": {
                     "200": {
-                        "description": "User deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User deleted"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
+                        "description": "OK"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
+                }
+            }
+        },
+        "/api/v1/permissions": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "List permissions",
+                "operationId": "permissionsIndex",
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
-                ]
+                }
+            }
+        },
+        "/api/v1/permissions/{id}": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Get permission",
+                "operationId": "permissionsShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
             }
         }
     },
     "components": {
         "schemas": {
             "SuccessResponse": {
-                "properties": {
-                    "status": {
-                        "type": "string",
-                        "example": "success"
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Operation completed successfully"
-                    },
-                    "data": {
-                        "type": "object"
-                    }
-                },
                 "type": "object"
             },
             "ErrorResponse": {
-                "properties": {
-                    "status": {
-                        "type": "string",
-                        "example": "error"
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "An error occurred"
-                    },
-                    "errors": {
-                        "type": "object"
-                    }
-                },
                 "type": "object"
             },
             "ValidationErrorResponse": {
-                "properties": {
-                    "status": {
-                        "type": "string",
-                        "example": "error"
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Validation failed"
-                    },
-                    "errors": {
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "PaginationResponse": {
-                "properties": {
-                    "status": {
-                        "type": "string",
-                        "example": "success"
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Data retrieved successfully"
-                    },
-                    "data": {
-                        "properties": {
-                            "data": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                }
-                            },
-                            "current_page": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "last_page": {
-                                "type": "integer",
-                                "example": 10
-                            },
-                            "per_page": {
-                                "type": "integer",
-                                "example": 15
-                            },
-                            "total": {
-                                "type": "integer",
-                                "example": 150
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
                 "type": "object"
             }
         },
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
-                "bearerFormat": "JWT",
                 "scheme": "bearer"
             }
         }
     },
     "tags": [
         {
-            "name": "Two-Factor Authentication",
-            "description": "2FA management endpoints"
-        },
-        {
             "name": "Authentication",
             "description": "Authentication endpoints"
         },
         {
             "name": "Users",
-            "description": "User management endpoints"
+            "description": "User management"
         },
         {
             "name": "Roles",
-            "description": "Role management endpoints"
+            "description": "Role management"
         },
         {
             "name": "Permissions",
-            "description": "Permission management endpoints"
+            "description": "Permission management"
         }
     ]
 }

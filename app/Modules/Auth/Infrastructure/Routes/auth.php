@@ -20,6 +20,12 @@ Route::prefix('api/v1/auth')->group(function (): void {
     Route::post('reset-password', [AuthController::class, 'resetPassword'])
         ->middleware('throttle:3,60'); 
 
+    Route::get('reset-password/{token}', static function (string $token) {
+        return response()->json([
+            'token' => $token,
+        ]);
+    })->name('password.reset');
+
     
     Route::middleware(['auth:sanctum'])->group(function (): void {
         Route::get('me', [AuthController::class, 'me'])
