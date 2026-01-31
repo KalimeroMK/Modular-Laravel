@@ -141,6 +141,25 @@ php artisan db:optimize --connection-info  # Get connection information
 -   **Clean Architecture**: Application/Infrastructure layer separation
 -   **Comprehensive Testing**: Unit, Feature, Integration, and Performance tests
 
+## Stub Templates
+
+Module generation uses stub files in `stubs/module`. These are used by both `php artisan make:module` and `php artisan modules:build-from-yaml`.
+
+Common stubs used during generation:
+-   `Model.stub`, `Repository.stub`, `Interface.stub`, `Factory.stub`
+-   `Migration.stub` (plus `Migration.pivot.stub` and `Migration.morph.stub` for YAML-driven relations)
+-   `routes/api.stub`, `ServiceProvider.stub`
+-   `Http/Controllers/Controller.stub`, `Http/Resource/Resource.stub`
+-   `Http/Requests/CreateRequest.stub`, `Http/Requests/UpdateRequest.stub`
+-   `Http/DTOs/DTO.stub`
+-   `Http/Actions/*Action.stub`
+-   `Events/Model*.stub`, `Listeners/Model*.stub`, `Observers/ModelObserver.stub`, `Policies/ModelPolicy.stub`
+-   `Notifications/Model*Notification.stub`
+-   `Tests/Feature/CrudTest.stub`
+-   `Http/Exceptions/Exception.stub`
+
+Edit these stubs to customize generated modules. Changes apply to newly generated modules only.
+
 ## ✅ Supported Field Types
 
 | Laravel Type         | SQL Equivalent  | Description                |
@@ -187,7 +206,7 @@ Each module is organized into two main layers:
 Contains business logic and use cases:
 
 -   **Actions/** - Business use cases and operations (return Eloquent models)
--   **DTOs/** - Data Transfer Objects for data manipulation (input from requests)
+-   **DTO/** - Data Transfer Objects for data manipulation (input from requests)
 -   **Services/** - Business services and interfaces
 -   **Interfaces/** - Contracts for external dependencies
 
@@ -210,7 +229,7 @@ Controllers → Actions → Services → Repositories → Models
   Resources  Business   Business    Database
   (Output)   Logic      Services    Access
      ↑
-   DTOs (Input)
+   DTO (Input)
 ```
 
 -   **Controllers** handle HTTP requests, use DTOs for input, and return Resources for output
@@ -387,7 +406,11 @@ php artisan make:module Product \
 app/Modules/Example/
 ├── Application/
 │   ├── Actions/
-│   ├── DTOs/
+│   ├── DTO/
+│   ├── Exceptions/       # optional
+│   ├── Events/           # optional
+│   ├── Listeners/        # optional
+│   ├── Notifications/    # optional
 │   ├── Services/
 │   └── Interfaces/
 ├── Infrastructure/
@@ -398,12 +421,11 @@ app/Modules/Example/
 │   │   ├── Requests/
 │   │   └── Resources/
 │   ├── Providers/
-│   └── Routes/
-│       └── api.php
-├── Exceptions/
-├── Observers/
-├── Policies/
-└── database/
+│   ├── Routes/
+│   │   └── api.php
+│   ├── Policies/         # optional
+│   └── Observers/        # optional
+└── Database/
     ├── migrations/
     └── factories/
 ```

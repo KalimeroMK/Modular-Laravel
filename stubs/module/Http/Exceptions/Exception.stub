@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Modules\{{module}}\Exceptions;
+declare(strict_types=1);
+
+namespace App\Modules\{{module}}\Application\Exceptions;
 
 use Exception;
 
