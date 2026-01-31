@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 return [
     'default' => [
         'base_path' => base_path(env('MODULE_DIRECTORY', 'app/Modules')),
@@ -13,8 +12,8 @@ return [
         'routing_options' => [
             'api' => [
                 'prefix' => 'api',
-                'version' => env('API_VERSION', 'v1'), 
-                'middleware' => ['api', 'throttle:api', 'auth:sanctum'], 
+                'version' => env('API_VERSION', 'v1'),
+                'middleware' => ['api', 'throttle:api', 'auth:sanctum'],
                 'files' => ['api.php'],
             ],
         ],
@@ -41,16 +40,16 @@ return [
 
     'specific' => [
         'Auth' => [
-            'enabled' => true, 
+            'enabled' => true,
         ],
         'User' => [
-            'enabled' => true, 
+            'enabled' => true,
         ],
         'Role' => [
-            'enabled' => true, 
+            'enabled' => true,
         ],
         'Permission' => [
-            'enabled' => true, 
+            'enabled' => true,
         ],
         'E2ETestModule' => [
             'enabled' => true,

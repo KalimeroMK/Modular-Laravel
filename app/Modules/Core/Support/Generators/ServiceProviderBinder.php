@@ -37,62 +37,35 @@ class ServiceProviderBinder
 
         
         
-        $pattern = '/->withProviders\(\[(.*?)\]\)->create\(\)/s';
-        if (preg_match($pattern, $content, $matches)) {
-            $existingProviders = mb_trim($matches[1]);
+        $pattern = '/->withProviders\(\[(?<providers>.*?)\]\)\s*->create\(\)/s';
+        if (! preg_match($pattern, $content, $matches)) {
+            return;
+        }
 
-            
-            if ($existingProviders === '' || $existingProviders === '0') {
-                
-                $newContent = str_replace(
-                    '->withProviders([',
-                    "->withProviders([\n        {$providerClass},",
-                    $content
-                );
-            } else {
-                
-                
-                
-                $lastProviderPattern = '/(\s+)(App\\\\Modules\\\\[^,]+::class)(,?)(\]\)->create\(\))/s';
-                if (preg_match_all($lastProviderPattern, $content, $allMatches, PREG_SET_ORDER)) {
-                    
-                    $lastMatch = end($allMatches);
-                    if (is_array($lastMatch) && count($lastMatch) >= 5) {
-                        $indent = $lastMatch[1];
-                        $lastProvider = $lastMatch[2];
-                        $closing = $lastMatch[4];
+        $providersBlock = $matches['providers'] ?? '';
 
-                        
-                        $replacement = "{$indent}{$lastProvider},\n{$indent}{$providerClass},\n{$indent}]{$closing}";
+        
+        if (str_contains($providersBlock, $providerClass)) {
+            return;
+        }
 
-                        $newContent = str_replace($lastMatch[0], $replacement, $content);
-                    }
-                } else {
-                    
-                    $simplePattern = '/(App\\\\Modules\\\\[^,]+::class)(,?)(\]\)->create\(\))/s';
-                    if (preg_match_all($simplePattern, $content, $allSimpleMatches, PREG_SET_ORDER)) {
-                        $simpleMatch = end($allSimpleMatches);
-                        if (is_array($simpleMatch) && count($simpleMatch) >= 4) {
-                            $lastProvider = $simpleMatch[1];
-                            $closing = $simpleMatch[3];
-
-                            $replacement = "{$lastProvider},\n        {$providerClass},\n    ]{$closing}";
-                            $newContent = str_replace($simpleMatch[0], $replacement, $content);
-                        }
-                    } else {
-                        
-                        $newContent = str_replace(
-                            '])->create()',
-                            "        {$providerClass},\n    ])->create()",
-                            $content
-                        );
-                    }
-                }
-            }
-
-            if (isset($newContent) && $newContent !== $content) {
-                $this->files->put($bootstrapPath, $newContent);
+        
+        $indent = '        ';
+        if (preg_match_all('/\n(\s*)App\\\\Modules\\\\[^,\n]+::class/', $providersBlock, $indentMatches)) {
+            $lastIndent = end($indentMatches[1]);
+            if (is_string($lastIndent) && $lastIndent !== '') {
+                $indent = $lastIndent;
             }
         }
+
+        $trimmedProviders = trim($providersBlock);
+        if ($trimmedProviders === '') {
+            $newProviders = "\n{$indent}{$providerClass},\n    ";
+        } else {
+            $newProviders = rtrim($providersBlock)."\n{$indent}{$providerClass},\n    ";
+        }
+
+        $newContent = str_replace($providersBlock, $newProviders, $content);
+        $this->files->put($bootstrapPath, $newContent);
     }
 }

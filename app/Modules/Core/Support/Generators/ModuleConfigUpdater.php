@@ -75,17 +75,16 @@ class ModuleConfigUpdater
 
     protected function insertModuleEntry(string $content, string $newEntry): string
     {
-        
-        $pattern = "/(    'specific' => \[.*?)(\n    \],\n\];)/s";
-
-        if (preg_match($pattern, $content, $matches)) {
-            $before = $matches[1];
-            $after = $matches[2];
-
-            
-            return str_replace($matches[0], $before."\n".$newEntry.$after, $content);
+        $start = strpos($content, "    'specific' => [");
+        if ($start === false) {
+            return $content;
         }
 
-        return $content;
+        $end = strpos($content, "\n    ],", $start);
+        if ($end === false) {
+            return $content;
+        }
+
+        return substr($content, 0, $end)."\n".$newEntry.substr($content, $end);
     }
 }
