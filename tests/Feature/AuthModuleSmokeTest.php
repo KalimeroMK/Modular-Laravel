@@ -93,7 +93,7 @@ class AuthModuleSmokeTest extends TestCase
     public function test_can_send_reset_link(): void
     {
         $email = 'reset_'.uniqid().'@example.com';
-        // Register user first
+        
         $this->postJson('/api/v1/auth/register', [
             'name' => 'Reset User',
             'email' => $email,

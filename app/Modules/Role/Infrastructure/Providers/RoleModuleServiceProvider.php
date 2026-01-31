@@ -15,16 +15,16 @@ use Override;
 
 class RoleModuleServiceProvider extends ServiceProvider
 {
-    #[Override]
+    
     public function register(): void
     {
-        // Bind interfaces to implementations
+        
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
     }
 
     public function boot(): void
     {
-        // Check if module is enabled before loading
+        
         if (! $this->isModuleEnabled()) {
             return;
         }
@@ -33,9 +33,9 @@ class RoleModuleServiceProvider extends ServiceProvider
         $this->loadRoutes();
     }
 
-    /**
-     * Check if this module is enabled in config/modules.php
-     */
+    
+
+
     protected function isModuleEnabled(): bool
     {
         return (bool) config('modules.specific.Role.enabled', true);
@@ -54,7 +54,7 @@ class RoleModuleServiceProvider extends ServiceProvider
             return;
         }
 
-        // Routes already have prefix and middleware in route files, just require them
+        
         require $routeFile;
     }
 }

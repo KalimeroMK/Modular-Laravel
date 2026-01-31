@@ -15,7 +15,7 @@ class ModuleStructureBuilder
         $basePath = app_path("Modules/{$moduleName}");
 
         $directories = [
-            // Application Layer
+            
             'Application/Actions',
             'Application/DTO',
             'Application/Services',
@@ -24,7 +24,7 @@ class ModuleStructureBuilder
             'Application/Listeners',
             'Application/Notifications',
 
-            // Infrastructure Layer
+            
             'Infrastructure/Http/Controllers',
             'Infrastructure/Http/Requests',
             'Infrastructure/Http/Middleware',
@@ -34,7 +34,7 @@ class ModuleStructureBuilder
             'Infrastructure/Providers',
             'Infrastructure/Routes',
 
-            // Database Layer
+            
             'Database/Migrations',
             'Database/Factories',
         ];

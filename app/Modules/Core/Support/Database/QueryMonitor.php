@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Log;
 
 class QueryMonitor
 {
-    /**
-     * @var array<int, array{sql: string, bindings: array<int, mixed>, time: float, connection: string}>
-     */
+    
+
+
     protected array $queries = [];
 
     protected float $totalTime = 0;
@@ -59,12 +59,12 @@ class QueryMonitor
 
     public function stopMonitoring(): void
     {
-        // DB::listen() is automatically removed when the listener is garbage collected
+        
     }
 
-    /**
-     * @return array<int, array{sql: string, bindings: array<int, mixed>, time: float, connection: string}>
-     */
+    
+
+
     public function getQueries(): array
     {
         return $this->queries;
@@ -85,9 +85,9 @@ class QueryMonitor
         return $this->queryCount > 0 ? $this->totalTime / $this->queryCount : 0;
     }
 
-    /**
-     * @return array<int, array{sql: string, bindings: array<int, mixed>, time: float, connection: string}>
-     */
+    
+
+
     public function getSlowQueries(float $threshold = 100): array
     {
         return array_filter($this->queries, fn ($query) => $query['time'] > $threshold);
@@ -113,9 +113,9 @@ class QueryMonitor
         $this->queryCount = 0;
     }
 
-    /**
-     * @return array{total_queries: int, total_time: float, average_time: float, slow_queries: int, queries: array<int, array{sql: string, bindings: array<int, mixed>, time: float, connection: string}>}
-     */
+    
+
+
     public function getReport(): array
     {
         return [

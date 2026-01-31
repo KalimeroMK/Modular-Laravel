@@ -16,7 +16,7 @@ class QueryMonitorTest extends TestCase
 
     protected QueryMonitor $monitor;
 
-    #[Override]
+    
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,24 +25,24 @@ class QueryMonitorTest extends TestCase
 
     public function test_can_enable_and_disable_monitoring(): void
     {
-        // Act & Assert
+        
         $this->monitor->enable();
-        $this->assertTrue(true); // Monitoring is enabled
+        $this->assertTrue(true); 
 
         $this->monitor->disable();
-        $this->assertTrue(true); // Monitoring is disabled
+        $this->assertTrue(true); 
     }
 
     public function test_can_track_queries(): void
     {
-        // Arrange
+        
         $this->monitor->enable();
 
-        // Act
+        
         DB::table('users')->count();
         DB::table('users')->where('id', 1)->first();
 
-        // Assert
+        
         $queries = $this->monitor->getQueries();
         $this->assertGreaterThan(0, count($queries));
         $this->assertGreaterThan(0, $this->monitor->getQueryCount());
@@ -51,14 +51,14 @@ class QueryMonitorTest extends TestCase
 
     public function test_can_calculate_average_time(): void
     {
-        // Arrange
+        
         $this->monitor->enable();
 
-        // Act
+        
         DB::table('users')->count();
         DB::table('users')->count();
 
-        // Assert
+        
         $averageTime = $this->monitor->getAverageTime();
         $this->assertGreaterThan(0, $averageTime);
         $this->assertEquals($this->monitor->getTotalTime() / $this->monitor->getQueryCount(), $averageTime);
@@ -66,27 +66,27 @@ class QueryMonitorTest extends TestCase
 
     public function test_can_identify_slow_queries(): void
     {
-        // Arrange
+        
         $this->monitor->enable();
 
-        // Act
+        
         DB::table('users')->count();
 
-        // Assert
-        $slowQueries = $this->monitor->getSlowQueries(0.1); // Very low threshold for testing
+        
+        $slowQueries = $this->monitor->getSlowQueries(0.1); 
         $this->assertIsArray($slowQueries);
     }
 
     public function test_can_reset_monitoring(): void
     {
-        // Arrange
+        
         $this->monitor->enable();
         DB::table('users')->count();
 
-        // Act
+        
         $this->monitor->reset();
 
-        // Assert
+        
         $this->assertEquals(0, $this->monitor->getQueryCount());
         $this->assertEquals(0, $this->monitor->getTotalTime());
         $this->assertEmpty($this->monitor->getQueries());
@@ -94,14 +94,14 @@ class QueryMonitorTest extends TestCase
 
     public function test_can_generate_report(): void
     {
-        // Arrange
+        
         $this->monitor->enable();
         DB::table('users')->count();
 
-        // Act
+        
         $report = $this->monitor->getReport();
 
-        // Assert
+        
         $this->assertArrayHasKey('total_queries', $report);
         $this->assertArrayHasKey('total_time', $report);
         $this->assertArrayHasKey('average_time', $report);

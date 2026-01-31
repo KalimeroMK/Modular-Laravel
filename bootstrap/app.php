@@ -19,17 +19,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Laravel built-in throttle middleware is already available
-        // No custom middleware needed - use throttle:name or throttle:max,decay
+        
+        
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Handle custom BaseException classes
+        
         $exceptions->render(fn (BaseException $e) => $e->render());
 
-        // Handle ModelNotFoundException - map it before it gets converted to NotFoundHttpException
+        
         $exceptions->map(fn (ModelNotFoundException $e) => new NotFoundHttpException('Resource not found', $e));
 
-        // Handle NotFoundHttpException for API requests (which includes ModelNotFoundException)
+        
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
@@ -40,16 +40,22 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 404);
             }
 
-            return null; // Let Laravel handle it for non-API requests
+            return null; 
         });
 
-        // Handle Laravel ValidationException
-        $exceptions->render(fn (LaravelValidationException $e) => response()->json([
-            'status' => 'error',
-            'error_code' => 'VALIDATION_ERROR',
-            'message' => 'Validation failed',
-            'errors' => $e->errors(),
-        ], 422));
+        
+        $exceptions->render(function (LaravelValidationException $e, Request $request) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'error_code' => 'VALIDATION_ERROR',
+                    'message' => 'Validation failed',
+                    'errors' => $e->errors(),
+                ], 422);
+            }
+
+            return null; 
+        });
     })
     ->withProviders([
         App\Modules\Auth\Infrastructure\Providers\AuthModuleServiceProvider::class,

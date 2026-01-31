@@ -15,17 +15,17 @@ class DatabaseOptimizationService
 {
     public function __construct(protected QueryMonitor $queryMonitor) {}
 
-    /**
-     * Optimize query with proper indexing hints
-     *
-     * @param  Builder<Model>  $query
-     * @param  array<int, string>  $indexes
-     * @return Builder<Model>
-     */
+    
+
+
+
+
+
+
     public function optimizeQuery(Builder $query, array $indexes = []): Builder
     {
         if ($indexes !== []) {
-            // Use first index from array
+            
             $index = $indexes[0];
             if ($index !== '') {
                 $query->useIndex($index);
@@ -35,19 +35,19 @@ class DatabaseOptimizationService
         return $query;
     }
 
-    /**
-     * Add query caching with automatic invalidation
-     *
-     * @param  callable(): mixed  $callback
-     */
+    
+
+
+
+
     public function cacheQuery(string $key, callable $callback, int $ttl = 3600): mixed
     {
         return Cache::remember($key, $ttl, Closure::fromCallable($callback));
     }
 
-    /**
-     * Invalidate cache patterns
-     */
+    
+
+
     public function invalidateCachePattern(string $pattern): void
     {
         try {
@@ -58,20 +58,20 @@ class DatabaseOptimizationService
                     $store->getRedis()->del($keys);
                 }
             } else {
-                // Fallback for non-Redis stores
+                
                 Cache::forget($pattern);
             }
         } catch (Exception) {
-            // Silently fail for unsupported cache stores
+            
         }
     }
 
-    /**
-     * Optimize pagination with cursor-based pagination for large datasets
-     *
-     * @param  Builder<Model>  $query
-     * @return array{data: \Illuminate\Support\Collection<int, Model>, next_cursor: int|null, has_more: bool}
-     */
+    
+
+
+
+
+
     public function optimizePagination(Builder $query, int $perPage = 15, ?string $cursor = null): array
     {
         if ($cursor) {
@@ -85,7 +85,7 @@ class DatabaseOptimizationService
             $results->pop();
         }
 
-        /** @var Model|null $lastModel */
+         
         $lastModel = $results->last();
         $nextCursor = $hasMore && $lastModel !== null ? (int) ($lastModel->id ?? $lastModel->getKey() ?? 0) : null;
 
@@ -96,12 +96,12 @@ class DatabaseOptimizationService
         ];
     }
 
-    /**
-     * Batch operations for better performance
-     *
-     * @param  array<int, array<string, mixed>>  $data
-     * @param  int<1, max>  $chunkSize
-     */
+    
+
+
+
+
+
     public function batchInsert(Model $model, array $data, int $chunkSize = 1000): bool
     {
         $validChunkSize = max(1, $chunkSize);
@@ -114,11 +114,11 @@ class DatabaseOptimizationService
         return true;
     }
 
-    /**
-     * Optimize bulk updates
-     *
-     * @param  array<int, array<string, mixed>>  $updates
-     */
+    
+
+
+
+
     public function batchUpdate(Model $model, array $updates, string $key = 'id'): bool
     {
         $cases = [];
@@ -149,11 +149,11 @@ class DatabaseOptimizationService
         return DB::update($sql, $bindings) > 0;
     }
 
-    /**
-     * Analyze table performance
-     *
-     * @return array{table: string, status: string, rows: int, size: array<string, float>}
-     */
+    
+
+
+
+
     public function analyzeTable(string $table): array
     {
         try {
@@ -161,7 +161,7 @@ class DatabaseOptimizationService
             $driver = $connection->getDriverName();
 
             if ($driver === 'sqlite') {
-                // SQLite doesn't support ANALYZE TABLE, return basic info
+                
                 return [
                     'table' => $table,
                     'status' => 'OK',
@@ -188,11 +188,11 @@ class DatabaseOptimizationService
         }
     }
 
-    /**
-     * Get table size information
-     *
-     * @return array{Size_MB: float, Data_MB: float, Index_MB: float}
-     */
+    
+
+
+
+
     public function getTableSize(string $table): array
     {
         try {
@@ -216,17 +216,17 @@ class DatabaseOptimizationService
                 ];
             }
         } catch (Exception) {
-            // Fallback for databases that don't support information_schema queries
+            
         }
 
         return ['Size_MB' => 0, 'Data_MB' => 0, 'Index_MB' => 0];
     }
 
-    /**
-     * Get slow query log
-     *
-     * @return array<int, object{sql_text: string, exec_count: int, avg_time_seconds: float, max_time_seconds: float}>
-     */
+    
+
+
+
+
     public function getSlowQueries(int $limit = 10): array
     {
         return DB::select('
@@ -241,19 +241,19 @@ class DatabaseOptimizationService
         ', [$limit]);
     }
 
-    /**
-     * Monitor query performance
-     */
+    
+
+
     public function startMonitoring(): void
     {
         $this->queryMonitor->enable();
     }
 
-    /**
-     * Stop monitoring and get report
-     *
-     * @return array{total_queries: int, total_time: float, average_time: float, slow_queries: int, queries: array<int, array<string, mixed>>}
-     */
+    
+
+
+
+
     public function stopMonitoring(): array
     {
         $this->queryMonitor->disable();
@@ -261,11 +261,11 @@ class DatabaseOptimizationService
         return $this->queryMonitor->getReport();
     }
 
-    /**
-     * Get database connection info
-     *
-     * @return array{driver: string, database: string, host: string|null, port: int|null, charset: string, collation: string}
-     */
+    
+
+
+
+
     public function getConnectionInfo(): array
     {
         $connection = DB::connection();

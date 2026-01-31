@@ -51,8 +51,8 @@ class Service implements ServiceInterface
         $qrCodeUrl = $this->generateQrCodeUrl($user, $secretKey);
         $recoveryCodes = $this->generateRecoveryCodes();
 
-        // Store encrypted secret key and recovery codes
-        // Reset confirmed_at to allow re-verification
+        
+        
         $user->update([
             'two_factor_secret' => Crypt::encrypt($secretKey),
             'two_factor_recovery_codes' => Crypt::encrypt($recoveryCodes->toArray()),
@@ -76,15 +76,15 @@ class Service implements ServiceInterface
 
         $verified = false;
 
-        // Check if it's a recovery code
+        
         if ($dto->recoveryCode) {
             $verified = $this->verifyRecoveryCode($user, $dto->recoveryCode);
         } else {
-            // Verify TOTP code
+            
             $verified = (bool) $this->google2fa->verifyKey($secretKey, $dto->code);
         }
 
-        // If verification is successful and 2FA is not yet confirmed, enable it
+        
         if ($verified && ! $user->two_factor_confirmed_at) {
             $user->update([
                 'two_factor_confirmed_at' => now(),
@@ -121,9 +121,9 @@ class Service implements ServiceInterface
 
         $key = array_search($recoveryCode, $codes, true);
         if ($key !== false) {
-            // Remove used recovery code
+            
             unset($codes[$key]);
-            $codes = array_values($codes); // Re-index array
+            $codes = array_values($codes); 
 
             $user->update([
                 'two_factor_recovery_codes' => Crypt::encrypt(['codes' => $codes]),

@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class DeleteRoleActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -22,7 +22,7 @@ class DeleteRoleActionTest extends TestCase
 
     public function test_execute_successful_role_deletion(): void
     {
-        // Arrange
+        
         $roleId = 1;
         $role = Mockery::mock(\App\Modules\Role\Infrastructure\Models\Role::class);
 
@@ -30,7 +30,7 @@ class DeleteRoleActionTest extends TestCase
         $roleRepository->shouldReceive('findOrFail')->with($roleId)->andReturn($role);
         $roleRepository->shouldReceive('delete')->with($roleId)->andReturn(true);
 
-        // Mock DB query builder chain
+        
         $queryBuilder = Mockery::mock();
         $queryBuilder->shouldReceive('where')->with('role_id', $roleId)->andReturnSelf();
         $queryBuilder->shouldReceive('delete')->andReturn(1);
@@ -44,16 +44,16 @@ class DeleteRoleActionTest extends TestCase
 
         $action = new DeleteRoleAction($roleRepository);
 
-        // Act
+        
         $result = $action->execute($roleId);
 
-        // Assert
+        
         $this->assertTrue($result);
     }
 
     public function test_execute_role_deletion_failure(): void
     {
-        // Arrange
+        
         $roleId = 1;
         $role = Mockery::mock(\App\Modules\Role\Infrastructure\Models\Role::class);
 
@@ -61,7 +61,7 @@ class DeleteRoleActionTest extends TestCase
         $roleRepository->shouldReceive('findOrFail')->with($roleId)->andReturn($role);
         $roleRepository->shouldReceive('delete')->with($roleId)->andReturn(false);
 
-        // Mock DB query builder chain
+        
         $queryBuilder = Mockery::mock();
         $queryBuilder->shouldReceive('where')->with('role_id', $roleId)->andReturnSelf();
         $queryBuilder->shouldReceive('delete')->andReturn(1);
@@ -75,10 +75,10 @@ class DeleteRoleActionTest extends TestCase
 
         $action = new DeleteRoleAction($roleRepository);
 
-        // Act
+        
         $result = $action->execute($roleId);
 
-        // Assert
+        
         $this->assertFalse($result);
     }
 }

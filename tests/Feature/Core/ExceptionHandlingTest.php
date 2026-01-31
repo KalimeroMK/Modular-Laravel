@@ -23,7 +23,7 @@ class ExceptionHandlingTest extends TestCase
 
     public $user;
 
-    #[Override]
+    
     protected function setUp(): void
     {
         parent::setUp();
@@ -45,11 +45,11 @@ class ExceptionHandlingTest extends TestCase
 
     public function test_model_not_found_exception_returns_404(): void
     {
-        // findOrFail() should throw ModelNotFoundException for non-existent IDs
-        // This is handled by the exception handler in bootstrap/app.php
+        
+        
         $response = $this->getJson('/api/v1/users/99999');
 
-        // findOrFail() should return 404
+        
         $response->assertStatus(404);
         $data = json_decode($response->getContent(), true);
         $this->assertEquals('error', $data['status']);

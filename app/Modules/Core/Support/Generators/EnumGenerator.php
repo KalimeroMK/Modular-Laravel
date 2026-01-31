@@ -11,11 +11,11 @@ class EnumGenerator
 {
     public function __construct(protected Filesystem $files) {}
 
-    /**
-     * Generate Enum class for a module.
-     *
-     * @throws FileNotFoundException
-     */
+    
+
+
+
+
     public function generate(string $moduleName): void
     {
         $path = app_path("Modules/{$moduleName}/Enums/{$moduleName}Status.php");

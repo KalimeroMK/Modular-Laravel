@@ -105,7 +105,7 @@ class SyncRelationsTest extends TestCase
         $relatedModel->shouldReceive('getMorphClass')->andReturn('App\\Models\\User');
         $relatedModel->shouldReceive('getKey')->andReturn(123);
 
-        // Set up the model with initial values that will trigger a change
+        
         $model->owner_type = 'OldType';
         $model->owner_id = 999;
 
@@ -198,13 +198,13 @@ class SyncRelationsTest extends TestCase
         $morphToRelation = Mockery::mock(MorphTo::class);
         $morphToManyRelation = Mockery::mock(MorphToMany::class);
 
-        // BelongsTo relation
+        
         $model->shouldReceive('user')->andReturn($belongsToRelation);
         $belongsToRelation->shouldReceive('getForeignKeyName')->andReturn('user_id');
         $model->shouldReceive('getAttribute')->with('user_id')->andReturn(null);
         $model->shouldReceive('setAttribute')->with('user_id', 123);
 
-        // MorphTo relation
+        
         $model->shouldReceive('owner')->andReturn($morphToRelation);
         $morphToRelation->shouldReceive('getMorphType')->andReturn('owner_type');
         $morphToRelation->shouldReceive('getForeignKeyName')->andReturn('owner_id');
@@ -213,7 +213,7 @@ class SyncRelationsTest extends TestCase
         $model->shouldReceive('setAttribute')->with('owner_type', 'App\\Models\\Product');
         $model->shouldReceive('setAttribute')->with('owner_id', 456);
 
-        // MorphToMany relation
+        
         $model->shouldReceive('tags')->andReturn($morphToManyRelation);
         $morphToManyRelation->shouldReceive('sync')->with([1, 2, 3])->once();
 

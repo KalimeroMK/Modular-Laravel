@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class SendPasswordResetLinkActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -23,7 +23,7 @@ class SendPasswordResetLinkActionTest extends TestCase
 
     public function test_execute_successful_password_reset_link(): void
     {
-        // Arrange
+        
         $request = Mockery::mock(SendPasswordResetLinkRequest::class);
         $request->shouldReceive('only')
             ->with('email')
@@ -35,16 +35,16 @@ class SendPasswordResetLinkActionTest extends TestCase
 
         $action = new SendPasswordResetLinkAction();
 
-        // Act
+        
         $result = $action->execute($request);
 
-        // Assert
+        
         $this->assertEquals('passwords.sent', $result);
     }
 
     public function test_execute_user_not_found(): void
     {
-        // Arrange
+        
         $request = Mockery::mock(SendPasswordResetLinkRequest::class);
         $request->shouldReceive('only')
             ->with('email')
@@ -56,7 +56,7 @@ class SendPasswordResetLinkActionTest extends TestCase
 
         $action = new SendPasswordResetLinkAction();
 
-        // Act & Assert
+        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to send reset link');
         $action->execute($request);
@@ -64,7 +64,7 @@ class SendPasswordResetLinkActionTest extends TestCase
 
     public function test_execute_password_reset_failure(): void
     {
-        // Arrange
+        
         $request = Mockery::mock(SendPasswordResetLinkRequest::class);
         $request->shouldReceive('only')
             ->with('email')
@@ -76,7 +76,7 @@ class SendPasswordResetLinkActionTest extends TestCase
 
         $action = new SendPasswordResetLinkAction();
 
-        // Act & Assert
+        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to send reset link');
         $action->execute($request);

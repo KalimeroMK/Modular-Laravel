@@ -25,8 +25,8 @@ class ResetPasswordAction
             return 'passwords.reset';
         }
 
-        // Return error message instead of throwing exception
-        // This allows the controller to handle validation errors properly
+        
+        
         $validator = \Illuminate\Support\Facades\Validator::make(
             ['password' => ''],
             ['password' => ['required']],

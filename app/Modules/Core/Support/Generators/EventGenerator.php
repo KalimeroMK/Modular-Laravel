@@ -12,9 +12,9 @@ class EventGenerator
 {
     public function __construct(protected Filesystem $files) {}
 
-    /**
-     * @throws FileNotFoundException
-     */
+    
+
+
     public function generate(string $moduleName): void
     {
         $modelName = Str::camel($moduleName);

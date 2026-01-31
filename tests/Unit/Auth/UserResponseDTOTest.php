@@ -13,7 +13,7 @@ class UserResponseDTOTest extends TestCase
 {
     public function test_constructor_sets_properties(): void
     {
-        // Arrange
+        
         $id = 1;
         $name = 'Test User';
         $email = 'test@example.com';
@@ -21,10 +21,10 @@ class UserResponseDTOTest extends TestCase
         $createdAt = '2023-01-01T00:00:00Z';
         $updatedAt = '2023-01-01T00:00:00Z';
 
-        // Act
+        
         $dto = new UserResponseDTO($id, $name, $email, $emailVerifiedAt, $createdAt, $updatedAt);
 
-        // Assert
+        
         $this->assertEquals($id, $dto->id);
         $this->assertEquals($name, $dto->name);
         $this->assertEquals($email, $dto->email);
@@ -35,7 +35,7 @@ class UserResponseDTOTest extends TestCase
 
     public function test_from_user_creates_dto(): void
     {
-        // Arrange
+        
         $user = new User();
         $user->id = 1;
         $user->name = 'Test User';
@@ -44,10 +44,10 @@ class UserResponseDTOTest extends TestCase
         $user->created_at = Carbon::parse('2023-01-01T00:00:00Z');
         $user->updated_at = Carbon::parse('2023-01-01T00:00:00Z');
 
-        // Act
+        
         $dto = UserResponseDTO::fromUser($user);
 
-        // Assert
+        
         $this->assertInstanceOf(UserResponseDTO::class, $dto);
         $this->assertEquals(1, $dto->id);
         $this->assertEquals('Test User', $dto->name);
@@ -57,7 +57,7 @@ class UserResponseDTOTest extends TestCase
 
     public function test_to_array_returns_correct_data(): void
     {
-        // Arrange
+        
         $dto = new UserResponseDTO(
             1,
             'Test User',
@@ -67,10 +67,10 @@ class UserResponseDTOTest extends TestCase
             '2023-01-01T00:00:00Z'
         );
 
-        // Act
+        
         $result = $dto->toArray();
 
-        // Assert
+        
         $this->assertIsArray($result);
         $this->assertEquals(1, $result['id']);
         $this->assertEquals('Test User', $result['name']);

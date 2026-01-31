@@ -11,9 +11,9 @@ class ActionGenerator
 {
     public function __construct(protected Filesystem $files) {}
 
-    /**
-     * @throws FileNotFoundException
-     */
+    
+
+
     public function generate(string $moduleName, bool $withEvents = false): void
     {
         $types = ['Create', 'Update', 'Delete', 'GetAll', 'GetById'];
@@ -34,7 +34,7 @@ class ActionGenerator
                 '{{moduleVar}}' => mb_strtolower($moduleName),
             ];
 
-            // Add event-related replacements if events are enabled
+            
             if ($withEvents) {
                 $moduleVar = mb_strtolower($moduleName);
                 $eventReplacements = [

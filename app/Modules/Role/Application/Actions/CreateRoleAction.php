@@ -22,7 +22,7 @@ class CreateRoleAction
             'guard_name' => $dto->guardName,
         ];
 
-        /** @var Role|null $role */
+         
         $role = $this->roleRepository->create($roleData);
 
         if ($role === null) {

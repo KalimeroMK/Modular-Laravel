@@ -14,9 +14,9 @@ class GetAllRolesAction
         protected RoleRepositoryInterface $roleRepository,
     ) {}
 
-    /**
-     * @return LengthAwarePaginator<int, Role>
-     */
+    
+
+
     public function execute(int $perPage = 15): LengthAwarePaginator
     {
         return $this->roleRepository->paginate($perPage);

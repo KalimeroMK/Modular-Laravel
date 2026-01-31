@@ -17,7 +17,7 @@ use Tests\TestCase;
 
 class LoginActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -26,7 +26,7 @@ class LoginActionTest extends TestCase
 
     public function test_execute_successful_login(): void
     {
-        // Arrange
+        
         $email = 'test@example.com';
         $password = 'password123';
         $user = new User();
@@ -52,10 +52,10 @@ class LoginActionTest extends TestCase
 
         $action = new LoginAction($authRepository, $tokenService);
 
-        // Act
+        
         $result = $action->execute($dto);
 
-        // Assert
+        
         $this->assertIsArray($result);
         $this->assertArrayHasKey('user', $result);
         $this->assertArrayHasKey('token', $result);
@@ -64,7 +64,7 @@ class LoginActionTest extends TestCase
 
     public function test_execute_failed_login(): void
     {
-        // Arrange
+        
         $email = 'test@example.com';
         $password = 'wrongpassword';
         $dto = new LoginRequestDTO($email, $password);
@@ -78,14 +78,14 @@ class LoginActionTest extends TestCase
 
         $action = new LoginAction($authRepository, $tokenService);
 
-        // Act & Assert
+        
         $this->expectException(ValidationException::class);
         $action->execute($dto);
     }
 
     public function test_execute_user_not_found(): void
     {
-        // Arrange
+        
         $email = 'test@example.com';
         $password = 'password123';
         $dto = new LoginRequestDTO($email, $password);
@@ -103,7 +103,7 @@ class LoginActionTest extends TestCase
 
         $action = new LoginAction($authRepository, $tokenService);
 
-        // Act & Assert
+        
         $this->expectException(ValidationException::class);
         $action->execute($dto);
     }

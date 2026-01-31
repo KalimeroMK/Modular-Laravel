@@ -13,7 +13,7 @@ class GetPermissionByIdAction
 
     public function execute(int $id): Permission
     {
-        /** @var Permission $permission */
+         
         $permission = $this->repository->findOrFail($id);
 
         return $permission;

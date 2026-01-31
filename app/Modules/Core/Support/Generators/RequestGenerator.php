@@ -11,11 +11,11 @@ class RequestGenerator
 {
     public function __construct(protected Filesystem $files) {}
 
-    /**
-     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
-     *
-     * @throws FileNotFoundException
-     */
+    
+
+
+
+
     public function generate(string $moduleName, array $fields): void
     {
         foreach (['Create', 'Update'] as $type) {
@@ -51,13 +51,13 @@ class RequestGenerator
                     default => 'string'
                 };
 
-                // For Update requests, use 'sometimes' instead of 'required'
+                
                 $required = $type === 'Update' ? 'sometimes' : 'required';
 
                 return "            '{$name}' => ['{$required}', '{$rule}'],";
             }, $fields)));
 
-            // Generate validation messages
+            
             $messages = implode("\n", array_filter(array_map(function ($field) {
                 if ($field['name'] === 'id') {
                     return null;

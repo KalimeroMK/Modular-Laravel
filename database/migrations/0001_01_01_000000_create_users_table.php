@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+    
+
+
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
 
-            // Performance indexes
+            
             $table->index('email_verified_at');
             $table->index('created_at');
             $table->index('updated_at');
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('token');
             $table->timestamp('created_at')->nullable();
 
-            // Performance indexes
+            
             $table->index('token');
             $table->index('created_at');
         });
@@ -46,15 +46,15 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
 
-            // Performance indexes
+            
             $table->index('ip_address');
             $table->index(['user_id', 'last_activity']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+    
+
+
     public function down(): void
     {
         Schema::dropIfExists('users');

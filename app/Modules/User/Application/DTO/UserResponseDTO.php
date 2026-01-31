@@ -36,9 +36,9 @@ readonly class UserResponseDTO
         );
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    
+
+
     public function toArray(): array
     {
         return [

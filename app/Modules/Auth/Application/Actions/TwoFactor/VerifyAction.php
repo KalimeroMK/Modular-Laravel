@@ -18,7 +18,7 @@ class VerifyAction
 
     public function execute(User $user, VerificationDTO $dto): bool
     {
-        // Allow verification even if 2FA is not yet confirmed (for initial setup)
+        
         if (empty($user->two_factor_secret)) {
             throw new TwoFactorSecretNotSetException();
         }

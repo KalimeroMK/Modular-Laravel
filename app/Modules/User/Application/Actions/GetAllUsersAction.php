@@ -13,12 +13,12 @@ class GetAllUsersAction
         protected UserRepositoryInterface $userRepository,
     ) {}
 
-    /**
-     * @return LengthAwarePaginator<int, \App\Modules\User\Infrastructure\Models\User>
-     */
+    
+
+
     public function execute(int $perPage = 15): LengthAwarePaginator
     {
-        /** @var LengthAwarePaginator<int, \App\Modules\User\Infrastructure\Models\User> $result */
+         
         $result = $this->userRepository->paginate($perPage);
 
         return $result;

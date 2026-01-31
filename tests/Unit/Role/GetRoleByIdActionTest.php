@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class GetRoleByIdActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -22,7 +22,7 @@ class GetRoleByIdActionTest extends TestCase
 
     public function test_execute_returns_role_when_found(): void
     {
-        // Arrange
+        
         $role = new Role();
         $role->id = 1;
         $role->name = 'admin';
@@ -36,10 +36,10 @@ class GetRoleByIdActionTest extends TestCase
 
         $action = new GetRoleByIdAction($repository);
 
-        // Act
+        
         $result = $action->execute(1);
 
-        // Assert
+        
         $this->assertInstanceOf(Role::class, $result);
         $this->assertEquals(1, $result->id);
         $this->assertEquals('admin', $result->name);
@@ -48,7 +48,7 @@ class GetRoleByIdActionTest extends TestCase
 
     public function test_execute_returns_role_dto(): void
     {
-        // Arrange
+        
         $role = new Role();
         $role->id = 2;
         $role->name = 'user';
@@ -62,10 +62,10 @@ class GetRoleByIdActionTest extends TestCase
 
         $action = new GetRoleByIdAction($repository);
 
-        // Act
+        
         $result = $action->execute(2);
 
-        // Assert
+        
         $this->assertInstanceOf(Role::class, $result);
         $this->assertEquals(2, $result->id);
         $this->assertEquals('user', $result->name);

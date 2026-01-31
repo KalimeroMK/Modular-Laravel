@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// config/modules.php
+
 return [
     'default' => [
         'base_path' => base_path(env('MODULE_DIRECTORY', 'app/Modules')),
@@ -13,8 +13,8 @@ return [
         'routing_options' => [
             'api' => [
                 'prefix' => 'api',
-                'version' => env('API_VERSION', 'v1'), // api/v1/...
-                'middleware' => ['api', 'throttle:api', 'auth:sanctum'], // или passport/jwt
+                'version' => env('API_VERSION', 'v1'), 
+                'middleware' => ['api', 'throttle:api', 'auth:sanctum'], 
                 'files' => ['api.php'],
             ],
         ],
@@ -41,16 +41,16 @@ return [
 
     'specific' => [
         'Auth' => [
-            'enabled' => true, // Disabled - using new Clean Architecture structure
+            'enabled' => true, 
         ],
         'User' => [
-            'enabled' => true, // Disabled - using new Clean Architecture structure
+            'enabled' => true, 
         ],
         'Role' => [
-            'enabled' => true, // Disabled - using new Clean Architecture structure
+            'enabled' => true, 
         ],
         'Permission' => [
-            'enabled' => true, // Disabled - using new Clean Architecture structure
+            'enabled' => true, 
         ],
     ],
 ];

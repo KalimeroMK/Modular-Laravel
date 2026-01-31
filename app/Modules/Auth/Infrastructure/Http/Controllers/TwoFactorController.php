@@ -16,7 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
-#[OA\Tag(name: 'Two-Factor Authentication', description: '2FA management endpoints')]
+
 class TwoFactorController
 {
     public function __construct(
@@ -27,7 +27,7 @@ class TwoFactorController
         protected GenerateRecoveryCodesAction $generateRecoveryCodesAction,
     ) {}
 
-    #[OA\Post(path: '/api/v1/auth/2fa/setup', description: 'Generate secret key and QR code for two-factor authentication setup', summary: 'Setup 2FA', security: [['sanctum' => []]], tags: ['Two-Factor Authentication'], responses: [
+    
         new OA\Response(
             response: 200,
             description: '2FA setup data generated successfully',
@@ -53,7 +53,7 @@ class TwoFactorController
         return response()->json($setupData->toArray());
     }
 
-    #[OA\Get(path: '/api/v1/auth/2fa/status', description: 'Get the current two-factor authentication status for the authenticated user', summary: 'Get 2FA status', security: [['sanctum' => []]], tags: ['Two-Factor Authentication'], responses: [
+    
         new OA\Response(
             response: 200,
             description: '2FA status retrieved successfully',
@@ -76,7 +76,7 @@ class TwoFactorController
         return response()->json($status);
     }
 
-    #[OA\Post(path: '/api/v1/auth/2fa/verify', description: 'Verify a two-factor authentication code or recovery code', summary: 'Verify 2FA code', security: [['sanctum' => []]], requestBody: new OA\RequestBody(
+    
         required: true,
         content: new OA\JsonContent(
             required: ['code'],
@@ -111,7 +111,7 @@ class TwoFactorController
         return response()->json(['verified' => $verified]);
     }
 
-    #[OA\Delete(path: '/api/v1/auth/2fa/disable', description: 'Disable two-factor authentication for the authenticated user', summary: 'Disable 2FA', security: [['sanctum' => []]], tags: ['Two-Factor Authentication'], responses: [
+    
         new OA\Response(
             response: 200,
             description: '2FA disabled successfully',
@@ -135,7 +135,7 @@ class TwoFactorController
         return response()->json(['message' => 'Two-factor authentication disabled successfully']);
     }
 
-    #[OA\Post(path: '/api/v1/auth/2fa/recovery-codes', description: 'Generate new recovery codes for two-factor authentication', summary: 'Generate new recovery codes', security: [['sanctum' => []]], tags: ['Two-Factor Authentication'], responses: [
+    
         new OA\Response(
             response: 200,
             description: 'New recovery codes generated successfully',

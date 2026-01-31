@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class IssueTokenServiceTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -23,7 +23,7 @@ class IssueTokenServiceTest extends TestCase
 
     public function test_issue_token_success(): void
     {
-        // Arrange
+        
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
         $user->id = 1;
@@ -41,17 +41,17 @@ class IssueTokenServiceTest extends TestCase
 
         $service = new IssueTokenService();
 
-        // Act
+        
         $result = $service->issueToken($user);
 
-        // Assert
+        
         $this->assertInstanceOf(SessionTokenDTO::class, $result);
         $this->assertEquals('test-token', $result->token);
     }
 
     public function test_revoke_token_success(): void
     {
-        // Arrange
+        
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
         $user->id = 1;
@@ -65,16 +65,16 @@ class IssueTokenServiceTest extends TestCase
 
         $service = new IssueTokenService();
 
-        // Act
+        
         $result = $service->revokeToken($user);
 
-        // Assert
+        
         $this->assertTrue($result);
     }
 
     public function test_revoke_all_tokens_success(): void
     {
-        // Arrange
+        
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
         $user->id = 1;
@@ -86,10 +86,10 @@ class IssueTokenServiceTest extends TestCase
 
         $service = new IssueTokenService();
 
-        // Act
+        
         $result = $service->revokeAllTokens($user);
 
-        // Assert
+        
         $this->assertTrue($result);
     }
 }

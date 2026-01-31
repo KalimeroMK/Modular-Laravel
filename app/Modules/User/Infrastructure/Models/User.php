@@ -15,16 +15,16 @@ use Override;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
+     
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     protected $table = 'users';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
+    
+
+
+
+
     protected array $dates = [
         'email_verified_at',
         'two_factor_confirmed_at',
@@ -48,21 +48,21 @@ class User extends Authenticatable
         'two_factor_confirmed_at',
     ];
 
-    /**
-     * Get the route key for the model.
-     */
-    #[Override]
+    
+
+
+    
     public function getRouteKeyName(): string
     {
         return 'id';
     }
 
-    /**
-     * Ensure Laravel can find the correct factory for this model.
-     */
-    /**
-     * @return Factory<User>
-     */
+    
+
+
+    
+
+
     protected static function newFactory(): Factory|UserFactory
     {
         return UserFactory::new();

@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 class CreateRoleActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -24,7 +24,7 @@ class CreateRoleActionTest extends TestCase
 
     public function test_execute_successful_role_creation(): void
     {
-        // Arrange
+        
         $name = 'admin';
         $guardName = 'api';
 
@@ -43,10 +43,10 @@ class CreateRoleActionTest extends TestCase
 
         $action = new CreateRoleAction($roleRepository);
 
-        // Act
+        
         $result = $action->execute($dto);
 
-        // Assert
+        
         $this->assertInstanceOf(Role::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($guardName, $result->guard_name);
@@ -54,7 +54,7 @@ class CreateRoleActionTest extends TestCase
 
     public function test_execute_role_creation_failure(): void
     {
-        // Arrange
+        
         $name = 'admin';
         $guardName = 'api';
 
@@ -66,7 +66,7 @@ class CreateRoleActionTest extends TestCase
 
         $action = new CreateRoleAction($roleRepository);
 
-        // Act & Assert
+        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to create role');
         $action->execute($dto);

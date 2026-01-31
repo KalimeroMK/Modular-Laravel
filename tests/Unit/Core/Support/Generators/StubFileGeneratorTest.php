@@ -15,17 +15,17 @@ class StubFileGeneratorTest extends TestCase
 
     private array $testModules = ['TestModule', 'Product'];
 
-    #[Override]
+    
     protected function setUp(): void
     {
         parent::setUp();
         $this->files = new Filesystem;
     }
 
-    #[Override]
+    
     protected function tearDown(): void
     {
-        // Cleanup all test modules
+        
         foreach ($this->testModules as $moduleName) {
             $modulePath = app_path("Modules/{$moduleName}");
             if ($this->files->exists($modulePath)) {
@@ -48,7 +48,7 @@ class StubFileGeneratorTest extends TestCase
             'table' => 'test_modules',
         ];
 
-        // Should not throw if stub exists
+        
         $generator->generate('TestModule', $fields, $options);
 
         $interfacePath = app_path('Modules/TestModule/Infrastructure/Repositories/TestModuleRepositoryInterface.php');

@@ -10,22 +10,22 @@ use Illuminate\Console\Command;
 
 class DatabaseOptimizeCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    
+
+
+
+
     protected $signature = 'db:optimize 
                             {--analyze : Analyze all tables}
                             {--slow-queries : Show slow queries}
                             {--connection-info : Show connection information}
                             {--monitor : Monitor query performance for 30 seconds}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    
+
+
+
+
     protected $description = 'Optimize database performance and analyze queries';
 
     public function __construct(protected DatabaseOptimizationService $optimizationService)
@@ -33,9 +33,9 @@ class DatabaseOptimizeCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     */
+    
+
+
     public function handle(): int
     {
         $this->info('🔧 Database Optimization Tool');

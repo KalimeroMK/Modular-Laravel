@@ -16,13 +16,13 @@ class IssueTokenService implements IssueTokenServiceInterface
 
         return new SessionTokenDTO(
             token: $token->plainTextToken,
-            type: 'Bearer' // Sanctum tokens don't expire by default
+            type: 'Bearer' 
         );
     }
 
     public function revokeToken(User $user): bool
     {
-        /** @var PersonalAccessToken|null $token */
+         
         $token = $user->currentAccessToken();
 
         if ($token !== null && $token instanceof PersonalAccessToken) {

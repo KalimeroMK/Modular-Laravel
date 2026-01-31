@@ -9,21 +9,21 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-/**
- * Helper class for standardizing API responses.
- *
- * Provides consistent JSON response format across the application.
- */
+
+
+
+
+
 class ApiResponse
 {
-    /**
-     * Return a successful JSON response.
-     *
-     * @param  array<string, mixed>|object|null  $data  Response data
-     * @param  string  $message  Success message
-     * @param  int  $statusCode  HTTP status code (default: 200)
-     * @return JsonResponse JSON response with success structure
-     */
+    
+
+
+
+
+
+
+
     public static function success(
         array|object|null $data = null,
         string $message = 'Success',
@@ -36,15 +36,15 @@ class ApiResponse
         ], $statusCode);
     }
 
-    /**
-     * Return an error JSON response.
-     *
-     * @param  string  $message  Error message
-     * @param  ErrorCode|string  $errorCode  Error code identifier
-     * @param  array<string, mixed>  $errors  Additional error details
-     * @param  int  $statusCode  HTTP status code (default: 400)
-     * @return JsonResponse JSON response with error structure
-     */
+    
+
+
+
+
+
+
+
+
     public static function error(
         string $message,
         ErrorCode|string $errorCode = ErrorCode::ERROR,
@@ -61,14 +61,14 @@ class ApiResponse
         ], $statusCode);
     }
 
-    /**
-     * Return a paginated JSON response.
-     *
-     * @param  LengthAwarePaginator<int, mixed>  $paginator  Paginated results
-     * @param  string  $message  Success message
-     * @param  AnonymousResourceCollection|null  $resourceCollection  Optional resource collection for data transformation
-     * @return JsonResponse JSON response with paginated data structure
-     */
+    
+
+
+
+
+
+
+
     public static function paginated(
         LengthAwarePaginator $paginator,
         string $message = 'Data retrieved successfully',
@@ -97,23 +97,23 @@ class ApiResponse
         ]);
     }
 
-    /**
-     * Return a created JSON response (201).
-     *
-     * @param  array<string, mixed>|object|null  $data  Created resource data
-     * @param  string  $message  Success message
-     * @return JsonResponse JSON response with 201 status code
-     */
+    
+
+
+
+
+
+
     public static function created(array|object|null $data = null, string $message = 'Resource created successfully'): JsonResponse
     {
         return self::success($data, $message, 201);
     }
 
-    /**
-     * Return a no content response (204).
-     *
-     * @return JsonResponse JSON response with 204 status code and empty body
-     */
+    
+
+
+
+
     public static function noContent(): JsonResponse
     {
         return response()->json([], 204);

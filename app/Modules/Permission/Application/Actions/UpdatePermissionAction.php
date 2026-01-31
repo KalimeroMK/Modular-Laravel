@@ -17,15 +17,15 @@ class UpdatePermissionAction
 
     public function execute(int $id, UpdatePermissionDTO $dto): Permission
     {
-        // Validate that the permission exists
+        
         $this->permissionRepository->findOrFail($id);
 
         $updateData = $dto->toArray();
 
-        // Only include non-null values in the update
+        
         $updateData = array_filter($updateData, fn ($value) => $value !== null);
 
-        /** @var Permission|null $updatedPermission */
+         
         $updatedPermission = $this->permissionRepository->update($id, $updateData);
 
         if ($updatedPermission === null) {

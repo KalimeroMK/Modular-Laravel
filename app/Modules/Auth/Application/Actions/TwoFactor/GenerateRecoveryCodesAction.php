@@ -24,7 +24,7 @@ class GenerateRecoveryCodesAction
 
         $recoveryCodes = $this->twoFactorService->generateRecoveryCodes();
 
-        // Update user with new recovery codes
+        
         $user->update([
             'two_factor_recovery_codes' => Crypt::encrypt($recoveryCodes->toArray()),
         ]);

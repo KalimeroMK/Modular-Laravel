@@ -13,7 +13,7 @@ class GetUserByIdAction
 
     public function execute(int $id): User
     {
-        /** @var User $user */
+         
         $user = $this->repository->findOrFail($id);
 
         return $user;

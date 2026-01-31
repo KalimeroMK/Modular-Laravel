@@ -12,9 +12,9 @@ readonly class SessionTokenDTO
         public ?int $expiresIn = null,
     ) {}
 
-    /**
-     * @return array<string, mixed>
-     */
+    
+
+
     public function toArray(): array
     {
         return [

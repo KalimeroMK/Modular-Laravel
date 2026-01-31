@@ -28,7 +28,7 @@ class YamlModuleParserCommentsTest extends TestCase
 
     public function test_ignores_comments_in_yaml_file(): void
     {
-        // Symfony YAML parser automatically ignores comments
+        
         $yamlContent = <<<'YAML'
 # This is a comment
 modules:
@@ -49,7 +49,7 @@ YAML;
         $parser = new YamlModuleParser($this->tempFile);
         $result = $parser->parse();
 
-        // Should parse successfully despite comments
+        
         $this->assertArrayHasKey('Product', $result);
         $this->assertEquals(['name:string', 'price:float'], $result['Product']['fields']);
         $this->assertTrue($result['Product']['observers']);

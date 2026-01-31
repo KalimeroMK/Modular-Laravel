@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class GetUserByIdActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -22,7 +22,7 @@ class GetUserByIdActionTest extends TestCase
 
     public function test_execute_returns_user_when_found(): void
     {
-        // Arrange
+        
         $user = new User();
         $user->id = 1;
         $user->name = 'Test User';
@@ -36,10 +36,10 @@ class GetUserByIdActionTest extends TestCase
 
         $action = new GetUserByIdAction($repository);
 
-        // Act
+        
         $result = $action->execute(1);
 
-        // Assert
+        
         $this->assertInstanceOf(User::class, $result);
         $this->assertEquals(1, $result->id);
         $this->assertEquals('Test User', $result->name);
@@ -48,7 +48,7 @@ class GetUserByIdActionTest extends TestCase
 
     public function test_execute_returns_user_dto(): void
     {
-        // Arrange
+        
         $user = new User();
         $user->id = 2;
         $user->name = 'Another User';
@@ -62,10 +62,10 @@ class GetUserByIdActionTest extends TestCase
 
         $action = new GetUserByIdAction($repository);
 
-        // Act
+        
         $result = $action->execute(2);
 
-        // Assert
+        
         $this->assertInstanceOf(User::class, $result);
         $this->assertEquals(2, $result->id);
         $this->assertEquals('Another User', $result->name);

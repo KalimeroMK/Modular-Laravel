@@ -13,7 +13,7 @@ class GetRoleByIdAction
 
     public function execute(int $id): Role
     {
-        /** @var Role $role */
+         
         $role = $this->repository->findOrFail($id);
 
         return $role;

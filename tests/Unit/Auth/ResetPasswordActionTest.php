@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class ResetPasswordActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -22,7 +22,7 @@ class ResetPasswordActionTest extends TestCase
 
     public function test_execute_successful_password_reset(): void
     {
-        // Arrange
+        
         $request = Mockery::mock(ResetPasswordRequest::class);
         $request->shouldReceive('only')
             ->with('email', 'password', 'password_confirmation', 'token')
@@ -38,16 +38,16 @@ class ResetPasswordActionTest extends TestCase
 
         $action = new ResetPasswordAction();
 
-        // Act
+        
         $result = $action->execute($request);
 
-        // Assert
+        
         $this->assertEquals('passwords.reset', $result);
     }
 
     public function test_execute_user_not_found(): void
     {
-        // Arrange
+        
         $request = Mockery::mock(ResetPasswordRequest::class);
         $request->shouldReceive('only')
             ->with('email', 'password', 'password_confirmation', 'token')
@@ -63,7 +63,7 @@ class ResetPasswordActionTest extends TestCase
 
         $action = new ResetPasswordAction();
 
-        // Act & Assert
+        
         $this->expectException(\Illuminate\Validation\ValidationException::class);
         $action->execute($request);
     }

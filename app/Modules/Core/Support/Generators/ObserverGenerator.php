@@ -11,9 +11,9 @@ class ObserverGenerator
 {
     public function __construct(protected Filesystem $files) {}
 
-    /**
-     * @throws FileNotFoundException
-     */
+    
+
+
     public function generate(string $moduleName): void
     {
         $className = $moduleName.'Observer';

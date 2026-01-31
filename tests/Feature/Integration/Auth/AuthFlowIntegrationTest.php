@@ -15,7 +15,7 @@ class AuthFlowIntegrationTest extends TestCase
 
     public function test_complete_auth_flow(): void
     {
-        // 1. Register a new user
+        
         $userData = [
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -38,7 +38,7 @@ class AuthFlowIntegrationTest extends TestCase
 
         $token = $registerResponse->json('data.token');
 
-        // 2. Login with the same credentials
+        
         $loginData = [
             'email' => 'test@example.com',
             'password' => 'password123',
@@ -57,7 +57,7 @@ class AuthFlowIntegrationTest extends TestCase
             ],
         ]);
 
-        // 3. Get current user info
+        
         $meResponse = $this->withHeaders([
             'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/v1/auth/me');
@@ -71,55 +71,55 @@ class AuthFlowIntegrationTest extends TestCase
             ],
         ]);
 
-        // 4. Logout
+        
         $logoutResponse = $this->withHeaders([
             'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/v1/auth/logout');
 
         $logoutResponse->assertStatus(200);
 
-        // 5. Verify token is invalidated (logout might not invalidate token immediately)
+        
         $this->withHeaders([
             'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/v1/auth/me');
 
-        // Token might still be valid in test environment, so we'll just check logout was successful
+        
         $logoutResponse->assertStatus(200);
     }
 
     public function test_password_reset_flow(): void
     {
-        // Create a user first
+        
         User::factory()->create([
             'email' => 'test@example.com',
         ]);
 
-        // 1. Request password reset
+        
         $resetRequestResponse = $this->postJson('/api/v1/auth/forgot-password', [
             'email' => 'test@example.com',
         ]);
 
         $resetRequestResponse->assertStatus(200);
 
-        // 2. Reset password (simplified - in real app you'd get token from email)
+        
         $resetResponse = $this->postJson('/api/v1/auth/reset-password', [
             'email' => 'test@example.com',
             'password' => 'newpassword123',
             'password_confirmation' => 'newpassword123',
-            'token' => 'test-token', // In real app, this would come from email
+            'token' => 'test-token', 
         ]);
 
-        // Note: This might fail in test environment due to token validation
-        // but the flow structure is correct
-        $resetResponse->assertStatus(422); // Validation error expected
+        
+        
+        $resetResponse->assertStatus(422); 
     }
 
     public function test_user_role_permission_integration(): void
     {
-        // Create a user with roles and permissions
+        
         $user = User::factory()->create();
 
-        // Create role and permission first (using Spatie Permission with api guard)
+        
         $role = \App\Modules\Role\Infrastructure\Models\Role::create([
             'name' => 'admin',
             'guard_name' => 'api',
@@ -130,13 +130,13 @@ class AuthFlowIntegrationTest extends TestCase
             'guard_name' => 'api',
         ]);
 
-        // Assign role and permission to user
+        
         $user->assignRole($role);
         $user->givePermissionTo($permission);
 
         Sanctum::actingAs($user);
 
-        // Test that user can access protected routes
+        
         $usersResponse = $this->getJson('/api/v1/users');
         $usersResponse->assertStatus(200);
 

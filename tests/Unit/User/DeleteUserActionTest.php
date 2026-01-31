@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class DeleteUserActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -21,7 +21,7 @@ class DeleteUserActionTest extends TestCase
 
     public function test_execute_successful_user_deletion(): void
     {
-        // Arrange
+        
         $userId = 1;
         $user = Mockery::mock(\App\Modules\User\Infrastructure\Models\User::class);
 
@@ -33,16 +33,16 @@ class DeleteUserActionTest extends TestCase
 
         $action = new DeleteUserAction($userRepository);
 
-        // Act
+        
         $result = $action->execute($userId);
 
-        // Assert
+        
         $this->assertTrue($result);
     }
 
     public function test_execute_user_deletion_failure(): void
     {
-        // Arrange
+        
         $userId = 1;
         $user = Mockery::mock(\App\Modules\User\Infrastructure\Models\User::class);
 
@@ -54,10 +54,10 @@ class DeleteUserActionTest extends TestCase
 
         $action = new DeleteUserAction($userRepository);
 
-        // Act
+        
         $result = $action->execute($userId);
 
-        // Assert
+        
         $this->assertFalse($result);
     }
 }

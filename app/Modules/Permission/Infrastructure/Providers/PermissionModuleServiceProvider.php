@@ -15,16 +15,16 @@ use Override;
 
 class PermissionModuleServiceProvider extends ServiceProvider
 {
-    #[Override]
+    
     public function register(): void
     {
-        // Bind interfaces to implementations
+        
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
     }
 
     public function boot(): void
     {
-        // Check if module is enabled before loading
+        
         if (! $this->isModuleEnabled()) {
             return;
         }
@@ -33,9 +33,9 @@ class PermissionModuleServiceProvider extends ServiceProvider
         $this->loadRoutes();
     }
 
-    /**
-     * Check if this module is enabled in config/modules.php
-     */
+    
+
+
     protected function isModuleEnabled(): bool
     {
         return (bool) config('modules.specific.Permission.enabled', true);
@@ -54,7 +54,7 @@ class PermissionModuleServiceProvider extends ServiceProvider
             return;
         }
 
-        // Routes already have prefix and middleware in route files, just require them
+        
         require $routeFile;
     }
 }

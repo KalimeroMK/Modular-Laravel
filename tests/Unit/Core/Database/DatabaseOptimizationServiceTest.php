@@ -20,7 +20,7 @@ class DatabaseOptimizationServiceTest extends TestCase
 
     protected QueryMonitor $queryMonitor;
 
-    #[Override]
+    
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,44 +30,44 @@ class DatabaseOptimizationServiceTest extends TestCase
 
     public function test_can_cache_query(): void
     {
-        // Arrange
+        
         $key = 'test_cache_key';
         $expectedData = ['test' => 'data'];
 
-        // Act
+        
         $result = $this->service->cacheQuery($key, fn () => $expectedData, 60);
 
-        // Assert
+        
         $this->assertEquals($expectedData, $result);
         $this->assertTrue(Cache::has($key));
     }
 
     public function test_can_invalidate_cache_pattern(): void
     {
-        // Arrange
+        
         Cache::put('test_key_1', 'value1', 60);
         Cache::put('test_key_2', 'value2', 60);
         Cache::put('other_key', 'value3', 60);
 
-        // Act
+        
         $this->service->invalidateCachePattern('test_key_*');
 
-        // Assert
-        // Note: Pattern invalidation may not work with all cache stores
-        // This test verifies the method doesn't throw exceptions
+        
+        
+        
         $this->assertTrue(true);
     }
 
     public function test_can_optimize_pagination(): void
     {
-        // Arrange
+        
         User::factory()->count(5)->create();
         $query = User::query();
 
-        // Act
+        
         $result = $this->service->optimizePagination($query, 3);
 
-        // Assert
+        
         $this->assertArrayHasKey('data', $result);
         $this->assertArrayHasKey('next_cursor', $result);
         $this->assertArrayHasKey('has_more', $result);
@@ -77,27 +77,27 @@ class DatabaseOptimizationServiceTest extends TestCase
 
     public function test_can_batch_insert(): void
     {
-        // Arrange
+        
         $data = [
             ['name' => 'User 1', 'email' => 'user1@test.com', 'password' => 'password'],
             ['name' => 'User 2', 'email' => 'user2@test.com', 'password' => 'password'],
             ['name' => 'User 3', 'email' => 'user3@test.com', 'password' => 'password'],
         ];
 
-        // Act
+        
         $result = $this->service->batchInsert(new User(), $data);
 
-        // Assert
+        
         $this->assertTrue($result);
         $this->assertDatabaseCount('users', 3);
     }
 
     public function test_can_get_connection_info(): void
     {
-        // Act
+        
         $info = $this->service->getConnectionInfo();
 
-        // Assert
+        
         $this->assertArrayHasKey('driver', $info);
         $this->assertArrayHasKey('database', $info);
         $this->assertArrayHasKey('host', $info);
@@ -108,19 +108,19 @@ class DatabaseOptimizationServiceTest extends TestCase
 
     public function test_can_monitor_queries(): void
     {
-        // Arrange
+        
         User::factory()->count(3)->create();
 
-        // Act
+        
         $this->service->startMonitoring();
 
-        // Execute some queries
+        
         User::all();
         User::where('name', 'like', '%test%')->get();
 
         $report = $this->service->stopMonitoring();
 
-        // Assert
+        
         $this->assertArrayHasKey('total_queries', $report);
         $this->assertArrayHasKey('total_time', $report);
         $this->assertArrayHasKey('average_time', $report);
@@ -130,13 +130,13 @@ class DatabaseOptimizationServiceTest extends TestCase
 
     public function test_can_analyze_table(): void
     {
-        // Arrange
+        
         User::factory()->count(5)->create();
 
-        // Act
+        
         $analysis = $this->service->analyzeTable('users');
 
-        // Assert
+        
         $this->assertArrayHasKey('table', $analysis);
         $this->assertArrayHasKey('status', $analysis);
         $this->assertArrayHasKey('rows', $analysis);

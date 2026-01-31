@@ -18,9 +18,9 @@ class LoginAction
         protected IssueTokenServiceInterface $tokenService,
     ) {}
 
-    /**
-     * @return array{user: UserResponseDTO, token: string}
-     */
+    
+
+
     public function execute(LoginRequestDTO $dto): array
     {
         if (! Auth::attempt(['email' => $dto->email, 'password' => $dto->password])) {

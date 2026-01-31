@@ -11,9 +11,9 @@ readonly class CreatePermissionDTO
         public string $guardName = 'api',
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
+    
+
+
     public static function fromArray(array $data): self
     {
         return new self(

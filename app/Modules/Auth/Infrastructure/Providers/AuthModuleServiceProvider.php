@@ -18,35 +18,35 @@ use PragmaRX\Google2FA\Google2FA;
 
 class AuthModuleServiceProvider extends ServiceProvider
 {
-    #[Override]
+    
     public function register(): void
     {
-        // Bind interfaces to implementations
-        // AuthRepository requires User model in constructor, so we need explicit binding
+        
+        
         $this->app->bind(AuthRepositoryInterface::class, function ($app) {
             return new AuthRepository($app->make(User::class));
         });
         $this->app->bind(IssueTokenServiceInterface::class, IssueTokenService::class);
 
-        // Bind 2FA service
+        
         $this->app->bind(ServiceInterface::class, Service::class);
         $this->app->singleton(Google2FA::class, fn () => new Google2FA());
     }
 
     public function boot(): void
     {
-        // Check if module is enabled before loading
+        
         if (! $this->isModuleEnabled()) {
             return;
         }
 
-        // Load routes
+        
         $this->loadRoutes();
     }
 
-    /**
-     * Check if this module is enabled in config/modules.php
-     */
+    
+
+
     protected function isModuleEnabled(): bool
     {
         return (bool) config('modules.specific.Auth.enabled', true);
@@ -60,7 +60,7 @@ class AuthModuleServiceProvider extends ServiceProvider
             return;
         }
 
-        // Routes already have prefix and middleware in route files, just require them
+        
         require $routeFile;
     }
 }

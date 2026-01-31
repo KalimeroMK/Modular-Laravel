@@ -17,7 +17,7 @@ use Tests\TestCase;
 
 class RegisterUserActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -26,7 +26,7 @@ class RegisterUserActionTest extends TestCase
 
     public function test_execute_successful_registration(): void
     {
-        // Arrange
+        
         $name = 'Test User';
         $email = 'test@example.com';
         $password = 'password123';
@@ -56,10 +56,10 @@ class RegisterUserActionTest extends TestCase
 
         $action = new RegisterUserAction($authRepository, $tokenService);
 
-        // Act
+        
         $result = $action->execute($dto);
 
-        // Assert
+        
         $this->assertIsArray($result);
         $this->assertArrayHasKey('user', $result);
         $this->assertArrayHasKey('token', $result);
@@ -68,7 +68,7 @@ class RegisterUserActionTest extends TestCase
 
     public function test_execute_registration_failure(): void
     {
-        // Arrange
+        
         $name = 'Test User';
         $email = 'test@example.com';
         $password = 'password123';
@@ -87,7 +87,7 @@ class RegisterUserActionTest extends TestCase
 
         $action = new RegisterUserAction($authRepository, $tokenService);
 
-        // Act & Assert
+        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to create user');
         $action->execute($dto);

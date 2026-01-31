@@ -16,7 +16,7 @@ use Tests\TestCase;
 
 class UpdateUserActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -25,7 +25,7 @@ class UpdateUserActionTest extends TestCase
 
     public function test_execute_successful_user_update(): void
     {
-        // Arrange
+        
         $userId = 1;
         $name = 'Updated User';
         $email = 'updated@example.com';
@@ -57,10 +57,10 @@ class UpdateUserActionTest extends TestCase
 
         $action = new UpdateUserAction($userRepository);
 
-        // Act
+        
         $result = $action->execute($userId, $dto);
 
-        // Assert
+        
         $this->assertInstanceOf(User::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($email, $result->email);
@@ -68,7 +68,7 @@ class UpdateUserActionTest extends TestCase
 
     public function test_execute_user_update_failure(): void
     {
-        // Arrange
+        
         $userId = 1;
         $name = 'Updated User';
         $email = 'updated@example.com';
@@ -90,7 +90,7 @@ class UpdateUserActionTest extends TestCase
 
         $action = new UpdateUserAction($userRepository);
 
-        // Act & Assert
+        
         $this->expectException(UpdateException::class);
         $this->expectExceptionMessage('Failed to update user');
         $action->execute($userId, $dto);

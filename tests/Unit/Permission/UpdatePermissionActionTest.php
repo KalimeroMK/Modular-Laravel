@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 class UpdatePermissionActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -24,7 +24,7 @@ class UpdatePermissionActionTest extends TestCase
 
     public function test_execute_successful_permission_update(): void
     {
-        // Arrange
+        
         $permissionId = 1;
         $name = 'updated-manage-users';
         $guardName = 'api';
@@ -50,10 +50,10 @@ class UpdatePermissionActionTest extends TestCase
 
         $action = new UpdatePermissionAction($permissionRepository);
 
-        // Act
+        
         $result = $action->execute($permissionId, $dto);
 
-        // Assert
+        
         $this->assertInstanceOf(Permission::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($guardName, $result->guard_name);
@@ -61,7 +61,7 @@ class UpdatePermissionActionTest extends TestCase
 
     public function test_execute_permission_update_failure(): void
     {
-        // Arrange
+        
         $permissionId = 1;
         $name = 'updated-manage-users';
         $guardName = 'api';
@@ -78,7 +78,7 @@ class UpdatePermissionActionTest extends TestCase
 
         $action = new UpdatePermissionAction($permissionRepository);
 
-        // Act & Assert
+        
         $this->expectException(UpdateException::class);
         $this->expectExceptionMessage('Failed to update permission');
         $action->execute($permissionId, $dto);

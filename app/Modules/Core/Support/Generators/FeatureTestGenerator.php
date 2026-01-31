@@ -11,10 +11,10 @@ class FeatureTestGenerator
 {
     public function __construct(protected Filesystem $files) {}
 
-    /**
-     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
-     * @param  array<string, mixed>  $options
-     */
+    
+
+
+
     public function generate(string $moduleName, array $fields, array $options = []): void
     {
         $path = base_path("tests/Feature/Modules/{$moduleName}/{$moduleName}CrudTest.php");
@@ -46,16 +46,16 @@ class FeatureTestGenerator
         $this->files->put($path, $content);
     }
 
-    /**
-     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
-     */
+    
+
+
     protected function buildTestData(array $fields, bool $forUpdate = false): string
     {
         $lines = [];
 
         foreach ($fields as $field) {
             if ($field['type'] === 'foreign') {
-                continue; // handled separately
+                continue; 
             }
 
             $fieldName = $field['name'];
@@ -74,7 +74,7 @@ class FeatureTestGenerator
                 default => "'{$prefix} {$fieldName}'",
             };
 
-            // Special handling for common field names
+            
             if (Str::contains($fieldName, 'email')) {
                 $value = $forUpdate ? "'updated@example.com'" : "'test@example.com'";
             } elseif (Str::contains($fieldName, 'name')) {
@@ -85,16 +85,16 @@ class FeatureTestGenerator
                 $value = "'api'";
             }
 
-            // Ensure exactly 12 spaces for consistent indentation
+            
             $lines[] = "            '{$fieldName}' => {$value},";
         }
 
         return implode("\n", $lines);
     }
 
-    /**
-     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
-     */
+    
+
+
     protected function buildRelatedFactories(array $fields): string
     {
         $lines = [];
@@ -114,16 +114,16 @@ class FeatureTestGenerator
         return "[\n".implode("\n", $lines)."\n        ]";
     }
 
-    /**
-     * @param  array{name: string, type: string, references?: string, on?: string}  $field
-     */
+    
+
+
     protected function getModelNameFromForeign(array $field): string
     {
         if (isset($field['on'])) {
             return Str::studly(Str::singular($field['on']));
         }
 
-        // Extract model name from field name (e.g., user_id -> User)
+        
         $fieldName = $field['name'];
         if (Str::endsWith($fieldName, '_id')) {
             return Str::studly(Str::before($fieldName, '_id'));
@@ -134,19 +134,19 @@ class FeatureTestGenerator
 
     protected function getModelPath(string $modelName): string
     {
-        // Check if it's a standard Laravel model first
+        
         $standardModels = ['User', 'Role', 'Permission'];
         if (in_array($modelName, $standardModels)) {
             return "\\App\\Modules\\{$modelName}\\Infrastructure\\Models\\{$modelName}";
         }
 
-        // Check if the model exists in modules
+        
         $modulePath = app_path("Modules/{$modelName}/Infrastructure/Models/{$modelName}.php");
         if (file_exists($modulePath)) {
             return "\\App\\Modules\\{$modelName}\\Infrastructure\\Models\\{$modelName}";
         }
 
-        // Fallback to App\Models namespace
+        
         return "\\App\\Models\\{$modelName}";
     }
 }

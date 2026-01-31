@@ -14,10 +14,10 @@ class SwaggerDocumentationTest extends TestCase
 
     public function test_swagger_documentation_is_generated(): void
     {
-        // Run the swagger generation command
+        
         $this->artisan('l5-swagger:generate')->assertExitCode(0);
 
-        // Check if swagger documentation files exist
+        
         $this->assertTrue(File::exists(storage_path('api-docs/api-docs.json')));
     }
 
@@ -28,7 +28,7 @@ class SwaggerDocumentationTest extends TestCase
         $jsonContent = File::get(storage_path('api-docs/api-docs.json'));
         $json = json_decode($jsonContent, true);
 
-        // Verify basic Swagger structure
+        
         $this->assertArrayHasKey('openapi', $json);
         $this->assertArrayHasKey('info', $json);
         $this->assertArrayHasKey('paths', $json);
@@ -42,7 +42,7 @@ class SwaggerDocumentationTest extends TestCase
         $jsonContent = File::get(storage_path('api-docs/api-docs.json'));
         $json = json_decode($jsonContent, true);
 
-        // Check if auth endpoints are documented
+        
         $this->assertArrayHasKey('/api/v1/auth/register', $json['paths']);
         $this->assertArrayHasKey('/api/v1/auth/login', $json['paths']);
         $this->assertArrayHasKey('/api/v1/auth/logout', $json['paths']);
@@ -50,7 +50,7 @@ class SwaggerDocumentationTest extends TestCase
         $this->assertArrayHasKey('/api/v1/auth/forgot-password', $json['paths']);
         $this->assertArrayHasKey('/api/v1/auth/reset-password', $json['paths']);
 
-        // Verify the Authentication tag exists
+        
         $tags = collect($json['tags'])->pluck('name')->toArray();
         $this->assertContains('Authentication', $tags);
     }
@@ -62,7 +62,7 @@ class SwaggerDocumentationTest extends TestCase
         $jsonContent = File::get(storage_path('api-docs/api-docs.json'));
         $json = json_decode($jsonContent, true);
 
-        // Check if user endpoints are documented
+        
         $this->assertArrayHasKey('/api/v1/users', $json['paths']);
         $this->assertArrayHasKey('/api/v1/users/{id}', $json['paths']);
     }
@@ -74,7 +74,7 @@ class SwaggerDocumentationTest extends TestCase
         $jsonContent = File::get(storage_path('api-docs/api-docs.json'));
         $json = json_decode($jsonContent, true);
 
-        // Check if role endpoints are documented
+        
         $this->assertArrayHasKey('/api/v1/roles', $json['paths']);
         $this->assertArrayHasKey('/api/v1/roles/{id}', $json['paths']);
     }
@@ -86,7 +86,7 @@ class SwaggerDocumentationTest extends TestCase
         $jsonContent = File::get(storage_path('api-docs/api-docs.json'));
         $json = json_decode($jsonContent, true);
 
-        // Check if permission endpoints are documented
+        
         $this->assertArrayHasKey('/api/v1/permissions', $json['paths']);
         $this->assertArrayHasKey('/api/v1/permissions/{id}', $json['paths']);
     }
@@ -126,7 +126,7 @@ class SwaggerDocumentationTest extends TestCase
 
         $this->assertArrayHasKey('schemas', $json['components']);
 
-        // Check for common response schemas
+        
         $this->assertArrayHasKey('SuccessResponse', $json['components']['schemas']);
         $this->assertArrayHasKey('ErrorResponse', $json['components']['schemas']);
         $this->assertArrayHasKey('ValidationErrorResponse', $json['components']['schemas']);

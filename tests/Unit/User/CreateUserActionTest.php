@@ -16,7 +16,7 @@ use Tests\TestCase;
 
 class CreateUserActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -25,7 +25,7 @@ class CreateUserActionTest extends TestCase
 
     public function test_execute_successful_user_creation(): void
     {
-        // Arrange
+        
         $name = 'Test User';
         $email = 'test@example.com';
         $password = 'password123';
@@ -50,10 +50,10 @@ class CreateUserActionTest extends TestCase
 
         $action = new CreateUserAction($userRepository);
 
-        // Act
+        
         $result = $action->execute($dto);
 
-        // Assert
+        
         $this->assertInstanceOf(User::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($email, $result->email);
@@ -61,7 +61,7 @@ class CreateUserActionTest extends TestCase
 
     public function test_execute_user_creation_failure(): void
     {
-        // Arrange
+        
         $name = 'Test User';
         $email = 'test@example.com';
         $password = 'password123';
@@ -78,7 +78,7 @@ class CreateUserActionTest extends TestCase
 
         $action = new CreateUserAction($userRepository);
 
-        // Act & Assert
+        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to create user');
         $action->execute($dto);

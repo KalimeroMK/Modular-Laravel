@@ -19,7 +19,7 @@ class ModuleGenerationSnapshotTest extends TestCase
 
     private string $testModuleName = 'SnapshotTestModule';
 
-    #[Override]
+    
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,22 +27,22 @@ class ModuleGenerationSnapshotTest extends TestCase
         $this->tracker = new ModuleGenerationTracker($this->files, new ModuleConfigUpdater);
     }
 
-    #[Override]
+    
     protected function tearDown(): void
     {
-        // Cleanup test module
+        
         $modulePath = app_path("Modules/{$this->testModuleName}");
         if ($this->files->exists($modulePath)) {
             $this->files->deleteDirectory($modulePath);
         }
 
-        // Cleanup test files
+        
         $testPath = base_path("tests/Feature/Modules/{$this->testModuleName}");
         if ($this->files->exists($testPath)) {
             $this->files->deleteDirectory($testPath);
         }
 
-        // Cleanup bootstrap/app.php - remove SnapshotTestModule provider registration
+        
         $bootstrapPath = base_path('bootstrap/app.php');
         if ($this->files->exists($bootstrapPath)) {
             $content = $this->files->get($bootstrapPath);
@@ -73,17 +73,17 @@ class ModuleGenerationSnapshotTest extends TestCase
         $modelPath = app_path("Modules/{$this->testModuleName}/Infrastructure/Models/{$this->testModuleName}.php");
         $content = $this->files->get($modelPath);
 
-        // Verify class structure
+        
         $this->assertStringContainsString("class {$this->testModuleName}", $content);
         $this->assertStringContainsString('extends Model', $content);
         $this->assertStringContainsString("protected \$table = 'snapshot_test_modules'", $content);
 
-        // Verify fillable fields
+        
         $this->assertStringContainsString("'name'", $content);
         $this->assertStringContainsString("'price'", $content);
         $this->assertStringContainsString("'is_active'", $content);
 
-        // Verify casts
+        
         $this->assertStringContainsString("'price' => 'float'", $content);
         $this->assertStringContainsString("'is_active' => 'bool'", $content);
     }
@@ -106,7 +106,7 @@ class ModuleGenerationSnapshotTest extends TestCase
         $interfacePath = app_path("Modules/{$this->testModuleName}/Infrastructure/Repositories/{$this->testModuleName}RepositoryInterface.php");
         $content = $this->files->get($interfacePath);
 
-        // Verify interface structure
+        
         $this->assertStringContainsString("interface {$this->testModuleName}RepositoryInterface", $content);
         $this->assertStringContainsString('extends RepositoryInterface', $content);
         $this->assertStringContainsString("namespace App\\Modules\\{$this->testModuleName}\\Infrastructure\\Repositories", $content);
@@ -130,10 +130,10 @@ class ModuleGenerationSnapshotTest extends TestCase
         $actionPath = app_path("Modules/{$this->testModuleName}/Application/Actions/GetById{$this->testModuleName}Action.php");
         $content = $this->files->get($actionPath);
 
-        // Verify action structure
+        
         $this->assertStringContainsString("class GetById{$this->testModuleName}Action", $content);
         $this->assertStringContainsString('public function execute', $content);
-        $this->assertStringContainsString(": {$this->testModuleName}", $content); // Should return model, not ResponseDTO
+        $this->assertStringContainsString(": {$this->testModuleName}", $content); 
     }
 
     public function test_generated_dto_matches_expected_structure(): void
@@ -155,7 +155,7 @@ class ModuleGenerationSnapshotTest extends TestCase
         $dtoPath = app_path("Modules/{$this->testModuleName}/Application/DTO/{$this->testModuleName}DTO.php");
         $content = $this->files->get($dtoPath);
 
-        // Verify DTO structure
+        
         $this->assertStringContainsString("class {$this->testModuleName}DTO", $content);
         $this->assertStringContainsString('public ?string $name', $content);
         $this->assertStringContainsString('public ?float $price', $content);
@@ -181,7 +181,7 @@ class ModuleGenerationSnapshotTest extends TestCase
         $controllerPath = app_path("Modules/{$this->testModuleName}/Infrastructure/Http/Controllers/{$this->testModuleName}Controller.php");
         $content = $this->files->get($controllerPath);
 
-        // Verify controller structure
+        
         $this->assertStringContainsString("class {$this->testModuleName}Controller", $content);
         $this->assertStringContainsString('extends Controller', $content);
         $this->assertStringContainsString('public function index', $content);

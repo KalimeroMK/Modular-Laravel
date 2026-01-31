@@ -25,7 +25,7 @@ class CreateUserAction
             'email_verified_at' => $dto->emailVerifiedAt,
         ];
 
-        /** @var User|null $user */
+         
         $user = $this->userRepository->create($userData);
 
         if ($user === null) {

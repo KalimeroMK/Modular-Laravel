@@ -27,12 +27,12 @@ class ModuleGenerator
         protected ModuleConfigUpdater $configUpdater,
     ) {}
 
-    /**
-     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
-     * @param  array<string, mixed>  $options
-     *
-     * @throws FileNotFoundException
-     */
+    
+
+
+
+
+
     public function generate(string $moduleName, array $fields, array $options): void
     {
         $tracker = $options['tracker'] ?? null;
@@ -84,20 +84,20 @@ class ModuleGenerator
         $this->testGenerator->generate($moduleName, $fields, $options);
         $this->trackFile($tracker, $moduleName, "../../../tests/Feature/Modules/{$moduleName}/{$moduleName}CrudTest.php");
 
-        // Repository bindings are now registered in individual module service providers
-        // No need to bind in RepositoryServiceProvider anymore
+        
+        
         $this->serviceProviderBinder->bind($moduleName);
 
-        // Add module to config/modules.php
+        
         $this->configUpdater->addModule($moduleName);
 
-        // Run Laravel Pint to format generated code
+        
         $this->formatGeneratedCode($moduleName);
     }
 
-    /**
-     * Track generated file for rollback.
-     */
+    
+
+
     protected function trackFile(?ModuleGenerationTracker $tracker, string $moduleName, string $relativePath): void
     {
         if ($tracker instanceof ModuleGenerationTracker) {
@@ -113,9 +113,9 @@ class ModuleGenerator
         }
     }
 
-    /**
-     * Track exception files.
-     */
+    
+
+
     protected function trackExceptionFiles(?ModuleGenerationTracker $tracker, string $moduleName): void
     {
         $exceptions = ['CreateException', 'UpdateException', 'DeleteException', 'IndexException', 'StoreException', 'DestroyException', 'NotFoundException'];
@@ -124,9 +124,9 @@ class ModuleGenerator
         }
     }
 
-    /**
-     * Track action files.
-     */
+    
+
+
     protected function trackActionFiles(?ModuleGenerationTracker $tracker, string $moduleName): void
     {
         $actions = ['Create', 'Update', 'Delete', 'GetAll', 'GetById'];
@@ -135,9 +135,9 @@ class ModuleGenerator
         }
     }
 
-    /**
-     * Track event files.
-     */
+    
+
+
     protected function trackEventFiles(?ModuleGenerationTracker $tracker, string $moduleName): void
     {
         $events = ['Created', 'Updated', 'Deleted'];
@@ -146,9 +146,9 @@ class ModuleGenerator
         }
     }
 
-    /**
-     * Track listener files.
-     */
+    
+
+
     protected function trackListenerFiles(?ModuleGenerationTracker $tracker, string $moduleName): void
     {
         $events = ['Created', 'Updated', 'Deleted'];
@@ -157,9 +157,9 @@ class ModuleGenerator
         }
     }
 
-    /**
-     * Track notification files.
-     */
+    
+
+
     protected function trackNotificationFiles(?ModuleGenerationTracker $tracker, string $moduleName): void
     {
         $notifications = ['Created', 'Updated', 'Deleted'];
@@ -168,26 +168,26 @@ class ModuleGenerator
         }
     }
 
-    /**
-     * Format generated code using Laravel Pint.
-     */
+    
+
+
     protected function formatGeneratedCode(string $moduleName): void
     {
         $modulePath = app_path("Modules/{$moduleName}");
         $testPath = base_path("tests/Feature/Modules/{$moduleName}");
 
-        // Check if Pint is available
+        
         $pintPath = base_path('vendor/bin/pint');
         if (! file_exists($pintPath)) {
             return;
         }
 
-        // Format module files
+        
         if (is_dir($modulePath)) {
             exec('cd '.base_path()." && {$pintPath} {$modulePath} --quiet 2>&1", $output, $returnCode);
         }
 
-        // Format test files
+        
         if (is_dir($testPath)) {
             exec('cd '.base_path()." && {$pintPath} {$testPath} --quiet 2>&1", $output, $returnCode);
         }

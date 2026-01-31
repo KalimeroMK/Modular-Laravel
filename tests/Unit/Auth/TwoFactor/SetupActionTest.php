@@ -18,7 +18,7 @@ class SetupActionTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -27,7 +27,7 @@ class SetupActionTest extends TestCase
 
     public function test_execute_successful_setup(): void
     {
-        // Arrange
+        
         $user = User::factory()->create();
         $secretKey = 'JBSWY3DPEHPK3PXP';
         $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=otpauth://totp/...';
@@ -45,10 +45,10 @@ class SetupActionTest extends TestCase
 
         $action = new SetupAction($twoFactorService);
 
-        // Act
+        
         $result = $action->execute($user);
 
-        // Assert
+        
         $this->assertInstanceOf(SetupDTO::class, $result);
         $this->assertEquals($secretKey, $result->secretKey);
         $this->assertEquals($qrCodeUrl, $result->qrCodeUrl);
@@ -57,7 +57,7 @@ class SetupActionTest extends TestCase
 
     public function test_execute_throws_exception_when_already_enabled(): void
     {
-        // Arrange
+        
         $user = User::factory()->create();
 
         $twoFactorService = Mockery::mock(ServiceInterface::class);
@@ -67,7 +67,7 @@ class SetupActionTest extends TestCase
 
         $action = new SetupAction($twoFactorService);
 
-        // Act & Assert
+        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Two-factor authentication is already enabled for this user.');
         $action->execute($user);

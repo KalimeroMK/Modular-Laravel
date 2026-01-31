@@ -49,7 +49,7 @@ class ModulesBuildFromYamlCommand extends Command
                     return ['name' => mb_trim($name), 'type' => mb_trim($type)];
                 }, $definition['fields']);
 
-                /** @var array{relations: string, exceptions: mixed, observers: mixed, policies: mixed, events: mixed, enum: mixed, notifications: mixed, repositories: array{}, table?: string, relationships?: string, tracker?: mixed} $options */
+                 
                 $options = [
                     'relations' => implode(',', $definition['relations']),
                     'exceptions' => $definition['exceptions'] ?? false,
@@ -74,7 +74,7 @@ class ModulesBuildFromYamlCommand extends Command
                 $failedModules[] = $name;
                 $this->error('❌ Error generating module: '.$e->getMessage());
 
-                // Rollback failed module
+                
                 $this->warn("Rolling back module '{$name}'...");
                 $this->getTracker()->rollbackModule(Str::studly($name));
             }
@@ -82,7 +82,7 @@ class ModulesBuildFromYamlCommand extends Command
 
         $this->generatePivotMigrations($allModules);
 
-        // Display statistics
+        
         $stats = $this->getTracker()->getStatistics();
         $this->newLine();
         $this->info('📊 Generation Statistics:');
@@ -110,7 +110,7 @@ class ModulesBuildFromYamlCommand extends Command
             $this->newLine();
             $this->warn("⚠️  {$errorCount} module(s) failed: ".implode(', ', $failedModules));
             $this->info('Rollback completed for failed modules.');
-            // Restore modified files if all modules failed
+            
             if ($successCount === 0) {
                 $this->getTracker()->restoreModifiedFiles();
             }
@@ -182,7 +182,7 @@ class ModulesBuildFromYamlCommand extends Command
             return;
         }
 
-        /** @var string $content */
+         
         $content = $fileContent;
         $content = str_replace(
             ['{{table}}', '{{first_column}}', '{{second_column}}'],
@@ -194,11 +194,11 @@ class ModulesBuildFromYamlCommand extends Command
         $this->info("📦 Pivot migration created: {$fileName}");
     }
 
-    /**
-     * Build relationship methods from relation definitions
-     *
-     * @param  string|array<int, string>  $relations
-     */
+    
+
+
+
+
     protected function buildRelationships(string|array $relations): string
     {
         if (empty($relations)) {
@@ -220,28 +220,28 @@ class ModulesBuildFromYamlCommand extends Command
             $relType = mb_trim($parts[1]);
             $relModel = $parts[2] ?? ucfirst($relName);
 
-            // Handle polymorphic relationships
+            
             if (in_array($relType, ['morphTo', 'morphMany', 'morphOne', 'morphToMany'])) {
                 $morphName = $parts[3] ?? $relName;
                 $lines[] = $this->buildPolymorphicRelationship($relName, $relType, $relModel, $parts);
             } else {
-                // Add import for the related model
+                
                 $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
                 $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
             }
         }
 
-        // Remove duplicate imports
+        
         $imports = array_unique($imports);
 
         return implode("\n", $imports)."\n\n".implode("\n", $lines);
     }
 
-    /**
-     * Build polymorphic relationship method
-     *
-     * @param  array<int, string>  $parts
-     */
+    
+
+
+
+
     protected function buildPolymorphicRelationship(string $relName, string $relType, string $relModel, array $parts): string
     {
         switch ($relType) {
@@ -264,7 +264,7 @@ class ModulesBuildFromYamlCommand extends Command
                 return "    public function {$relName}()\n    {\n        return \$this->morphToMany({$relModel}::class, '{$morphName}');\n    }";
 
             default:
-                // Fallback to standard relationship
+                
                 return "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
         }
     }

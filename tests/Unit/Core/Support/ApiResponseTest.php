@@ -97,9 +97,9 @@ class ApiResponseTest extends TestCase
 
         $paginator = new LengthAwarePaginator(
             $items,
-            2, // total
-            15, // per page
-            1  // current page
+            2, 
+            15, 
+            1  
         );
 
         $response = ApiResponse::paginated($paginator, 'Data retrieved successfully');

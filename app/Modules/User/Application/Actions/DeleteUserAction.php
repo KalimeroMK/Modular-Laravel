@@ -14,7 +14,7 @@ class DeleteUserAction
 
     public function execute(int $id): bool
     {
-        // Validate that the user exists
+        
         $this->userRepository->findOrFail($id);
 
         return $this->userRepository->delete($id);

@@ -13,9 +13,9 @@ readonly class UpdateUserDTO
         public ?string $emailVerifiedAt = null,
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
+    
+
+
     public static function fromArray(array $data): self
     {
         return new self(
@@ -26,9 +26,9 @@ readonly class UpdateUserDTO
         );
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    
+
+
     public function toArray(): array
     {
         return array_filter([

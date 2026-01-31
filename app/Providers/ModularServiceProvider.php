@@ -13,15 +13,15 @@ use Illuminate\Support\ServiceProvider;
 use Override;
 use Throwable;
 
-/**
- * ModularServiceProvider handles GLOBAL resources for all modules:
- * - Factory resolver (global, registered once)
- * - Migrations (module-specific, but registered globally)
- * - Helpers (module-specific, but registered globally)
- *
- * Module-specific resources (routes, policies, observers, events, repository bindings)
- * are handled by individual module service providers.
- */
+
+
+
+
+
+
+
+
+
 class ModularServiceProvider extends ServiceProvider
 {
     protected Filesystem $files;
@@ -30,7 +30,7 @@ class ModularServiceProvider extends ServiceProvider
     {
         $this->files = $files;
 
-        // Read base path & namespace from config
+        
         $basePath = mb_rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
         $nsBase = mb_rtrim((string) config('modules.default.namespace', 'App\\Modules'), '\\');
 
@@ -40,7 +40,7 @@ class ModularServiceProvider extends ServiceProvider
             return;
         }
 
-        // Cache modules list (short TTL in dev, forever in prod)
+        
         $cacheKey = 'modular.modules.list';
         $ttl = app()->environment('production') ? null : now()->addMinutes(5);
 
@@ -55,11 +55,11 @@ class ModularServiceProvider extends ServiceProvider
             return array_values($dirs);
         });
 
-        // Register global factory resolver (once for all modules)
+        
         $this->registerFactoriesResolver($basePath, $nsBase);
 
-        // Register module-specific resources (migrations, helpers)
-        // Routes, policies, observers, and events are registered by individual module service providers
+        
+        
         foreach ($modules as $module) {
             try {
                 $this->registerHelpers($module, $basePath);
@@ -70,13 +70,13 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
-    #[Override]
+    
     public function register(): void {}
 
-    /**
-     * Include module helpers if present.
-     * This is module-specific but registered globally for convenience.
-     */
+    
+
+
+
     protected function registerHelpers(string $module, string $basePath): void
     {
         $structure = config('modules.default.structure', []);
@@ -95,10 +95,10 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Register module migrations (safe if path doesn't exist).
-     * This is module-specific but registered globally for convenience.
-     */
+    
+
+
+
     protected function registerMigrations(string $module, string $basePath): void
     {
         $structure = config('modules.default.structure', []);
@@ -110,22 +110,22 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Register global factory resolver for all modules.
-     * Maps: App\Modules\X\Infrastructure\Models\Post -> App\Modules\X\Database\Factories\PostFactory
-     * This is a GLOBAL resource, registered once for all modules.
-     */
+    
+
+
+
+
     protected function registerFactoriesResolver(string $basePath, string $nsBase): void
     {
         Factory::guessFactoryNamesUsing(static function (string $modelFqcn): string {
-            // Replace "\Infrastructure\Models\" with "\Database\Factories\" (PSR-4 aligned)
+            
             $factoryFqcn = str_replace(
                 ['\\Infrastructure\\Models\\', '\\Models\\', '\\Model\\'],
                 '\\Database\\Factories\\',
                 $modelFqcn
             );
 
-            /** @var class-string<Factory<Model>> $factoryClass */
+             
             $factoryClass = $factoryFqcn.'Factory';
 
             return $factoryClass;

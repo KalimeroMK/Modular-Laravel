@@ -14,9 +14,9 @@ class UpdateUserRequest extends FormRequest
         return true;
     }
 
-    /**
-     * @return array<string, array<int, string>>
-     */
+    
+
+
     public function rules(): array
     {
         $id = $this->route('id');
@@ -28,10 +28,10 @@ class UpdateUserRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
-    #[Override]
+    
+
+
+    
     public function messages(): array
     {
         return [

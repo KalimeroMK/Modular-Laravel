@@ -16,7 +16,7 @@ use Tests\TestCase;
 
 class GetCurrentUserActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -25,7 +25,7 @@ class GetCurrentUserActionTest extends TestCase
 
     public function test_execute_returns_current_user(): void
     {
-        // Arrange
+        
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
         $user->shouldReceive('getAttribute')->andReturnUsing(fn ($key) => match ($key) {
@@ -49,10 +49,10 @@ class GetCurrentUserActionTest extends TestCase
 
         $action = new GetCurrentUserAction($tokenService);
 
-        // Act
+        
         $result = $action->execute($request);
 
-        // Assert
+        
         $this->assertInstanceOf(UserResponseDTO::class, $result);
         $this->assertEquals('Test User', $result->name);
         $this->assertEquals('test@example.com', $result->email);
@@ -60,7 +60,7 @@ class GetCurrentUserActionTest extends TestCase
 
     public function test_execute_throws_exception_when_no_user(): void
     {
-        // Arrange
+        
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('user')
             ->andReturn(null);
@@ -69,7 +69,7 @@ class GetCurrentUserActionTest extends TestCase
 
         $action = new GetCurrentUserAction($tokenService);
 
-        // Act & Assert
+        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('User not authenticated');
         $action->execute($request);

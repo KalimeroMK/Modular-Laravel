@@ -10,11 +10,11 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait HasRoles
 {
-    /**
-     * Get all roles for the user.
-     *
-     * @return MorphToMany<Role, \Illuminate\Database\Eloquent\Model>
-     */
+    
+
+
+
+
     public function roles(): MorphToMany
     {
         return $this->morphToMany(
@@ -26,11 +26,11 @@ trait HasRoles
         )->wherePivot('model_type', static::class);
     }
 
-    /**
-     * Get all permissions for the user (direct and via roles).
-     *
-     * @return MorphToMany<Permission, \Illuminate\Database\Eloquent\Model>
-     */
+    
+
+
+
+
     public function permissions(): MorphToMany
     {
         return $this->morphToMany(
@@ -42,9 +42,9 @@ trait HasRoles
         )->wherePivot('model_type', static::class);
     }
 
-    /**
-     * Assign a role to the user.
-     */
+    
+
+
     public function assignRole(Role|string $role): void
     {
         if (is_string($role)) {
@@ -54,9 +54,9 @@ trait HasRoles
         $this->roles()->syncWithoutDetaching([$role->id]);
     }
 
-    /**
-     * Remove a role from the user.
-     */
+    
+
+
     public function removeRole(Role|string $role): void
     {
         if (is_string($role)) {
@@ -66,9 +66,9 @@ trait HasRoles
         $this->roles()->detach($role->id);
     }
 
-    /**
-     * Give permission directly to the user.
-     */
+    
+
+
     public function givePermissionTo(Permission|string $permission): void
     {
         if (is_string($permission)) {
@@ -78,9 +78,9 @@ trait HasRoles
         $this->permissions()->syncWithoutDetaching([$permission->id]);
     }
 
-    /**
-     * Revoke permission from the user.
-     */
+    
+
+
     public function revokePermissionTo(Permission|string $permission): void
     {
         if (is_string($permission)) {
@@ -90,9 +90,9 @@ trait HasRoles
         $this->permissions()->detach($permission->id);
     }
 
-    /**
-     * Check if user has a specific role.
-     */
+    
+
+
     public function hasRole(Role|string $role): bool
     {
         if (is_string($role)) {
@@ -102,12 +102,12 @@ trait HasRoles
         return $this->roles()->where('roles.id', $role->id)->exists();
     }
 
-    /**
-     * Check if user has a specific permission (direct or via role).
-     */
+    
+
+
     public function hasPermissionTo(Permission|string $permission): bool
     {
-        // Check direct permissions
+        
         if (is_string($permission)) {
             $hasDirectPermission = $this->permissions()->where('name', $permission)->where('guard_name', 'api')->exists();
         } else {
@@ -118,7 +118,7 @@ trait HasRoles
             return true;
         }
 
-        // Check permissions via roles
+        
         $rolePermissions = $this->roles()->with('permissions')->get()->pluck('permissions')->flatten();
 
         if (is_string($permission)) {
@@ -128,11 +128,11 @@ trait HasRoles
         return $rolePermissions->where('id', $permission->id)->isNotEmpty();
     }
 
-    /**
-     * Check if user has any of the given roles.
-     *
-     * @param  array<int, Role|string>|string  $roles
-     */
+    
+
+
+
+
     public function hasAnyRole(array|string $roles): bool
     {
         if (is_string($roles)) {
@@ -148,11 +148,11 @@ trait HasRoles
         return false;
     }
 
-    /**
-     * Check if user has all of the given roles.
-     *
-     * @param  array<int, Role|string>  $roles
-     */
+    
+
+
+
+
     public function hasAllRoles(array $roles): bool
     {
         foreach ($roles as $role) {

@@ -6,9 +6,9 @@ namespace App\Modules\Core\Support\Generators;
 
 class FieldParser
 {
-    /**
-     * @return array<int, array{name: string, type: string, references?: string, on?: string, morphable_name?: string}>
-     */
+    
+
+
     public function parse(string $fieldsOption): array
     {
         $fields = [];
@@ -28,7 +28,7 @@ class FieldParser
             }
 
             if (isset($parts[1]) && $parts[1] === 'morphable') {
-                // Handle morphable fields - generate both type and id fields
+                
                 $morphableName = $parts[2] ?? $name;
 
                 $fields[] = [

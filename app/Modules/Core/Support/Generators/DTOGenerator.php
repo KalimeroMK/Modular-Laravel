@@ -11,11 +11,11 @@ class DTOGenerator
 {
     public function __construct(protected Filesystem $files) {}
 
-    /**
-     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
-     *
-     * @throws FileNotFoundException
-     */
+    
+
+
+
+
     public function generate(string $moduleName, array $fields): void
     {
         $path = app_path("Modules/{$moduleName}/Application/DTO/{$moduleName}DTO.php");
@@ -48,19 +48,19 @@ class DTOGenerator
         $this->files->put($path, $content);
     }
 
-    /**
-     * Generate with tracking support.
-     *
-     * @param  array<int, array{name: string, type: string, references?: string, on?: string}>  $fields
-     * @param  array<string, mixed>  $options
-     *
-     * @throws FileNotFoundException
-     */
+    
+
+
+
+
+
+
+
     public function generateWithTracking(string $moduleName, array $fields, array $options): void
     {
         $this->generate($moduleName, $fields);
 
-        // Track generated file
+        
         if (isset($options['tracker']) && $options['tracker'] instanceof ModuleGenerationTracker) {
             $path = app_path("Modules/{$moduleName}/Application/DTO/{$moduleName}DTO.php");
             $options['tracker']->trackGeneratedFile($moduleName, $path);

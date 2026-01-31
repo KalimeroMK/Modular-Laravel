@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 class CreatePermissionActionTest extends TestCase
 {
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -24,7 +24,7 @@ class CreatePermissionActionTest extends TestCase
 
     public function test_execute_successful_permission_creation(): void
     {
-        // Arrange
+        
         $name = 'manage-users';
         $guardName = 'api';
 
@@ -43,10 +43,10 @@ class CreatePermissionActionTest extends TestCase
 
         $action = new CreatePermissionAction($permissionRepository);
 
-        // Act
+        
         $result = $action->execute($dto);
 
-        // Assert
+        
         $this->assertInstanceOf(Permission::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($guardName, $result->guard_name);
@@ -54,7 +54,7 @@ class CreatePermissionActionTest extends TestCase
 
     public function test_execute_permission_creation_failure(): void
     {
-        // Arrange
+        
         $name = 'manage-users';
         $guardName = 'api';
 
@@ -66,7 +66,7 @@ class CreatePermissionActionTest extends TestCase
 
         $action = new CreatePermissionAction($permissionRepository);
 
-        // Act & Assert
+        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to create permission');
         $action->execute($dto);

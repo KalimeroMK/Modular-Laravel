@@ -20,7 +20,7 @@ class TwoFactorServiceTest extends TestCase
 
     protected Service $service;
 
-    #[Override]
+    
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,7 +28,7 @@ class TwoFactorServiceTest extends TestCase
         $this->service = new Service($this->google2fa);
     }
 
-    #[Override]
+    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -37,24 +37,24 @@ class TwoFactorServiceTest extends TestCase
 
     public function test_generate_secret_key(): void
     {
-        // Act
+        
         $secretKey = $this->service->generateSecretKey();
 
-        // Assert
+        
         $this->assertIsString($secretKey);
         $this->assertGreaterThan(10, mb_strlen($secretKey));
     }
 
     public function test_generate_qr_code_url(): void
     {
-        // Arrange
+        
         $user = User::factory()->create();
         $secretKey = 'JBSWY3DPEHPK3PXP';
 
-        // Act
+        
         $qrCodeUrl = $this->service->generateQrCodeUrl($user, $secretKey);
 
-        // Assert
+        
         $this->assertIsString($qrCodeUrl);
         $this->assertStringContainsString('otpauth://totp/', $qrCodeUrl);
         $this->assertStringContainsString(urlencode((string) $user->email), $qrCodeUrl);
@@ -62,10 +62,10 @@ class TwoFactorServiceTest extends TestCase
 
     public function test_generate_recovery_codes(): void
     {
-        // Act
+        
         $recoveryCodes = $this->service->generateRecoveryCodes();
 
-        // Assert
+        
         $this->assertCount(8, $recoveryCodes->codes);
         foreach ($recoveryCodes->codes as $code) {
             $this->assertEquals(10, mb_strlen($code));
@@ -74,19 +74,19 @@ class TwoFactorServiceTest extends TestCase
 
     public function test_setup_two_factor(): void
     {
-        // Arrange
+        
         $user = User::factory()->create();
 
-        // Act
+        
         $setupData = $this->service->setupTwoFactor($user);
 
-        // Assert
+        
         $this->assertInstanceOf(\App\Modules\Auth\Application\DTO\TwoFactor\SetupDTO::class, $setupData);
         $this->assertIsString($setupData->secretKey);
         $this->assertIsString($setupData->qrCodeUrl);
         $this->assertIsString($setupData->recoveryCodes);
 
-        // Check that user was updated
+        
         $user->refresh();
         $this->assertNotNull($user->two_factor_secret);
         $this->assertNotNull($user->two_factor_recovery_codes);
@@ -96,32 +96,32 @@ class TwoFactorServiceTest extends TestCase
     {
         $this->markTestSkipped('Test has known issue with refresh() - needs investigation');
 
-        // Arrange
+        
         $user = User::factory()->create();
 
-        // Act & Assert - Initially disabled
+        
         $this->assertFalse($this->service->isTwoFactorEnabled($user));
 
-        // Enable 2FA
+        
         $user->update(['two_factor_secret' => 'encrypted_secret']);
         $user->refresh();
 
-        // Act & Assert - Now enabled
+        
         $this->assertTrue($this->service->isTwoFactorEnabled($user));
     }
 
     public function test_disable_two_factor(): void
     {
-        // Arrange
+        
         $user = User::factory()->create([
             'two_factor_secret' => 'encrypted_secret',
             'two_factor_recovery_codes' => 'encrypted_codes',
         ]);
 
-        // Act
+        
         $result = $this->service->disableTwoFactor($user);
 
-        // Assert
+        
         $this->assertTrue($result);
         $user->refresh();
         $this->assertNull($user->two_factor_secret);

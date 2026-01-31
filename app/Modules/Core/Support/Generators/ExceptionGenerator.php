@@ -11,9 +11,9 @@ class ExceptionGenerator
 {
     public function __construct(protected Filesystem $files) {}
 
-    /**
-     * @throws FileNotFoundException
-     */
+    
+
+
     public function generate(string $moduleName): void
     {
         $types = ['Store', 'Update', 'Delete', 'NotFound', 'Index'];

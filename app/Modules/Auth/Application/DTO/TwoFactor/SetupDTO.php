@@ -12,9 +12,9 @@ class SetupDTO
         public string $recoveryCodes,
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
+    
+
+
     public static function fromArray(array $data): self
     {
         return new self(
@@ -24,9 +24,9 @@ class SetupDTO
         );
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    
+
+
     public function toArray(): array
     {
         return [

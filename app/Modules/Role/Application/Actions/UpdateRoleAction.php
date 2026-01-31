@@ -17,15 +17,15 @@ class UpdateRoleAction
 
     public function execute(int $id, UpdateRoleDTO $dto): Role
     {
-        // Validate that the role exists
+        
         $this->roleRepository->findOrFail($id);
 
         $updateData = $dto->toArray();
 
-        // Only include non-null values in the update
+        
         $updateData = array_filter($updateData, fn ($value) => $value !== null);
 
-        /** @var Role|null $updatedRole */
+         
         $updatedRole = $this->roleRepository->update($id, $updateData);
 
         if ($updatedRole === null) {

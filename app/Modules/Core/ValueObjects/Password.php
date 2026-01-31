@@ -17,37 +17,37 @@ readonly class Password implements Stringable
         $this->validate();
     }
 
-    /**
-     * Convert to string.
-     */
+    
+
+
     public function __toString(): string
     {
         return $this->value;
     }
 
-    /**
-     * Create Password from string.
-     */
+    
+
+
     public static function fromString(string $password): self
     {
         return new self($password);
     }
 
-    /**
-     * Check if password meets strength requirements.
-     */
+    
+
+
     public function isStrong(): bool
     {
         return mb_strlen($this->value) >= self::MIN_LENGTH
-            && preg_match('/[A-Z]/', $this->value) // Has uppercase
-            && preg_match('/[a-z]/', $this->value) // Has lowercase
-            && preg_match('/\d/', $this->value) // Has number
-            && preg_match('/[^A-Za-z0-9]/', $this->value); // Has special char
+            && preg_match('/[A-Z]/', $this->value) 
+            && preg_match('/[a-z]/', $this->value) 
+            && preg_match('/\d/', $this->value) 
+            && preg_match('/[^A-Za-z0-9]/', $this->value); 
     }
 
-    /**
-     * Get password strength score (0-4).
-     */
+    
+
+
     public function strengthScore(): int
     {
         $score = 0;
@@ -71,9 +71,9 @@ readonly class Password implements Stringable
         return min($score, 4);
     }
 
-    /**
-     * Validate password strength.
-     */
+    
+
+
     private function validate(): void
     {
         if (mb_strlen($this->value) < self::MIN_LENGTH) {

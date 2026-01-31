@@ -80,7 +80,7 @@ class MakeModuleCommandTest extends TestCase
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildPolymorphicRelationship');
 
-        // When no morph name is provided, it should use the relation name
+        
         $result = $method->invoke($this->command, 'comments', 'morphMany', 'Comment', ['comments', 'morphMany', 'Comment']);
 
         $expected = "    public function comments()\n    {\n        return \$this->morphMany(Comment::class, 'comments');\n    }";
@@ -95,19 +95,19 @@ class MakeModuleCommandTest extends TestCase
         $relations = 'user:belongsTo:User,comments:morphMany:Comment:commentable,tags:morphToMany:Tag:taggable,owner:morphTo';
         $result = $method->invoke($this->command, $relations);
 
-        // Check standard relationship
+        
         $this->assertStringContainsString('public function user()', $result);
         $this->assertStringContainsString('return $this->belongsTo(User::class)', $result);
 
-        // Check morphMany relationship
+        
         $this->assertStringContainsString('public function comments()', $result);
         $this->assertStringContainsString('return $this->morphMany(Comment::class, \'commentable\')', $result);
 
-        // Check morphToMany relationship
+        
         $this->assertStringContainsString('public function tags()', $result);
         $this->assertStringContainsString('return $this->morphToMany(Tag::class, \'taggable\')', $result);
 
-        // Check morphTo relationship
+        
         $this->assertStringContainsString('public function owner()', $result);
         $this->assertStringContainsString('return $this->morphTo()', $result);
     }
@@ -127,7 +127,7 @@ class MakeModuleCommandTest extends TestCase
         $reflection = new ReflectionClass($this->command);
         $method = $reflection->getMethod('buildRelationships');
 
-        // Relations without proper format should be skipped
+        
         $result = $method->invoke($this->command, 'invalid,user:belongsTo:User');
 
         $this->assertStringNotContainsString('invalid', $result);
@@ -179,7 +179,7 @@ class MakeModuleCommandTest extends TestCase
 
         $result = $method->invoke($this->command, 'comments:morphMany:Comment:commentable');
 
-        // Check for proper indentation and formatting
+        
         $this->assertStringContainsString('    public function comments()', $result);
         $this->assertStringContainsString('    {', $result);
         $this->assertStringContainsString('        return $this->morphMany(Comment::class, \'commentable\');', $result);
@@ -194,7 +194,7 @@ class MakeModuleCommandTest extends TestCase
         $relations = 'commentable:morphTo,comments:morphMany:Comment:commentable,tags:morphToMany:Tag:taggable,avatar:morphOne:Avatar:imageable';
         $result = $method->invoke($this->command, $relations);
 
-        // Verify all polymorphic relationships are built correctly
+        
         $lines = explode("\n", (string) $result);
         $methodCount = 0;
 
@@ -204,9 +204,9 @@ class MakeModuleCommandTest extends TestCase
             }
         }
 
-        $this->assertEquals(4, $methodCount); // Should have 4 relationship methods
+        $this->assertEquals(4, $methodCount); 
 
-        // Check specific content
+        
         $this->assertStringContainsString('morphTo()', $result);
         $this->assertStringContainsString('morphMany(Comment::class, \'commentable\')', $result);
         $this->assertStringContainsString('morphToMany(Tag::class, \'taggable\')', $result);
