@@ -99,14 +99,6 @@ docker compose exec app php artisan key:generate
 echo "🗄️ Running migrations..."
 docker compose exec app php artisan migrate
 
-# Publish Spatie Permission migrations
-echo "🔐 Publishing Spatie Permission migrations..."
-docker compose exec app php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
-
-# Run migrations again to include permission tables
-echo "🗄️ Running migrations with permission tables..."
-docker compose exec app php artisan migrate
-
 # Run seeders
 echo "🌱 Running seeders..."
 docker compose exec app php artisan db:seed

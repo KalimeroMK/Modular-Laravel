@@ -13,7 +13,6 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
         "pragmarx/google2fa-laravel": "^3.0",
-        "spatie/laravel-permission": "^7.0",
         "symfony/yaml": "^7.0"
     },
     "require-dev": {

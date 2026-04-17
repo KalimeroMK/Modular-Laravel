@@ -57,7 +57,6 @@ setup: ## Quick setup for local development (without Docker)
 	@cp .env.example .env
 	@php artisan key:generate
 	@php artisan migrate --seed
-	@php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
 	@php artisan migrate
 	@php artisan l5-swagger:generate
 	@echo "✅ Local setup completed!"
