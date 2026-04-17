@@ -4,24 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
-use App\Modules\{{module}}\Infrastructure\Models\{{class}};
+use App\Modules\Core\Application\Actions\AbstractGetByIdAction;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
 
-/**
- * Action to get a {{moduleVar}} by ID.
- */
-class GetById{{class}}Action
+class GetById{{class}}Action extends AbstractGetByIdAction
 {
-    public function __construct(protected {{class}}RepositoryInterface $repository) {}
-
-    /**
-     * Execute the action to get a {{moduleVar}} by ID.
-     *
-     * @param int|string $id The {{moduleVar}} ID (supports integer IDs, ULIDs, and UUIDs)
-     * @return {{class}} {{moduleVar}} model
-     */
-    public function execute(int|string $id): {{class}}
+    public function __construct({{class}}RepositoryInterface $repository)
     {
-        return $this->repository->findOrFail($id);
+        parent::__construct($repository);
     }
 }

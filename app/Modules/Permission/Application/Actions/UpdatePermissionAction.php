@@ -4,34 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Application\Actions;
 
-use App\Modules\Core\Exceptions\UpdateException;
-use App\Modules\Permission\Application\DTO\UpdatePermissionDTO;
-use App\Modules\Permission\Infrastructure\Models\Permission;
+use App\Modules\Core\Application\Actions\AbstractUpdateAction;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 
-class UpdatePermissionAction
+class UpdatePermissionAction extends AbstractUpdateAction
 {
-    public function __construct(
-        protected PermissionRepositoryInterface $permissionRepository,
-    ) {}
-
-    public function execute(int $id, UpdatePermissionDTO $dto): Permission
+    public function __construct(PermissionRepositoryInterface $repository)
     {
-        
-        $this->permissionRepository->findOrFail($id);
-
-        $updateData = $dto->toArray();
-
-        
-        $updateData = array_filter($updateData, fn ($value) => $value !== null);
-
-         
-        $updatedPermission = $this->permissionRepository->update($id, $updateData);
-
-        if ($updatedPermission === null) {
-            throw new UpdateException('Failed to update permission');
-        }
-
-        return $updatedPermission;
+        parent::__construct($repository);
     }
 }

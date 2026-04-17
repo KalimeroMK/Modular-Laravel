@@ -5,19 +5,4 @@ declare(strict_types=1);
 use App\Modules\{{module}}\Infrastructure\Http\Controllers\{{module}}Controller;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('api/v1/{{table}}')->middleware(['auth:sanctum'])->group(function (): void {
-    Route::get('/', [{{module}}Controller::class, 'index'])
-        ->middleware('throttle:120,1');
-    
-    Route::post('/', [{{module}}Controller::class, 'store'])
-        ->middleware('throttle:20,60');
-    
-    Route::get('/{id}', [{{module}}Controller::class, 'show'])
-        ->middleware('throttle:120,1');
-    
-    Route::put('/{id}', [{{module}}Controller::class, 'update'])
-        ->middleware('throttle:20,60');
-    
-    Route::delete('/{id}', [{{module}}Controller::class, 'destroy'])
-        ->middleware('throttle:5,60');
-});
+Route::crud('{{table}}', {{module}}Controller::class);

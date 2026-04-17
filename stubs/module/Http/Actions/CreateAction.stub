@@ -4,40 +4,16 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
-use App\Modules\Core\Exceptions\CreateException;
-use App\Modules\{{module}}\Application\DTO\{{module}}DTO;
+use App\Modules\Core\Application\Actions\AbstractCreateAction;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
-use App\Modules\{{module}}\Infrastructure\Models\{{class}};
 {{event_imports}}
 
-/**
- * Action to create a new {{moduleVar}}.
- */
-class Create{{class}}Action
+class Create{{class}}Action extends AbstractCreateAction
 {
-    /**
-     * Create a new action instance.
-     */
-    public function __construct(protected {{class}}RepositoryInterface $repository) {}
-
-    /**
-     * Execute the action to create a new {{moduleVar}}.
-     *
-     * @param {{module}}DTO $dto Data transfer object containing {{moduleVar}} data
-     * @return {{class}} Created {{moduleVar}} model
-     * @throws CreateException If {{moduleVar}} creation fails
-     */
-    public function execute({{module}}DTO $dto): {{class}}
+    public function __construct({{class}}RepositoryInterface $repository)
     {
-        /** @var {{class}}|null $result */
-        $result = $this->repository->create($dto->toArray());
-        
-        if ($result === null) {
-            throw new CreateException('Failed to create {{moduleVar}}');
-        }
-        
-        {{event_dispatch_created}}
-        
-        return $result;
+        parent::__construct($repository);
     }
+
+{{event_method_created}}
 }

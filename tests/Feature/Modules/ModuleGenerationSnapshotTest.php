@@ -132,8 +132,7 @@ class ModuleGenerationSnapshotTest extends TestCase
 
         
         $this->assertStringContainsString("class GetById{$this->testModuleName}Action", $content);
-        $this->assertStringContainsString('public function execute', $content);
-        $this->assertStringContainsString(": {$this->testModuleName}", $content); 
+        $this->assertStringContainsString('extends AbstractGetByIdAction', $content); 
     }
 
     public function test_generated_dto_matches_expected_structure(): void
@@ -183,11 +182,12 @@ class ModuleGenerationSnapshotTest extends TestCase
 
         
         $this->assertStringContainsString("class {$this->testModuleName}Controller", $content);
-        $this->assertStringContainsString('extends Controller', $content);
-        $this->assertStringContainsString('public function index', $content);
+        $this->assertStringContainsString('extends AbstractCrudController', $content);
+        $this->assertStringContainsString('protected function getCreateDtoClass', $content);
+        $this->assertStringContainsString('protected function getUpdateDtoClass', $content);
+        $this->assertStringContainsString('protected function getResourceClass', $content);
+        $this->assertStringContainsString('protected function getEntityLabel', $content);
         $this->assertStringContainsString('public function store', $content);
-        $this->assertStringContainsString('public function show', $content);
         $this->assertStringContainsString('public function update', $content);
-        $this->assertStringContainsString('public function destroy', $content);
     }
 }

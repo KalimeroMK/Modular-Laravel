@@ -4,57 +4,23 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Infrastructure\Providers;
 
+use App\Modules\Core\Infrastructure\Providers\AbstractCrudModuleServiceProvider;
 use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Policies\PermissionPolicy;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepository;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\ServiceProvider;
-use Override;
 
-class PermissionModuleServiceProvider extends ServiceProvider
+class PermissionModuleServiceProvider extends AbstractCrudModuleServiceProvider
 {
-    
-    public function register(): void
+    protected function getModuleConfig(): array
     {
-        
-        $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
-    }
-
-    public function boot(): void
-    {
-        
-        if (! $this->isModuleEnabled()) {
-            return;
-        }
-
-        $this->registerPolicies();
-        $this->loadRoutes();
-    }
-
-    
-
-
-    protected function isModuleEnabled(): bool
-    {
-        return (bool) config('modules.specific.Permission.enabled', true);
-    }
-
-    protected function registerPolicies(): void
-    {
-        Gate::policy(Permission::class, PermissionPolicy::class);
-    }
-
-    protected function loadRoutes(): void
-    {
-        $routeFile = __DIR__.'/../Routes/permissions.php';
-
-        if (! file_exists($routeFile)) {
-            return;
-        }
-
-        
-        require $routeFile;
+        return [
+            'moduleName' => 'Permission',
+            'model' => Permission::class,
+            'policy' => PermissionPolicy::class,
+            'repository' => PermissionRepository::class,
+            'interface' => PermissionRepositoryInterface::class,
+            'routeFile' => __DIR__.'/../Routes/permissions.php',
+        ];
     }
 }

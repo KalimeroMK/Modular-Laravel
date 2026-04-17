@@ -4,34 +4,24 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Application\Actions;
 
-use App\Modules\Core\Exceptions\CreateException;
-use App\Modules\User\Application\DTO\CreateUserDTO;
-use App\Modules\User\Infrastructure\Models\User;
+use App\Modules\Core\Application\Actions\AbstractCreateAction;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 
-class CreateUserAction
+class CreateUserAction extends AbstractCreateAction
 {
-    public function __construct(
-        protected UserRepositoryInterface $userRepository,
-    ) {}
-
-    public function execute(CreateUserDTO $dto): User
+    public function __construct(UserRepositoryInterface $repository)
     {
-        $userData = [
+        parent::__construct($repository);
+    }
+
+    protected function mapDtoToArray(object $dto): array
+    {
+        return [
             'name' => $dto->name,
             'email' => $dto->email,
             'password' => Hash::make($dto->password),
             'email_verified_at' => $dto->emailVerifiedAt,
         ];
-
-         
-        $user = $this->userRepository->create($userData);
-
-        if ($user === null) {
-            throw new CreateException('Failed to create user');
-        }
-
-        return $user;
     }
 }

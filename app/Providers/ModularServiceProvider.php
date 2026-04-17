@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Override;
 use Throwable;
@@ -30,7 +31,6 @@ class ModularServiceProvider extends ServiceProvider
     {
         $this->files = $files;
 
-        
         $basePath = rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
         $nsBase = rtrim((string) config('modules.default.namespace', 'App\\Modules'), '\\');
 
@@ -71,11 +71,43 @@ class ModularServiceProvider extends ServiceProvider
     }
 
     
-    public function register(): void {}
+    public function register(): void
+    {
+        $this->registerCrudRouteMacro();
+    }
 
-    
+    protected function registerCrudRouteMacro(): void
+    {
+        Route::macro('crud', function (string $prefix, string $controller, ?string $name = null) {
+            $name = $name ?? $prefix;
 
+            Route::prefix('api/v1/'.$prefix)->middleware(['auth:sanctum'])->group(function () use ($controller, $name) {
+                Route::get('/', [$controller, 'index'])
+                    ->middleware('throttle:60,1')
+                    ->name("{$name}.index");
 
+                Route::post('/', [$controller, 'store'])
+                    ->middleware('throttle:10,60')
+                    ->name("{$name}.store");
+
+                Route::get('/{id}', [$controller, 'show'])
+                    ->middleware('throttle:120,1')
+                    ->name("{$name}.show");
+
+                Route::put('/{id}', [$controller, 'update'])
+                    ->middleware('throttle:30,1')
+                    ->name("{$name}.update");
+
+                Route::patch('/{id}', [$controller, 'update'])
+                    ->middleware('throttle:30,1')
+                    ->name("{$name}.patch");
+
+                Route::delete('/{id}', [$controller, 'destroy'])
+                    ->middleware('throttle:10,60')
+                    ->name("{$name}.destroy");
+            });
+        });
+    }
 
     protected function registerHelpers(string $module, string $basePath): void
     {

@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Application\Actions;
 
-use App\Modules\User\Infrastructure\Models\User;
+use App\Modules\Core\Application\Actions\AbstractGetByIdAction;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 
-class GetUserByIdAction
+class GetUserByIdAction extends AbstractGetByIdAction
 {
-    public function __construct(protected UserRepositoryInterface $repository) {}
-
-    public function execute(int $id): User
+    public function __construct(UserRepositoryInterface $repository)
     {
-         
-        $user = $this->repository->findOrFail($id);
-
-        return $user;
+        parent::__construct($repository);
     }
 }

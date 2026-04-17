@@ -4,28 +4,17 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
+use App\Modules\Core\Application\Actions\AbstractDeleteAction;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
+use Illuminate\Database\Eloquent\Model;
 {{event_imports}}
 
-class Delete{{class}}Action
+class Delete{{class}}Action extends AbstractDeleteAction
 {
-    public function __construct(
-        protected {{class}}RepositoryInterface ${{moduleVar}}Repository,
-    ) {}
-
-    /**
-     * Execute the action to delete a {{moduleVar}}.
-     *
-     * @param int|string $id The {{moduleVar}} ID (supports integer IDs, ULIDs, and UUIDs)
-     * @return bool True if deletion was successful
-     */
-    public function execute(int|string $id): bool
+    public function __construct({{class}}RepositoryInterface $repository)
     {
-        // Validate that the {{moduleVar}} exists
-        ${{moduleVar}} = $this->{{moduleVar}}Repository->findOrFail($id);
-
-        {{event_dispatch_deleted}}
-
-        return $this->{{moduleVar}}Repository->delete($id);
+        parent::__construct($repository);
     }
+
+{{event_method_deleted}}
 }

@@ -4,47 +4,17 @@ declare(strict_types=1);
 
 namespace App\Modules\{{module}}\Application\Actions;
 
-use App\Modules\Core\Exceptions\UpdateException;
-use App\Modules\{{module}}\Application\DTO\{{module}}DTO;
+use App\Modules\Core\Application\Actions\AbstractUpdateAction;
 use App\Modules\{{module}}\Infrastructure\Repositories\{{class}}RepositoryInterface;
-use App\Modules\{{module}}\Infrastructure\Models\{{class}};
+use Illuminate\Database\Eloquent\Model;
 {{event_imports}}
 
-/**
- * Action to update an existing {{moduleVar}}.
- */
-class Update{{class}}Action
+class Update{{class}}Action extends AbstractUpdateAction
 {
-    /**
-     * Create a new action instance.
-     */
-    public function __construct(protected {{class}}RepositoryInterface $repository) {}
-
-    /**
-     * Execute the action to update a {{moduleVar}}.
-     *
-     * @param int|string $id The {{moduleVar}} ID (supports integer IDs, ULIDs, and UUIDs)
-     * @param {{module}}DTO $dto Data transfer object containing updated {{moduleVar}} data
-     * @return {{class}} Updated {{moduleVar}} model
-     * @throws UpdateException If {{moduleVar}} update fails
-     */
-    public function execute(int|string $id, {{module}}DTO $dto): {{class}}
+    public function __construct({{class}}RepositoryInterface $repository)
     {
-        // Validate that the {{moduleVar}} exists
-        $this->repository->findOrFail($id);
-        
-        // Only include non-null values in the update
-        $updateData = array_filter($dto->toArray(), fn ($value) => $value !== null);
-        
-        /** @var {{class}}|null $result */
-        $result = $this->repository->update($id, $updateData);
-        
-        if ($result === null) {
-            throw new UpdateException('Failed to update {{moduleVar}}');
-        }
-        
-        {{event_dispatch_updated}}
-        
-        return $result;
+        parent::__construct($repository);
     }
+
+{{event_method_updated}}
 }

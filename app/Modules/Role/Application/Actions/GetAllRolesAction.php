@@ -4,21 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Application\Actions;
 
-use App\Modules\Role\Infrastructure\Models\Role;
+use App\Modules\Core\Application\Actions\AbstractGetAllAction;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class GetAllRolesAction
+class GetAllRolesAction extends AbstractGetAllAction
 {
-    public function __construct(
-        protected RoleRepositoryInterface $roleRepository,
-    ) {}
-
-    
-
-
-    public function execute(int $perPage = 15): LengthAwarePaginator
+    public function __construct(RoleRepositoryInterface $repository)
     {
-        return $this->roleRepository->paginate($perPage);
+        parent::__construct($repository);
     }
 }

@@ -4,19 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Application\Actions;
 
+use App\Modules\Core\Application\Actions\AbstractDeleteAction;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 
-class DeleteUserAction
+class DeleteUserAction extends AbstractDeleteAction
 {
-    public function __construct(
-        protected UserRepositoryInterface $userRepository,
-    ) {}
-
-    public function execute(int $id): bool
+    public function __construct(UserRepositoryInterface $repository)
     {
-        
-        $this->userRepository->findOrFail($id);
-
-        return $this->userRepository->delete($id);
+        parent::__construct($repository);
     }
 }

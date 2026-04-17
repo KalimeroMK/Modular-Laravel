@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Infrastructure\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Modules\Core\Support\ApiResponse;
-use App\Modules\Core\Traits\SwaggerTrait;
+use App\Modules\Core\Http\Controllers\AbstractCrudController;
 use App\Modules\Permission\Application\Actions\CreatePermissionAction;
 use App\Modules\Permission\Application\Actions\DeletePermissionAction;
 use App\Modules\Permission\Application\Actions\GetAllPermissionsAction;
@@ -19,259 +17,51 @@ use App\Modules\Permission\Infrastructure\Http\Requests\UpdatePermissionRequest;
 use App\Modules\Permission\Infrastructure\Http\Resources\PermissionResource;
 use Illuminate\Http\JsonResponse;
 
-class PermissionController extends Controller
+class PermissionController extends AbstractCrudController
 {
-    use SwaggerTrait;
-
     public function __construct(
-        protected GetAllPermissionsAction $getAllPermissionsAction,
-        protected GetPermissionByIdAction $getPermissionByIdAction,
-        protected CreatePermissionAction $createPermissionAction,
-        protected UpdatePermissionAction $updatePermissionAction,
-        protected DeletePermissionAction $deletePermissionAction,
-    ) {}
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function index(): JsonResponse
-    {
-        $permissions = $this->getAllPermissionsAction->execute();
-
-        return ApiResponse::paginated($permissions, 'Permissions retrieved successfully', PermissionResource::collection($permissions->items()));
+        GetAllPermissionsAction $getAllPermissionsAction,
+        GetPermissionByIdAction $getPermissionByIdAction,
+        CreatePermissionAction $createPermissionAction,
+        UpdatePermissionAction $updatePermissionAction,
+        DeletePermissionAction $deletePermissionAction,
+    ) {
+        parent::__construct(
+            $getAllPermissionsAction,
+            $getPermissionByIdAction,
+            $createPermissionAction,
+            $updatePermissionAction,
+            $deletePermissionAction,
+        );
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function show(int $id): JsonResponse
+    protected function getCreateDtoClass(): string
     {
-        return ApiResponse::success(new PermissionResource($this->getPermissionByIdAction->execute($id)), 'Permission retrieved successfully');
+        return CreatePermissionDTO::class;
     }
 
-    
+    protected function getUpdateDtoClass(): string
+    {
+        return UpdatePermissionDTO::class;
+    }
 
+    protected function getResourceClass(): string
+    {
+        return PermissionResource::class;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    protected function getEntityLabel(): string
+    {
+        return 'Permission';
+    }
 
     public function store(CreatePermissionRequest $request): JsonResponse
     {
-        return ApiResponse::created(new PermissionResource($this->createPermissionAction->execute(CreatePermissionDTO::fromArray($request->validated()))), 'Permission created successfully');
+        return $this->handleStore($request);
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function update(int $id, UpdatePermissionRequest $request): JsonResponse
     {
-        return ApiResponse::success(new PermissionResource($this->updatePermissionAction->execute($id, UpdatePermissionDTO::fromArray($request->validated()))), 'Permission updated successfully');
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function destroy(int $id): JsonResponse
-    {
-        $this->deletePermissionAction->execute($id);
-
-        return ApiResponse::success(null, 'Permission deleted successfully');
+        return $this->handleUpdate($id, $request);
     }
 }

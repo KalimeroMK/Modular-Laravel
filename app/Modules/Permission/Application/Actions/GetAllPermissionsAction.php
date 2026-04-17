@@ -4,21 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Application\Actions;
 
-use App\Modules\Permission\Infrastructure\Models\Permission;
+use App\Modules\Core\Application\Actions\AbstractGetAllAction;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class GetAllPermissionsAction
+class GetAllPermissionsAction extends AbstractGetAllAction
 {
-    public function __construct(
-        protected PermissionRepositoryInterface $permissionRepository,
-    ) {}
-
-    
-
-
-    public function execute(int $perPage = 15): LengthAwarePaginator
+    public function __construct(PermissionRepositoryInterface $repository)
     {
-        return $this->permissionRepository->paginate($perPage);
+        parent::__construct($repository);
     }
 }

@@ -4,31 +4,21 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Application\Actions;
 
-use App\Modules\Core\Exceptions\CreateException;
-use App\Modules\Role\Application\DTO\CreateRoleDTO;
-use App\Modules\Role\Infrastructure\Models\Role;
+use App\Modules\Core\Application\Actions\AbstractCreateAction;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 
-class CreateRoleAction
+class CreateRoleAction extends AbstractCreateAction
 {
-    public function __construct(
-        protected RoleRepositoryInterface $roleRepository,
-    ) {}
-
-    public function execute(CreateRoleDTO $dto): Role
+    public function __construct(RoleRepositoryInterface $repository)
     {
-        $roleData = [
+        parent::__construct($repository);
+    }
+
+    protected function mapDtoToArray(object $dto): array
+    {
+        return [
             'name' => $dto->name,
             'guard_name' => $dto->guardName,
         ];
-
-         
-        $role = $this->roleRepository->create($roleData);
-
-        if ($role === null) {
-            throw new CreateException('Failed to create role');
-        }
-
-        return $role;
     }
 }

@@ -4,31 +4,21 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Application\Actions;
 
-use App\Modules\Core\Exceptions\CreateException;
-use App\Modules\Permission\Application\DTO\CreatePermissionDTO;
-use App\Modules\Permission\Infrastructure\Models\Permission;
+use App\Modules\Core\Application\Actions\AbstractCreateAction;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 
-class CreatePermissionAction
+class CreatePermissionAction extends AbstractCreateAction
 {
-    public function __construct(
-        protected PermissionRepositoryInterface $permissionRepository,
-    ) {}
-
-    public function execute(CreatePermissionDTO $dto): Permission
+    public function __construct(PermissionRepositoryInterface $repository)
     {
-        $permissionData = [
+        parent::__construct($repository);
+    }
+
+    protected function mapDtoToArray(object $dto): array
+    {
+        return [
             'name' => $dto->name,
             'guard_name' => $dto->guardName,
         ];
-
-         
-        $permission = $this->permissionRepository->create($permissionData);
-
-        if ($permission === null) {
-            throw new CreateException('Failed to create permission');
-        }
-
-        return $permission;
     }
 }

@@ -4,34 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Application\Actions;
 
-use App\Modules\Core\Exceptions\UpdateException;
-use App\Modules\Role\Application\DTO\UpdateRoleDTO;
-use App\Modules\Role\Infrastructure\Models\Role;
+use App\Modules\Core\Application\Actions\AbstractUpdateAction;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 
-class UpdateRoleAction
+class UpdateRoleAction extends AbstractUpdateAction
 {
-    public function __construct(
-        protected RoleRepositoryInterface $roleRepository,
-    ) {}
-
-    public function execute(int $id, UpdateRoleDTO $dto): Role
+    public function __construct(RoleRepositoryInterface $repository)
     {
-        
-        $this->roleRepository->findOrFail($id);
-
-        $updateData = $dto->toArray();
-
-        
-        $updateData = array_filter($updateData, fn ($value) => $value !== null);
-
-         
-        $updatedRole = $this->roleRepository->update($id, $updateData);
-
-        if ($updatedRole === null) {
-            throw new UpdateException('Failed to update role');
-        }
-
-        return $updatedRole;
+        parent::__construct($repository);
     }
 }
