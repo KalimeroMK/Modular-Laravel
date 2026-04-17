@@ -128,7 +128,9 @@ return [
 
 
 
-            'analyser' => null,
+            'analyser' => new \OpenApi\Analysers\ReflectionAnalyser([
+                new \OpenApi\Analysers\DocBlockAnnotationFactory(),
+            ]),
 
             
 

@@ -7,12 +7,10 @@ namespace App\Swagger;
 use OpenApi\Annotations as OA;
 
 /**
- * @OA\OpenApi(
- *     @OA\Info(
- *         title="Modular Laravel API",
- *         version="1.0.0",
- *         description="API documentation for Modular Laravel application"
- *     )
+ * @OA\Info(
+ *     title="Modular Laravel API",
+ *     version="1.0.0",
+ *     description="API documentation for Modular Laravel application"
  * )
  *
  * @OA\Server(
