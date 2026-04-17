@@ -35,8 +35,11 @@ abstract class AbstractCrudController extends Controller
 
     abstract protected function getEntityLabel(): string;
 
+    abstract protected function getModelClass(): string;
+
     final public function index(): JsonResponse
     {
+        $this->authorize('viewAny', $this->getModelClass());
         $items = $this->getAllAction->execute();
         $resourceClass = $this->getResourceClass();
 
@@ -49,16 +52,20 @@ abstract class AbstractCrudController extends Controller
 
     final public function show(int|string $id): JsonResponse
     {
+        $entity = $this->getByIdAction->execute($id);
+        $this->authorize('view', $entity);
         $resourceClass = $this->getResourceClass();
 
         return ApiResponse::success(
-            new $resourceClass($this->getByIdAction->execute($id)),
+            new $resourceClass($entity),
             $this->getEntityLabel().' retrieved successfully'
         );
     }
 
     final public function destroy(int|string $id): JsonResponse
     {
+        $entity = $this->getByIdAction->execute($id);
+        $this->authorize('delete', $entity);
         $this->deleteAction->execute($id);
 
         return ApiResponse::success(null, $this->getEntityLabel().' deleted successfully');
@@ -66,6 +73,7 @@ abstract class AbstractCrudController extends Controller
 
     protected function handleStore(Request $request): JsonResponse
     {
+        $this->authorize('create', $this->getModelClass());
         $dtoClass = $this->getCreateDtoClass();
         $dto = $dtoClass::fromArray($request->validated());
         $resourceClass = $this->getResourceClass();
@@ -78,6 +86,8 @@ abstract class AbstractCrudController extends Controller
 
     protected function handleUpdate(int|string $id, Request $request): JsonResponse
     {
+        $entity = $this->getByIdAction->execute($id);
+        $this->authorize('update', $entity);
         $dtoClass = $this->getUpdateDtoClass();
         $dto = $dtoClass::fromArray($request->validated());
         $resourceClass = $this->getResourceClass();

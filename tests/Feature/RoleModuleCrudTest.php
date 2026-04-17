@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,6 +19,8 @@ class RoleModuleCrudTest extends TestCase
     {
         parent::setUp();
         $user = User::factory()->create();
+        Permission::factory()->create(['name' => 'manage-roles', 'guard_name' => 'api']);
+        $user->givePermissionTo('manage-roles');
         Sanctum::actingAs($user);
     }
 

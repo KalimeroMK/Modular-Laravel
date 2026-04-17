@@ -64,4 +64,9 @@ class PermissionController extends AbstractCrudController
     {
         return 'Permission';
     }
+
+    protected function getModelClass(): string
+    {
+        return \App\Modules\Permission\Infrastructure\Models\Permission::class;
+    }
 }

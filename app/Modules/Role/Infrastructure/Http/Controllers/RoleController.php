@@ -64,4 +64,9 @@ class RoleController extends AbstractCrudController
     {
         return 'Role';
     }
+
+    protected function getModelClass(): string
+    {
+        return \App\Modules\Role\Infrastructure\Models\Role::class;
+    }
 }

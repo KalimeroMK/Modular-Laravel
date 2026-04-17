@@ -64,4 +64,9 @@ class UserController extends AbstractCrudController
     {
         return 'User';
     }
+
+    protected function getModelClass(): string
+    {
+        return \App\Modules\User\Infrastructure\Models\User::class;
+    }
 }

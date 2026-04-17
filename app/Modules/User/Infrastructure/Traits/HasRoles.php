@@ -32,10 +32,15 @@ trait HasRoles
         )->wherePivot('model_type', static::class);
     }
 
+    public function getGuardName(): string
+    {
+        return property_exists($this, 'guard_name') ? $this->guard_name : config('auth.defaults.guard', 'web');
+    }
+
     public function assignRole(Role|string $role): void
     {
         if (is_string($role)) {
-            $role = Role::where('name', $role)->where('guard_name', 'api')->firstOrFail();
+            $role = Role::where('name', $role)->where('guard_name', $this->getGuardName())->firstOrFail();
         }
 
         $this->roles()->syncWithoutDetaching([$role->id]);
@@ -44,34 +49,46 @@ trait HasRoles
     public function removeRole(Role|string $role): void
     {
         if (is_string($role)) {
-            $role = Role::where('name', $role)->where('guard_name', 'api')->firstOrFail();
+            $role = Role::where('name', $role)->where('guard_name', $this->getGuardName())->firstOrFail();
         }
 
         $this->roles()->detach($role->id);
     }
 
-    public function givePermissionTo(Permission|string $permission): void
+    public function givePermissionTo(Permission|string|array $permission): void
     {
-        if (is_string($permission)) {
-            $permission = Permission::where('name', $permission)->where('guard_name', 'api')->firstOrFail();
+        $permissions = is_array($permission) ? $permission : [$permission];
+        $ids = [];
+
+        foreach ($permissions as $perm) {
+            if (is_string($perm)) {
+                $perm = Permission::where('name', $perm)->where('guard_name', $this->getGuardName())->firstOrFail();
+            }
+            $ids[] = $perm->id;
         }
 
-        $this->permissions()->syncWithoutDetaching([$permission->id]);
+        $this->permissions()->syncWithoutDetaching($ids);
     }
 
-    public function revokePermissionTo(Permission|string $permission): void
+    public function revokePermissionTo(Permission|string|array $permission): void
     {
-        if (is_string($permission)) {
-            $permission = Permission::where('name', $permission)->where('guard_name', 'api')->firstOrFail();
+        $permissions = is_array($permission) ? $permission : [$permission];
+        $ids = [];
+
+        foreach ($permissions as $perm) {
+            if (is_string($perm)) {
+                $perm = Permission::where('name', $perm)->where('guard_name', $this->getGuardName())->firstOrFail();
+            }
+            $ids[] = $perm->id;
         }
 
-        $this->permissions()->detach($permission->id);
+        $this->permissions()->detach($ids);
     }
 
     public function hasRole(Role|string $role): bool
     {
         if (is_string($role)) {
-            return $this->roles()->where('name', $role)->where('guard_name', 'api')->exists();
+            return $this->roles()->where('name', $role)->where('guard_name', $this->getGuardName())->exists();
         }
 
         return $this->roles()->where('roles.id', $role->id)->exists();
@@ -79,24 +96,23 @@ trait HasRoles
 
     public function hasPermissionTo(Permission|string $permission): bool
     {
-
         if (is_string($permission)) {
-            $hasDirectPermission = $this->permissions()->where('name', $permission)->where('guard_name', 'api')->exists();
-        } else {
-            $hasDirectPermission = $this->permissions()->where('permissions.id', $permission->id)->exists();
+            if ($this->permissions()->where('name', $permission)->where('guard_name', $this->getGuardName())->exists()) {
+                return true;
+            }
+
+            return $this->roles()->whereHas('permissions', function ($query) use ($permission) {
+                $query->where('name', $permission)->where('guard_name', $this->getGuardName());
+            })->exists();
         }
 
-        if ($hasDirectPermission) {
+        if ($this->permissions()->where('permissions.id', $permission->id)->exists()) {
             return true;
         }
 
-        $rolePermissions = $this->roles()->with('permissions')->get()->pluck('permissions')->flatten();
-
-        if (is_string($permission)) {
-            return $rolePermissions->where('name', $permission)->where('guard_name', 'api')->isNotEmpty();
-        }
-
-        return $rolePermissions->where('id', $permission->id)->isNotEmpty();
+        return $this->roles()->whereHas('permissions', function ($query) use ($permission) {
+            $query->where('permissions.id', $permission->id);
+        })->exists();
     }
 
     public function hasAnyRole(array|string $roles): bool
@@ -114,11 +130,22 @@ trait HasRoles
         return false;
     }
 
+    public function hasAllRoles(array $roles): bool
+    {
+        foreach ($roles as $role) {
+            if (! $this->hasRole($role)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function syncRoles(array $roles): void
     {
         $ids = collect($roles)->map(function (Role|string $role) {
             if (is_string($role)) {
-                $role = Role::where('name', $role)->where('guard_name', 'api')->firstOrFail();
+                $role = Role::where('name', $role)->where('guard_name', $this->getGuardName())->firstOrFail();
             }
 
             return $role->id;
@@ -131,7 +158,7 @@ trait HasRoles
     {
         $ids = collect($permissions)->map(function (Permission|string $permission) {
             if (is_string($permission)) {
-                $permission = Permission::where('name', $permission)->where('guard_name', 'api')->firstOrFail();
+                $permission = Permission::where('name', $permission)->where('guard_name', $this->getGuardName())->firstOrFail();
             }
 
             return $permission->id;
@@ -140,14 +167,13 @@ trait HasRoles
         $this->permissions()->sync($ids);
     }
 
-    public function hasAllRoles(array $roles): bool
+    public function getRoleNames(): array
     {
-        foreach ($roles as $role) {
-            if (! $this->hasRole($role)) {
-                return false;
-            }
-        }
+        return $this->roles()->pluck('name')->toArray();
+    }
 
-        return true;
+    public function getPermissionNames(): array
+    {
+        return $this->permissions()->pluck('name')->toArray();
     }
 }

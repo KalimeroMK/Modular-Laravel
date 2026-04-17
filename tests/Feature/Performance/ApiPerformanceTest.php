@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Performance;
 
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -73,6 +74,9 @@ class ApiPerformanceTest extends TestCase
     {
 
         $user = User::factory()->create();
+        Permission::factory()->create(['name' => 'manage-roles', 'guard_name' => 'api']);
+        Permission::factory()->create(['name' => 'manage-permissions', 'guard_name' => 'api']);
+        $user->givePermissionTo(['manage-roles', 'manage-permissions']);
         Sanctum::actingAs($user);
 
         $startTime = microtime(true);

@@ -159,4 +159,99 @@ class EloquentRepositoryTest extends TestCase
             'email' => 'user2@example.com',
         ]);
     }
+
+    public function test_all_cached_is_invalidated_after_create(): void
+    {
+        $this->repository->create([
+            'name' => 'User 1',
+            'email' => 'user1@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+        $cached = $this->repository->allCached();
+        $this->assertCount(1, $cached);
+
+        $this->repository->create([
+            'name' => 'User 2',
+            'email' => 'user2@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+        $fresh = $this->repository->allCached();
+        $this->assertCount(2, $fresh);
+    }
+
+    public function test_all_cached_with_relations_is_invalidated_after_create(): void
+    {
+        $this->repository->create([
+            'name' => 'User 1',
+            'email' => 'user3@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+        $cached = $this->repository->allCached(['roles']);
+        $this->assertCount(1, $cached);
+
+        $this->repository->create([
+            'name' => 'User 2',
+            'email' => 'user4@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+        $fresh = $this->repository->allCached(['roles']);
+        $this->assertCount(2, $fresh);
+    }
+
+    public function test_find_cached_is_invalidated_after_update(): void
+    {
+        $user = User::factory()->create(['name' => 'Original']);
+        $cached = $this->repository->findCached($user->id);
+        $this->assertEquals('Original', $cached->name);
+
+        $this->repository->update($user->id, ['name' => 'Updated']);
+        $fresh = $this->repository->findCached($user->id);
+        $this->assertEquals('Updated', $fresh->name);
+    }
+
+    public function test_find_cached_with_relations_is_invalidated_after_update(): void
+    {
+        $user = User::factory()->create(['name' => 'Original']);
+        $cached = $this->repository->findCached($user->id, ['roles']);
+        $this->assertEquals('Original', $cached->name);
+
+        $this->repository->update($user->id, ['name' => 'Updated']);
+        $fresh = $this->repository->findCached($user->id, ['roles']);
+        $this->assertEquals('Updated', $fresh->name);
+    }
+
+    public function test_find_cached_is_invalidated_after_delete(): void
+    {
+        $user = User::factory()->create();
+        $cached = $this->repository->findCached($user->id);
+        $this->assertNotNull($cached);
+
+        $this->repository->delete($user->id);
+        $fresh = $this->repository->findCached($user->id);
+        $this->assertNull($fresh);
+    }
+
+    public function test_clear_cache_clears_all_cached_entries(): void
+    {
+        $user = User::factory()->create();
+        $this->repository->findCached($user->id);
+        $this->repository->findCached($user->id, ['roles']);
+        $this->repository->allCached();
+        $this->repository->allCached(['roles']);
+
+        $this->repository->clearCache();
+
+        $reflection = new \ReflectionMethod($this->repository, 'getCacheKey');
+        $reflection->setAccessible(true);
+
+        $keyAll = $reflection->invoke($this->repository, 'all');
+        $keyAllWith = $reflection->invoke($this->repository, 'all', ['roles']);
+        $keyFind = $reflection->invoke($this->repository, 'find', [], $user->id);
+        $keyFindWith = $reflection->invoke($this->repository, 'find', ['roles'], $user->id);
+
+        $this->assertNull(\Illuminate\Support\Facades\Cache::get($keyAll));
+        $this->assertNull(\Illuminate\Support\Facades\Cache::get($keyAllWith));
+        $this->assertNull(\Illuminate\Support\Facades\Cache::get($keyFind));
+        $this->assertNull(\Illuminate\Support\Facades\Cache::get($keyFindWith));
+    }
 }

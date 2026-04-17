@@ -82,10 +82,11 @@ abstract class EloquentRepository
 
     final public function delete(int|string $id): bool
     {
-        $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
+        $model = $this->findOrFail($id);
+        $deleted = $model->delete();
         $this->invalidateCache($id);
 
-        return $deletedRows > 0;
+        return $deleted;
     }
 
     final public function restore(int|string $id): ?Model
@@ -124,6 +125,7 @@ abstract class EloquentRepository
     final public function allCached(array $with = [], int $ttl = 3600): Collection
     {
         $cacheKey = $this->getCacheKey('all', $with);
+        $this->trackCacheKey($cacheKey);
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, fn () => $this->all($with));
     }
@@ -131,13 +133,21 @@ abstract class EloquentRepository
     final public function findCached(int|string $id, array $with = [], int $ttl = 3600): ?Model
     {
         $cacheKey = $this->getCacheKey('find', $with, $id);
+        $this->trackCacheKey($cacheKey);
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, fn () => $this->find($id, $with));
     }
 
     final public function clearCache(): void
     {
-        \Illuminate\Support\Facades\Cache::forget($this->getCacheKey('all'));
+        $registryKey = "repository_{$this->getModelBaseName()}_keys";
+        $keys = \Illuminate\Support\Facades\Cache::get($registryKey, []);
+
+        foreach ($keys as $key) {
+            \Illuminate\Support\Facades\Cache::forget($key);
+        }
+
+        \Illuminate\Support\Facades\Cache::forever($registryKey, []);
     }
 
     protected function query(): Builder
@@ -154,12 +164,42 @@ abstract class EloquentRepository
         return "repository_{$modelName}_{$method}{$withString}{$idString}";
     }
 
+    protected function trackCacheKey(string $key): void
+    {
+        $registryKey = "repository_{$this->getModelBaseName()}_keys";
+        $keys = \Illuminate\Support\Facades\Cache::get($registryKey, []);
+        if (! in_array($key, $keys, true)) {
+            $keys[] = $key;
+            \Illuminate\Support\Facades\Cache::forever($registryKey, $keys);
+        }
+    }
+
     protected function invalidateCache(int|string|null $id = null): void
     {
-        \Illuminate\Support\Facades\Cache::forget($this->getCacheKey('all'));
+        $registryKey = "repository_{$this->getModelBaseName()}_keys";
+        $keys = \Illuminate\Support\Facades\Cache::get($registryKey, []);
+        $remaining = [];
 
-        if ($id !== null) {
-            \Illuminate\Support\Facades\Cache::forget($this->getCacheKey('find', [], $id));
+        foreach ($keys as $key) {
+            $shouldRemove = false;
+            if (str_contains($key, "_all")) {
+                $shouldRemove = true;
+            } elseif ($id !== null && preg_match("/_\\Q{$id}\\E$/", $key)) {
+                $shouldRemove = true;
+            }
+
+            if ($shouldRemove) {
+                \Illuminate\Support\Facades\Cache::forget($key);
+            } else {
+                $remaining[] = $key;
+            }
         }
+
+        \Illuminate\Support\Facades\Cache::forever($registryKey, $remaining);
+    }
+
+    protected function getModelBaseName(): string
+    {
+        return class_basename($this->model);
     }
 }

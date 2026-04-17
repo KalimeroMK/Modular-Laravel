@@ -120,8 +120,19 @@ class AuthFlowIntegrationTest extends TestCase
             'guard_name' => 'api',
         ]);
 
+        \App\Modules\Permission\Infrastructure\Models\Permission::create([
+            'name' => 'manage-roles',
+            'guard_name' => 'api',
+        ]);
+
+        \App\Modules\Permission\Infrastructure\Models\Permission::create([
+            'name' => 'manage-permissions',
+            'guard_name' => 'api',
+        ]);
+
         $user->assignRole($role);
         $user->givePermissionTo($permission);
+        $user->givePermissionTo(['manage-roles', 'manage-permissions']);
 
         Sanctum::actingAs($user);
 

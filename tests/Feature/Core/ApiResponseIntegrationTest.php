@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Core;
 
+use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -19,6 +20,9 @@ class ApiResponseIntegrationTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
+        Permission::factory()->create(['name' => 'manage-roles', 'guard_name' => 'api']);
+        Permission::factory()->create(['name' => 'manage-permissions', 'guard_name' => 'api']);
+        $this->user->givePermissionTo(['manage-roles', 'manage-permissions']);
         Sanctum::actingAs($this->user);
     }
 
@@ -99,10 +103,9 @@ class ApiResponseIntegrationTest extends TestCase
 
     public function test_user_update_returns_success_response_structure(): void
     {
-        $user = User::factory()->create();
         $payload = ['name' => 'Updated Name'];
 
-        $response = $this->putJson("/api/v1/users/{$user->id}", $payload);
+        $response = $this->putJson("/api/v1/users/{$this->user->id}", $payload);
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -119,8 +122,13 @@ class ApiResponseIntegrationTest extends TestCase
 
     public function test_user_destroy_returns_success_response_structure(): void
     {
-        $user = User::factory()->create();
+        \App\Modules\Role\Infrastructure\Models\Role::factory()->create([
+            'name' => 'admin',
+            'guard_name' => 'api',
+        ]);
+        $this->user->assignRole('admin');
 
+        $user = User::factory()->create();
         $response = $this->deleteJson("/api/v1/users/{$user->id}");
 
         $response->assertStatus(200);

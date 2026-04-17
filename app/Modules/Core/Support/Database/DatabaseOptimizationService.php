@@ -98,26 +98,32 @@ class DatabaseOptimizationService
 
             foreach ($update as $column => $value) {
                 if ($column !== $key) {
-                    $cases[$column][] = "WHEN {$id} THEN ?";
+                    $cases[$column][] = 'WHEN ? THEN ?';
+                    $bindings[] = $id;
                     $bindings[] = $value;
                 }
             }
         }
 
-        $idsString = implode(',', $ids);
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
         $sql = "UPDATE {$model->getTable()} SET ";
 
         foreach ($cases as $column => $caseStatements) {
             $sql .= "{$column} = CASE {$key} ".implode(' ', $caseStatements).' END, ';
         }
 
-        $sql = mb_rtrim($sql, ', ')." WHERE {$key} IN ({$idsString})";
+        $sql = mb_rtrim($sql, ', ')." WHERE {$key} IN ({$placeholders})";
+        $bindings = array_merge($bindings, $ids);
 
         return DB::update($sql, $bindings) > 0;
     }
 
     public function analyzeTable(string $table): array
     {
+        if (! preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
+            throw new \InvalidArgumentException('Invalid table name: '.$table);
+        }
+
         try {
             $connection = DB::connection();
             $driver = $connection->getDriverName();

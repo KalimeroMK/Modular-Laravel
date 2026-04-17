@@ -18,6 +18,8 @@ class PermissionModuleCrudTest extends TestCase
     {
         parent::setUp();
         $user = User::factory()->create();
+        Permission::factory()->create(['name' => 'manage-permissions', 'guard_name' => 'api']);
+        $user->givePermissionTo('manage-permissions');
         Sanctum::actingAs($user);
     }
 
