@@ -20,6 +20,9 @@ class ModuleConfigUpdater
         }
 
         $content = file_get_contents($this->configPath);
+        if ($content === false) {
+            return;
+        }
 
         if ($this->moduleExists($content, $moduleName)) {
             return;
@@ -38,11 +41,17 @@ class ModuleConfigUpdater
         }
 
         $content = file_get_contents($this->configPath);
+        if ($content === false) {
+            return;
+        }
 
         $pattern = "/\s+'{$moduleName}' => \[\s+.*?\s+\],\n/s";
-        $content = preg_replace($pattern, '', $content);
+        $result = preg_replace($pattern, '', $content);
+        if ($result === null) {
+            return;
+        }
 
-        file_put_contents($this->configPath, $content);
+        file_put_contents($this->configPath, $result);
     }
 
     protected function moduleExists(string $content, string $moduleName): bool

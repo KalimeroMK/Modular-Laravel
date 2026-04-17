@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use RuntimeException;
 use Throwable;
 
 class ModularServiceProvider extends ServiceProvider
@@ -58,6 +59,27 @@ class ModularServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerCrudRouteMacro();
+    }
+
+    /**
+     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $modelFqcn
+     * @return class-string<Factory<\Illuminate\Database\Eloquent\Model>>
+     */
+    public function resolveFactoryName(string $modelFqcn): string
+    {
+        $factoryFqcn = strtr($modelFqcn, [
+            '\\Infrastructure\\Models\\' => '\\Database\\Factories\\',
+            '\\Models\\' => '\\Database\\Factories\\',
+            '\\Model\\' => '\\Database\\Factories\\',
+        ]);
+
+        $factoryClass = $factoryFqcn.'Factory';
+
+        if (! class_exists($factoryClass) || ! is_subclass_of($factoryClass, Factory::class)) {
+            throw new RuntimeException("Factory class {$factoryClass} does not exist or is not a factory.");
+        }
+
+        return $factoryClass;
     }
 
     protected function registerCrudRouteMacro(): void
@@ -124,14 +146,6 @@ class ModularServiceProvider extends ServiceProvider
 
     protected function registerFactoriesResolver(): void
     {
-        Factory::guessFactoryNamesUsing(static function (string $modelFqcn): string {
-            $factoryFqcn = str_replace(
-                ['\\Infrastructure\\Models\\', '\\Models\\', '\\Model\\'],
-                '\\Database\\Factories\\',
-                $modelFqcn
-            );
-
-            return $factoryFqcn.'Factory';
-        });
+        Factory::guessFactoryNamesUsing([$this, 'resolveFactoryName']);
     }
 }

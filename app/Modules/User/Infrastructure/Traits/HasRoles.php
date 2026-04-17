@@ -34,7 +34,12 @@ trait HasRoles
 
     public function getGuardName(): string
     {
-        return property_exists($this, 'guard_name') ? $this->guard_name : config('auth.defaults.guard', 'web');
+        $properties = get_object_vars($this);
+        if (isset($properties['guard_name']) && is_string($properties['guard_name'])) {
+            return $properties['guard_name'];
+        }
+
+        return config('auth.defaults.guard', 'web');
     }
 
     public function assignRole(Role|string $role): void

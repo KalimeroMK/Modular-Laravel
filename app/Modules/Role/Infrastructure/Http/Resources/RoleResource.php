@@ -6,6 +6,9 @@ namespace App\Modules\Role\Infrastructure\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Modules\Role\Infrastructure\Models\Role
+ */
 class RoleResource extends JsonResource
 {
     public function toArray($request): array

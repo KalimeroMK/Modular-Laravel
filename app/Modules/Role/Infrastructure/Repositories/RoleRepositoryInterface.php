@@ -6,7 +6,7 @@ namespace App\Modules\Role\Infrastructure\Repositories;
 
 use App\Modules\Core\Interfaces\RepositoryInterface;
 use App\Modules\Role\Infrastructure\Models\Role;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface RoleRepositoryInterface extends RepositoryInterface
 {

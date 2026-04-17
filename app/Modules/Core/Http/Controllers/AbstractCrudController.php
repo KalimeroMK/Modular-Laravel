@@ -12,8 +12,8 @@ use App\Modules\Core\Application\Actions\AbstractGetByIdAction;
 use App\Modules\Core\Application\Actions\AbstractUpdateAction;
 use App\Modules\Core\Support\ApiResponse;
 use App\Modules\Core\Traits\SwaggerTrait;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 abstract class AbstractCrudController extends Controller
 {
@@ -71,7 +71,7 @@ abstract class AbstractCrudController extends Controller
         return ApiResponse::success(null, $this->getEntityLabel().' deleted successfully');
     }
 
-    protected function handleStore(Request $request): JsonResponse
+    protected function handleStore(FormRequest $request): JsonResponse
     {
         $this->authorize('create', $this->getModelClass());
         $dtoClass = $this->getCreateDtoClass();
@@ -84,7 +84,7 @@ abstract class AbstractCrudController extends Controller
         );
     }
 
-    protected function handleUpdate(int|string $id, Request $request): JsonResponse
+    protected function handleUpdate(int|string $id, FormRequest $request): JsonResponse
     {
         $entity = $this->getByIdAction->execute($id);
         $this->authorize('update', $entity);

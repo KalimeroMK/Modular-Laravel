@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Permission\Application\DTO;
 
-readonly class CreatePermissionDTO
+use App\Modules\Core\Application\Contracts\DtoInterface;
+
+readonly class CreatePermissionDTO implements DtoInterface
 {
     public function __construct(
         public string $name,

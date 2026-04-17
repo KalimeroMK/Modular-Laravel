@@ -7,6 +7,7 @@ namespace App\Modules\User\Infrastructure\Repositories;
 use App\Modules\Core\Repositories\EloquentRepository;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 
 class UserRepository extends EloquentRepository implements UserRepositoryInterface
 {
@@ -17,23 +18,20 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
 
     public function findByEmail(string $email): ?User
     {
-
         $result = $this->findBy('email', $email);
 
-        return $result;
+        return $result instanceof User ? $result : null;
     }
 
     public function findByEmailWithRoles(string $email): ?User
     {
-
         $result = $this->findBy('email', $email, ['roles', 'permissions']);
 
-        return $result;
+        return $result instanceof User ? $result : null;
     }
 
     public function paginateWithRoles(int $perPage = 15): LengthAwarePaginator
     {
-
         $result = $this->query()
             ->with(['roles', 'permissions'])
             ->paginate($perPage);
@@ -45,6 +43,8 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
     {
         $cacheKey = "users_paginated_{$perPage}";
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, fn () => $this->paginate($perPage));
+        return Cache::remember($cacheKey, $ttl, function () use ($perPage): LengthAwarePaginator {
+            return $this->paginate($perPage);
+        });
     }
 }

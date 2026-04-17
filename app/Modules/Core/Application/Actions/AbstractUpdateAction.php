@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Application\Actions;
 
+use App\Modules\Core\Application\Contracts\DtoInterface;
 use App\Modules\Core\Exceptions\UpdateException;
 use App\Modules\Core\Interfaces\RepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ abstract class AbstractUpdateAction
 {
     public function __construct(protected RepositoryInterface $repository) {}
 
-    final public function execute(int|string $id, object $dto): Model
+    final public function execute(int|string $id, DtoInterface $dto): Model
     {
         $this->repository->findOrFail($id);
 
@@ -31,7 +32,7 @@ abstract class AbstractUpdateAction
         return $result;
     }
 
-    protected function mapDtoToArray(object $dto): array
+    protected function mapDtoToArray(DtoInterface $dto): array
     {
         return $dto->toArray();
     }

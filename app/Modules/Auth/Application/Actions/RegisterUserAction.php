@@ -8,6 +8,7 @@ use App\Modules\Auth\Application\DTO\RegisterUserDTO;
 use App\Modules\Auth\Application\DTO\UserResponseDTO;
 use App\Modules\Auth\Application\Services\IssueTokenServiceInterface;
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepositoryInterface;
+use App\Modules\User\Infrastructure\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,7 +29,7 @@ class RegisterUserAction
 
         $user = $this->authRepository->create($userData);
 
-        if ($user === null) {
+        if (! $user instanceof User) {
             throw new Exception('Failed to create user');
         }
 

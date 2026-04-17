@@ -86,7 +86,7 @@ abstract class EloquentRepository
         $deleted = $model->delete();
         $this->invalidateCache($id);
 
-        return $deleted;
+        return (bool) $deleted;
     }
 
     final public function restore(int|string $id): ?Model
@@ -112,7 +112,7 @@ abstract class EloquentRepository
         return method_exists($query, 'withTrashed') ? $query->withTrashed()->find($id) : $query->find($id);
     }
 
-    final public function paginate(int $perPage = 15, array $with = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    final public function paginate(int $perPage = 15, array $with = []): \Illuminate\Pagination\LengthAwarePaginator
     {
         $query = $this->query();
         if ($with !== []) {
@@ -182,7 +182,7 @@ abstract class EloquentRepository
 
         foreach ($keys as $key) {
             $shouldRemove = false;
-            if (str_contains($key, "_all")) {
+            if (str_contains($key, '_all')) {
                 $shouldRemove = true;
             } elseif ($id !== null && preg_match("/_\\Q{$id}\\E$/", $key)) {
                 $shouldRemove = true;

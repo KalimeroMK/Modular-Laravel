@@ -41,7 +41,7 @@ class YamlModuleParser
                     $parts = explode(':', $relationConfig);
                     if (count($parts) >= 2) {
                         $relationType = mb_trim($parts[0]);
-                        $relModel = mb_trim($parts[1] ?? '');
+                        $relModel = mb_trim($parts[1]);
                         $morphName = mb_trim($parts[2] ?? $relationKey);
                         if (in_array($relationType, ['morphTo', 'morphMany', 'morphOne', 'morphToMany']) && $morphName) {
                             $relations[] = "{$relationKey}:{$relationType}:{$relModel}:{$morphName}";

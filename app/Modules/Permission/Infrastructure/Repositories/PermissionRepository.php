@@ -16,9 +16,8 @@ class PermissionRepository extends EloquentRepository implements PermissionRepos
 
     public function findByName(string $name): ?Permission
     {
-
         $result = $this->findBy('name', $name);
 
-        return $result;
+        return $result instanceof Permission ? $result : null;
     }
 }

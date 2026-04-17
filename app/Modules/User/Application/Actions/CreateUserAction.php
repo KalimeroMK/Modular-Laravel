@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\User\Application\Actions;
 
 use App\Modules\Core\Application\Actions\AbstractCreateAction;
+use App\Modules\User\Application\DTO\CreateUserDTO;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
+use InvalidArgumentException;
 
 class CreateUserAction extends AbstractCreateAction
 {
@@ -17,6 +19,10 @@ class CreateUserAction extends AbstractCreateAction
 
     protected function mapDtoToArray(object $dto): array
     {
+        if (! $dto instanceof CreateUserDTO) {
+            throw new InvalidArgumentException('Expected CreateUserDTO');
+        }
+
         return [
             'name' => $dto->name,
             'email' => $dto->email,

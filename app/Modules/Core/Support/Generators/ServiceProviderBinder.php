@@ -36,7 +36,7 @@ class ServiceProviderBinder
             return;
         }
 
-        $providersBlock = $matches['providers'] ?? '';
+        $providersBlock = $matches['providers'];
 
         if (str_contains($providersBlock, $providerClass)) {
             return;

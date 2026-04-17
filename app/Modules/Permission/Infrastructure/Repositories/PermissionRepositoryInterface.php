@@ -6,7 +6,7 @@ namespace App\Modules\Permission\Infrastructure\Repositories;
 
 use App\Modules\Core\Interfaces\RepositoryInterface;
 use App\Modules\Permission\Infrastructure\Models\Permission;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface PermissionRepositoryInterface extends RepositoryInterface
 {

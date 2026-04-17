@@ -17,5 +17,5 @@ interface ReadableRepositoryInterface
 
     public function findBy(string $column, mixed $value, array $with = []): ?Model;
 
-    public function paginate(int $perPage = 15, array $with = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+    public function paginate(int $perPage = 15, array $with = []): \Illuminate\Pagination\LengthAwarePaginator;
 }

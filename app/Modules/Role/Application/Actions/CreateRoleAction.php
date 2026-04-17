@@ -13,12 +13,4 @@ class CreateRoleAction extends AbstractCreateAction
     {
         parent::__construct($repository);
     }
-
-    protected function mapDtoToArray(object $dto): array
-    {
-        return [
-            'name' => $dto->name,
-            'guard_name' => $dto->guardName,
-        ];
-    }
 }

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class DatabaseOptimizationService
 {
@@ -121,7 +122,7 @@ class DatabaseOptimizationService
     public function analyzeTable(string $table): array
     {
         if (! preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
-            throw new \InvalidArgumentException('Invalid table name: '.$table);
+            throw new InvalidArgumentException('Invalid table name: '.$table);
         }
 
         try {

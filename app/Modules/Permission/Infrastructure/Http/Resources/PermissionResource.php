@@ -6,6 +6,9 @@ namespace App\Modules\Permission\Infrastructure\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Modules\Permission\Infrastructure\Models\Permission
+ */
 class PermissionResource extends JsonResource
 {
     public function toArray($request): array

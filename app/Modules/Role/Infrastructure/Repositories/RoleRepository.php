@@ -16,9 +16,8 @@ class RoleRepository extends EloquentRepository implements RoleRepositoryInterfa
 
     public function findByName(string $name): ?Role
     {
-
         $result = $this->findBy('name', $name);
 
-        return $result;
+        return $result instanceof Role ? $result : null;
     }
 }

@@ -7,6 +7,7 @@ namespace Tests\Unit\Core;
 use App\Modules\User\Infrastructure\Models\User;
 use App\Modules\User\Infrastructure\Repositories\UserRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use ReflectionMethod;
 use Tests\TestCase;
 
 class EloquentRepositoryTest extends TestCase
@@ -241,7 +242,7 @@ class EloquentRepositoryTest extends TestCase
 
         $this->repository->clearCache();
 
-        $reflection = new \ReflectionMethod($this->repository, 'getCacheKey');
+        $reflection = new ReflectionMethod($this->repository, 'getCacheKey');
         $reflection->setAccessible(true);
 
         $keyAll = $reflection->invoke($this->repository, 'all');

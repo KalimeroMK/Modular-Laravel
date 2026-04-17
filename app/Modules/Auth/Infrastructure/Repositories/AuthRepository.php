@@ -16,9 +16,8 @@ class AuthRepository extends EloquentRepository implements AuthRepositoryInterfa
 
     public function findByEmail(string $email): ?User
     {
-
         $result = $this->findBy('email', $email);
 
-        return $result;
+        return $result instanceof User ? $result : null;
     }
 }

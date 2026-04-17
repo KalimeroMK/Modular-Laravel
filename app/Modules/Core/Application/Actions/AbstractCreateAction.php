@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Application\Actions;
 
+use App\Modules\Core\Application\Contracts\DtoInterface;
 use App\Modules\Core\Exceptions\CreateException;
 use App\Modules\Core\Interfaces\RepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ abstract class AbstractCreateAction
 {
     public function __construct(protected RepositoryInterface $repository) {}
 
-    final public function execute(object $dto): Model
+    final public function execute(DtoInterface $dto): Model
     {
         $data = $this->beforeCreate($this->mapDtoToArray($dto));
 
@@ -27,7 +28,7 @@ abstract class AbstractCreateAction
         return $result;
     }
 
-    protected function mapDtoToArray(object $dto): array
+    protected function mapDtoToArray(DtoInterface $dto): array
     {
         return $dto->toArray();
     }

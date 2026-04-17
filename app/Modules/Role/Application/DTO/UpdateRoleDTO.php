@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Application\DTO;
 
-readonly class UpdateRoleDTO
+use App\Modules\Core\Application\Contracts\DtoInterface;
+
+readonly class UpdateRoleDTO implements DtoInterface
 {
     public function __construct(
         public ?string $name = null,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Auth\Application\Actions;
 
 use App\Modules\Auth\Application\Services\IssueTokenServiceInterface;
+use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Http\Request;
 
 class LogoutAction
@@ -17,7 +18,7 @@ class LogoutAction
     {
         $user = $request->user();
 
-        if ($user !== null) {
+        if ($user instanceof User) {
             $this->tokenService->revokeToken($user);
         }
     }
