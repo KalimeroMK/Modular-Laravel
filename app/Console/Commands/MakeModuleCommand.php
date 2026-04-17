@@ -8,7 +8,6 @@ use App\Modules\Core\Support\Generators\ModuleGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
-use Laravel\Prompts\textarea;
 use Throwable;
 
 class MakeModuleCommand extends Command
@@ -183,8 +182,9 @@ class MakeModuleCommand extends Command
 
         foreach ($lines as $line) {
             $line = mb_trim($line);
-            if ($line !== '' && $line !== '0') {
-                $fields[] = $line;
+            if ($line !== '' && $line !== '0' && str_contains($line, ':')) {
+                [$name, $type] = explode(':', $line, 2);
+                $fields[] = ['name' => mb_trim($name), 'type' => mb_trim($type)];
             }
         }
 

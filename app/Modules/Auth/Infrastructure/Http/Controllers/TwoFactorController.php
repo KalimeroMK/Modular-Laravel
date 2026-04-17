@@ -12,9 +12,11 @@ use App\Modules\Auth\Application\Actions\TwoFactor\VerifyAction;
 use App\Modules\Auth\Application\DTO\TwoFactor\VerificationDTO;
 use App\Modules\Auth\Infrastructure\Http\Requests\TwoFactorSetupRequest;
 use App\Modules\Auth\Infrastructure\Http\Requests\TwoFactorVerifyRequest;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-class TwoFactorController
+
+class TwoFactorController extends Controller
 {
     public function __construct(
         protected SetupAction $setupAction,

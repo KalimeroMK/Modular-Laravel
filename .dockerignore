@@ -1,0 +1,17 @@
+.git
+vendor
+node_modules
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+bootstrap/cache/*
+.idea
+.vscode
+.env
+.env.*
+!env.example
+*.log
+coverage
+.phpunit.result.cache
+.php-cs-fixer.cache
+storage/api-docs/*.json

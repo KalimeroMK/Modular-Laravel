@@ -3,6 +3,8 @@
 # Docker Setup Script for Modular Laravel
 # This script sets up the development environment with Docker
 
+set -e
+
 echo "🐳 Setting up Modular Laravel with Docker..."
 
 # Check if Docker is running
@@ -16,7 +18,7 @@ echo "📝 Creating .env.docker file..."
 cat > .env.docker << 'EOF'
 APP_NAME=Laravel
 APP_ENV=local
-APP_KEY=base64:benKImyGs3Vco9uGRjBZO4KjcLoEKAWG6egc2Zck7NE=
+APP_KEY=
 APP_DEBUG=true
 APP_URL=http://localhost
 
@@ -40,15 +42,15 @@ SESSION_LIFETIME=120
 
 MEMCACHED_HOST=127.0.0.1
 
-REDIS_HOST=127.0.0.1
+REDIS_HOST=redis
 REDIS_PASSWORD=null
 REDIS_PORT=6379
 
 MAIL_MAILER=smtp
-MAIL_HOST=sandbox.smtp.mailtrap.io
-MAIL_PORT=2525
-MAIL_USERNAME=8bc5c18edaec34
-MAIL_PASSWORD=4d9d8674c2a4df
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=
+MAIL_PASSWORD=
 
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
@@ -73,13 +75,13 @@ EOF
 
 echo "✅ .env.docker file created"
 
+# Export current user/group IDs for Dockerfile
+export USER_ID=$(id -u)
+export GROUP_ID=$(id -g)
+
 # Start Docker containers
 echo "🚀 Starting Docker containers..."
-docker-compose up -d
-
-# Wait for database to be ready
-echo "⏳ Waiting for database to be ready..."
-sleep 10
+docker compose up -d --build
 
 # Copy .env.docker to .env for Docker environment
 echo "📋 Copying Docker environment configuration..."
@@ -87,49 +89,50 @@ cp .env.docker .env
 
 # Install dependencies inside container
 echo "📦 Installing dependencies..."
-docker-compose exec app composer install
+docker compose exec app composer install
 
-# Generate application key if needed
+# Generate application key
 echo "🔑 Generating application key..."
-docker-compose exec app php artisan key:generate
+docker compose exec app php artisan key:generate
 
 # Run migrations
 echo "🗄️ Running migrations..."
-docker-compose exec app php artisan migrate:fresh
+docker compose exec app php artisan migrate
 
 # Publish Spatie Permission migrations
 echo "🔐 Publishing Spatie Permission migrations..."
-docker-compose exec app php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
+docker compose exec app php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
 
 # Run migrations again to include permission tables
 echo "🗄️ Running migrations with permission tables..."
-docker-compose exec app php artisan migrate
+docker compose exec app php artisan migrate
 
 # Run seeders
 echo "🌱 Running seeders..."
-docker-compose exec app php artisan db:seed
+docker compose exec app php artisan db:seed
 
 # Generate Swagger documentation
 echo "📚 Generating Swagger documentation..."
-docker-compose exec app php artisan l5-swagger:generate
+docker compose exec app php artisan l5-swagger:generate
 
 # Set proper permissions
 echo "🔧 Setting proper permissions..."
-docker-compose exec app chmod -R 775 storage bootstrap/cache
+docker compose exec app chmod -R 775 storage bootstrap/cache
 
 echo ""
 echo "🎉 Docker setup completed successfully!"
 echo ""
 echo "📋 Available services:"
-echo "   🌐 Web: http://localhost"
+echo "   🌐 Web: http://localhost:8080"
 echo "   🗄️ Database: localhost:3301 (homestead/secret)"
-echo "   📚 API Docs: http://localhost/api/documentation"
+echo "   📧 Mailpit: http://localhost:8025"
+echo "   📚 API Docs: http://localhost:8080/api/documentation"
 echo ""
 echo "🔧 Useful commands:"
-echo "   docker-compose exec app php artisan migrate:fresh --seed"
-echo "   docker-compose exec app php artisan test"
-echo "   docker-compose exec app composer install"
-echo "   docker-compose logs -f"
+echo "   docker compose exec app php artisan migrate --seed"
+echo "   docker compose exec app php artisan test"
+echo "   docker compose exec app composer install"
+echo "   docker compose logs -f"
 echo ""
-echo "🛑 To stop: docker-compose down"
-echo "🔄 To restart: docker-compose restart"
+echo "🛑 To stop: docker compose down"
+echo "🔄 To restart: docker compose restart"

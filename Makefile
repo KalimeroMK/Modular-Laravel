@@ -15,19 +15,19 @@ docker-setup: ## Setup Docker environment and run migrations/seeders
 
 docker-test: ## Run all tests in Docker environment
 	@echo "🧪 Running tests in Docker..."
-	@./docker-test.sh
+	@docker compose exec app php artisan test
 
 docker-stop: ## Stop Docker containers
 	@echo "🛑 Stopping Docker containers..."
-	@docker-compose down
+	@docker compose down
 
 docker-restart: ## Restart Docker containers
 	@echo "🔄 Restarting Docker containers..."
-	@docker-compose restart
+	@docker compose restart
 
 docker-logs: ## Show Docker logs
 	@echo "📋 Showing Docker logs..."
-	@docker-compose logs -f
+	@docker compose logs -f
 
 # Development commands
 test: ## Run PHPUnit tests
@@ -44,7 +44,7 @@ pint: ## Run Laravel Pint code formatting
 
 migrate: ## Run database migrations
 	@echo "🗄️ Running migrations..."
-	@php artisan migrate:fresh --seed
+	@php artisan migrate --seed
 
 seed: ## Run database seeders
 	@echo "🌱 Running seeders..."
@@ -56,7 +56,7 @@ setup: ## Quick setup for local development (without Docker)
 	@composer install
 	@cp .env.example .env
 	@php artisan key:generate
-	@php artisan migrate:fresh --seed
+	@php artisan migrate --seed
 	@php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
 	@php artisan migrate
 	@php artisan l5-swagger:generate
@@ -77,4 +77,3 @@ build: ## Build for production
 	@php artisan config:cache
 	@php artisan route:cache
 	@php artisan view:cache
-	@npm run build

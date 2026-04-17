@@ -144,7 +144,7 @@ class DatabaseOptimizationService
             $sql .= "{$column} = CASE {$key} ".implode(' ', $caseStatements).' END, ';
         }
 
-        $sql = mb_rtrim($sql, ', ')." WHERE {$key} IN ({$idsString})";
+        $sql = rtrim($sql, ', ')." WHERE {$key} IN ({$idsString})";
 
         return DB::update($sql, $bindings) > 0;
     }

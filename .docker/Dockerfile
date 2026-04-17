@@ -17,17 +17,26 @@ RUN docker-php-ext-configure gd --with-jpeg --with-freetype \
 # Stage 2: Final image
 FROM php:8.4-fpm-alpine
 
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
 # Install runtime dependencies
 RUN apk add --no-cache \
     git curl bash unzip \
     libpng libjpeg freetype libzip icu libxml2 oniguruma
+
+# Create matching host user for permissions
+RUN deluser www-data 2>/dev/null || true \
+    && delgroup www-data 2>/dev/null || true \
+    && addgroup -g ${GROUP_ID} -S www-data \
+    && adduser -u ${USER_ID} -S www-data -G www-data
 
 # Copy PHP extensions from builder
 COPY --from=builder /usr/local/lib/php/extensions /usr/local/lib/php/extensions
 COPY --from=builder /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
 
 # Copy Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www

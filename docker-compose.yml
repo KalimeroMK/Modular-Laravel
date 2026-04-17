@@ -3,6 +3,9 @@ services:
     build:
       context: .docker
       dockerfile: Dockerfile
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
     container_name: app_module
     restart: unless-stopped
     working_dir: /var/www/
@@ -13,9 +16,14 @@ services:
       - ./.docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
     networks:
       - laravelapp
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   db:
-    image: mariadb:latest
+    image: mariadb:11.4
     container_name: mysql_module
     restart: unless-stopped
     environment:
@@ -32,9 +40,32 @@ services:
       - ./.docker/mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - laravelapp
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis_module
+    restart: unless-stopped
+    networks:
+      - laravelapp
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit_module
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - laravelapp
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.27-alpine
     container_name: nginx_module
     restart: unless-stopped
     ports:
@@ -44,6 +75,9 @@ services:
       - ./.docker/nginx:/etc/nginx/conf.d
     networks:
       - laravelapp
+    depends_on:
+      app:
+        condition: service_started
 
 volumes:
   dbdata:

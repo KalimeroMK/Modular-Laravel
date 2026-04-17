@@ -103,7 +103,7 @@ class ModulesBuildFromYamlCommand extends Command
             foreach ($stats['files_by_module'] as $module => $count) {
                 $filesTable[] = [$module, $count];
             }
-            $this->table(['Module', 'Files'], array_slice($filesTable, 1));
+            $this->table(['Module', 'Files'], $filesTable);
         }
 
         if ($errorCount > 0) {

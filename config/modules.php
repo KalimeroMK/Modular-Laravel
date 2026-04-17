@@ -51,7 +51,5 @@ return [
         'Permission' => [
             'enabled' => true,
         ],
-        'E2ETestModule' => [
-            'enabled' => true,
-        ],    ],
+    ],
 ];

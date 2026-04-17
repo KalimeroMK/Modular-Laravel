@@ -31,8 +31,8 @@ class ModularServiceProvider extends ServiceProvider
         $this->files = $files;
 
         
-        $basePath = mb_rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
-        $nsBase = mb_rtrim((string) config('modules.default.namespace', 'App\\Modules'), '\\');
+        $basePath = rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
+        $nsBase = rtrim((string) config('modules.default.namespace', 'App\\Modules'), '\\');
 
         if (! is_dir($basePath)) {
             Log::warning("Modules base path not found: {$basePath}");
@@ -56,7 +56,7 @@ class ModularServiceProvider extends ServiceProvider
         });
 
         
-        $this->registerFactoriesResolver($basePath, $nsBase);
+        $this->registerFactoriesResolver();
 
         
         
@@ -80,7 +80,7 @@ class ModularServiceProvider extends ServiceProvider
     protected function registerHelpers(string $module, string $basePath): void
     {
         $structure = config('modules.default.structure', []);
-        $helpersDir = $structure['support'] ?? ($structure['helpers'] ?? '');
+        $helpersDir = $structure['helpers'] ?? '';
         if (! $helpersDir) {
             return;
         }
@@ -115,20 +115,16 @@ class ModularServiceProvider extends ServiceProvider
 
 
 
-    protected function registerFactoriesResolver(string $basePath, string $nsBase): void
+    protected function registerFactoriesResolver(): void
     {
         Factory::guessFactoryNamesUsing(static function (string $modelFqcn): string {
-            
             $factoryFqcn = str_replace(
                 ['\\Infrastructure\\Models\\', '\\Models\\', '\\Model\\'],
                 '\\Database\\Factories\\',
                 $modelFqcn
             );
 
-             
-            $factoryClass = $factoryFqcn.'Factory';
-
-            return $factoryClass;
+            return $factoryFqcn.'Factory';
         });
     }
 }

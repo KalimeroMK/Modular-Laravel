@@ -25,10 +25,14 @@ class User extends Authenticatable
 
 
 
-    protected array $dates = [
-        'email_verified_at',
-        'two_factor_confirmed_at',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'two_factor_confirmed_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
 
     protected $hidden = [
         'password',
