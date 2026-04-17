@@ -60,6 +60,5 @@ return Application::configure(basePath: dirname(__DIR__))
         App\Modules\Auth\Infrastructure\Providers\AuthModuleServiceProvider::class,
         App\Modules\User\Infrastructure\Providers\UserModuleServiceProvider::class,
         App\Modules\Role\Infrastructure\Providers\RoleModuleServiceProvider::class,
-        App\Modules\Permission\Infrastructure\Providers\PermissionModuleServiceProvider::class
-    ])
+        App\Modules\Permission\Infrastructure\Providers\PermissionModuleServiceProvider::class])
     ->create();

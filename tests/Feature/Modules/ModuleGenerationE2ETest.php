@@ -15,34 +15,34 @@ class ModuleGenerationE2ETest extends TestCase
 
     private string $testModuleName = 'E2ETestModule';
 
-    
+    private string $bootstrapBackup = '';
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->files = new Filesystem;
+
+        $bootstrapPath = base_path('bootstrap/app.php');
+        if ($this->files->exists($bootstrapPath)) {
+            $this->bootstrapBackup = $this->files->get($bootstrapPath);
+        }
     }
 
-    
     protected function tearDown(): void
     {
-        
         $modulePath = app_path("Modules/{$this->testModuleName}");
         if ($this->files->exists($modulePath)) {
             $this->files->deleteDirectory($modulePath);
         }
 
-        
         $testPath = base_path("tests/Feature/Modules/{$this->testModuleName}");
         if ($this->files->exists($testPath)) {
             $this->files->deleteDirectory($testPath);
         }
 
-        
         $bootstrapPath = base_path('bootstrap/app.php');
-        if ($this->files->exists($bootstrapPath)) {
-            $content = $this->files->get($bootstrapPath);
-            $content = preg_replace('/\s+App\\\\Modules\\\\E2ETestModule\\\\Infrastructure\\\\Providers\\\\E2ETestModuleModuleServiceProvider::class,?\s*/', '', $content);
-            $this->files->put($bootstrapPath, $content);
+        if ($this->bootstrapBackup !== '' && $this->files->exists($bootstrapPath)) {
+            $this->files->put($bootstrapPath, $this->bootstrapBackup);
         }
 
         parent::tearDown();
