@@ -135,7 +135,9 @@ php artisan db:optimize --connection-info  # Get connection information
     -   `--policies`: Generate policy stubs
 -   **Auto-discovery**: Routes, migrations, factories, observers, and policies
 -   **Repository pattern**: Interface-to-implementation binding out-of-the-box
+-   **DtoInterface contract**: Unified `fromArray()` / `toArray()` interface for all create/update DTOs, wired into `AbstractCreateAction` and `AbstractUpdateAction`
 -   **Fully configurable**: `config/modules.php` for structure and behaviors
+-   **Custom Role/Permission system**: Built-in `Permission` and `Role` models with `HasRoles` trait — no external package required
 -   **Two-Factor Authentication**: Complete 2FA support with Google Authenticator
 -   **Database Optimization**: Performance indexes, query caching, and monitoring
 -   **Clean Architecture**: Application/Infrastructure layer separation
@@ -246,7 +248,7 @@ The application follows a clear separation between input and output:
 
 **Input Flow (Request → Action):**
 ```
-HTTP Request → FormRequest → DTO → Action → Model
+HTTP Request → FormRequest → DTO (implements DtoInterface) → Action → Model
 ```
 
 **Output Flow (Action → Response):**
@@ -255,7 +257,7 @@ Action → Model → Resource → JSON Response
 ```
 
 **Key Principles:**
--   **DTOs** are used **only** for data manipulation (validated input from requests)
+-   **DTOs** implement `DtoInterface` (`fromArray()` / `toArray()`) and are used **only** for validated input from requests
 -   **Resources** are used **only** for API responses (formatted output to clients)
 -   **Actions** return **Eloquent models**, not DTOs or Resources
 -   **Controllers** transform models to Resources for API responses
@@ -310,6 +312,27 @@ The `ModularServiceProvider` handles **global resources** for all modules:
 -   **Helpers** - Loads helper files from modules (if they exist)
 
 **Note:** `ModularServiceProvider` does NOT register routes, policies, observers, or events - these are handled by individual module service providers.
+
+### 🔗 Route::crud Macro
+
+Each module registers its CRUD routes using the custom `Route::crud` macro (registered globally in `ModularServiceProvider`):
+
+```php
+Route::crud('products', ProductController::class, 'products');
+```
+
+This single line creates all standard CRUD endpoints with the following defaults:
+
+| Method | Endpoint | Middleware | Rate Limit |
+|--------|----------|------------|------------|
+| `GET` | `/api/v1/products` | `auth:sanctum`, `throttle:60,1` | 60/min |
+| `POST` | `/api/v1/products` | `auth:sanctum`, `throttle:10,60` | 10/hour |
+| `GET` | `/api/v1/products/{id}` | `auth:sanctum`, `throttle:120,1` | 120/min |
+| `PUT` | `/api/v1/products/{id}` | `auth:sanctum`, `throttle:30,1` | 30/min |
+| `PATCH` | `/api/v1/products/{id}` | `auth:sanctum`, `throttle:30,1` | 30/min |
+| `DELETE` | `/api/v1/products/{id}` | `auth:sanctum`, `throttle:10,60` | 10/hour |
+
+The macro is similar to `Route::apiResource()`, but adds a dedicated `PATCH` route and applies per-route throttle limits out of the box.
 
 ### ⚙️ Module Enable/Disable
 
@@ -796,6 +819,64 @@ modules:
 -   `morphMany`: `comments: morphMany:Comment:commentable`
 -   `morphOne`: `image: morphOne:Image:imageable`
 -   `morphToMany`: `tags: morphToMany:Tag:taggable`
+
+## 🔐 Role & Permission System
+
+The starter kit includes a **custom Role/Permission system** built entirely in-house — no external package required. It provides granular access control via `Permission` and `Role` Eloquent models and a reusable `HasRoles` trait.
+
+### 🛡️ Core Components
+
+-   **`Permission` model** — Represents a single permission (e.g. `users.view`, `users.create`)
+-   **`Role` model** — Groups permissions together (e.g. `admin`, `editor`)
+-   **`HasRoles` trait** — Attach to any Eloquent model (typically `User`) to enable role/permission checks
+
+### 🛠️ Available Methods
+
+**Role management:**
+```php
+$user->assignRole('admin');
+$user->removeRole('admin');
+$user->syncRoles(['admin', 'editor']);
+$user->hasRole('admin');           // bool
+$user->hasAnyRole(['admin','mod']); // bool
+$user->hasAllRoles(['admin','mod']);// bool
+$user->getRoleNames();              // array
+```
+
+**Permission management:**
+```php
+$user->givePermissionTo('users.create');
+$user->revokePermissionTo('users.create');
+$user->syncPermissions(['users.view', 'users.create']);
+$user->hasPermissionTo('users.create'); // bool (checks direct + via role)
+$user->getPermissionNames();           // array
+```
+
+**Role-level permissions:**
+```php
+$role->givePermissionTo('users.delete');
+$role->revokePermissionTo('users.delete');
+$role->syncPermissions(['users.view', 'users.edit']);
+$role->hasPermissionTo('users.view'); // bool
+```
+
+### 🔧 Guard Name Resolution
+
+Both `Permission` and `Role` include a `guard_name` column (defaults to `api`). The `HasRoles` trait dynamically resolves the correct guard from the model's `$guard_name` property, falling back to `config('auth.defaults.guard')`.
+
+### 📋 Default Tables
+
+```
+permissions          — id, name, guard_name, timestamps
+roles                — id, name, guard_name, timestamps
+model_has_permissions — permission_id, model_type, model_id
+model_has_roles      — role_id, model_type, model_id
+role_has_permissions — permission_id, role_id
+```
+
+### 🎯 Policy Authorization
+
+`AbstractCrudController` automatically calls `authorize()` for every CRUD action (`index`, `show`, `store`, `update`, `destroy`). Generated modules include a `Policy` stub that maps each action to the appropriate permission check (e.g. `viewAny`, `view`, `create`, `update`, `delete`).
 
 ## 🔐 Two-Factor Authentication (2FA)
 
