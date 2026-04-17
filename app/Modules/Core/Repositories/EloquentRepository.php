@@ -93,6 +93,7 @@ abstract class EloquentRepository
     final public function create(array $data): ?Model
     {
         $created = $this->model->newInstance()->create($data);
+        $this->invalidateCache();
 
         return $created ? $created->fresh() : null;
     }
@@ -102,7 +103,10 @@ abstract class EloquentRepository
 
     final public function insert(array $data): bool
     {
-        return $this->model->newInstance()->insert($data);
+        $result = $this->model->newInstance()->insert($data);
+        $this->invalidateCache();
+
+        return $result;
     }
 
     
@@ -113,6 +117,7 @@ abstract class EloquentRepository
     {
         $model = $this->findOrFail($id);
         $model->fill($data)->save();
+        $this->invalidateCache($id);
 
         return $model->fresh();
     }
@@ -122,8 +127,8 @@ abstract class EloquentRepository
 
     final public function delete(int|string $id): bool
     {
-        
         $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
+        $this->invalidateCache($id);
 
         return $deletedRows > 0;
     }
@@ -141,6 +146,7 @@ abstract class EloquentRepository
         $model = method_exists($query, 'withTrashed') ? $query->withTrashed()->find($id) : $query->find($id);
         if ($model) {
             $model->restore();
+            $this->invalidateCache($id);
         }
 
         return $model;
@@ -206,8 +212,7 @@ abstract class EloquentRepository
 
     final public function clearCache(): void
     {
-        $pattern = $this->getCacheKey('*');
-        \Illuminate\Support\Facades\Cache::forget($pattern);
+        \Illuminate\Support\Facades\Cache::forget($this->getCacheKey('all'));
     }
 
     
@@ -231,5 +236,14 @@ abstract class EloquentRepository
         $idString = $id ? "_$id" : '';
 
         return "repository_{$modelName}_{$method}{$withString}{$idString}";
+    }
+
+    protected function invalidateCache(int|string|null $id = null): void
+    {
+        \Illuminate\Support\Facades\Cache::forget($this->getCacheKey('all'));
+
+        if ($id !== null) {
+            \Illuminate\Support\Facades\Cache::forget($this->getCacheKey('find', [], $id));
+        }
     }
 }
