@@ -10,11 +10,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait HasRoles
 {
-    
-
-
-
-
     public function roles(): MorphToMany
     {
         return $this->morphToMany(
@@ -25,11 +20,6 @@ trait HasRoles
             'role_id'
         )->wherePivot('model_type', static::class);
     }
-
-    
-
-
-
 
     public function permissions(): MorphToMany
     {
@@ -42,9 +32,6 @@ trait HasRoles
         )->wherePivot('model_type', static::class);
     }
 
-    
-
-
     public function assignRole(Role|string $role): void
     {
         if (is_string($role)) {
@@ -53,9 +40,6 @@ trait HasRoles
 
         $this->roles()->syncWithoutDetaching([$role->id]);
     }
-
-    
-
 
     public function removeRole(Role|string $role): void
     {
@@ -66,9 +50,6 @@ trait HasRoles
         $this->roles()->detach($role->id);
     }
 
-    
-
-
     public function givePermissionTo(Permission|string $permission): void
     {
         if (is_string($permission)) {
@@ -77,9 +58,6 @@ trait HasRoles
 
         $this->permissions()->syncWithoutDetaching([$permission->id]);
     }
-
-    
-
 
     public function revokePermissionTo(Permission|string $permission): void
     {
@@ -90,9 +68,6 @@ trait HasRoles
         $this->permissions()->detach($permission->id);
     }
 
-    
-
-
     public function hasRole(Role|string $role): bool
     {
         if (is_string($role)) {
@@ -102,12 +77,9 @@ trait HasRoles
         return $this->roles()->where('roles.id', $role->id)->exists();
     }
 
-    
-
-
     public function hasPermissionTo(Permission|string $permission): bool
     {
-        
+
         if (is_string($permission)) {
             $hasDirectPermission = $this->permissions()->where('name', $permission)->where('guard_name', 'api')->exists();
         } else {
@@ -118,7 +90,6 @@ trait HasRoles
             return true;
         }
 
-        
         $rolePermissions = $this->roles()->with('permissions')->get()->pluck('permissions')->flatten();
 
         if (is_string($permission)) {
@@ -127,11 +98,6 @@ trait HasRoles
 
         return $rolePermissions->where('id', $permission->id)->isNotEmpty();
     }
-
-    
-
-
-
 
     public function hasAnyRole(array|string $roles): bool
     {
@@ -147,11 +113,6 @@ trait HasRoles
 
         return false;
     }
-
-    
-
-
-
 
     public function hasAllRoles(array $roles): bool
     {

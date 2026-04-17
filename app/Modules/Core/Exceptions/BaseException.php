@@ -7,27 +7,11 @@ namespace App\Modules\Core\Exceptions;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-
-
-
-
-
 abstract class BaseException extends Exception
 {
-    
-
-
     protected int $statusCode = 500;
 
-    
-
-
     protected string $errorCode = 'INTERNAL_ERROR';
-
-    
-
-
-
 
     final public function render(): JsonResponse
     {
@@ -39,26 +23,15 @@ abstract class BaseException extends Exception
         ], $this->statusCode);
     }
 
-    
-
-
     final public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
-    
-
-
     final public function getErrorCode(): string
     {
         return $this->errorCode;
     }
-
-    
-
-
-
 
     protected function getErrors(): array
     {

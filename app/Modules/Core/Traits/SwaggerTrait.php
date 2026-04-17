@@ -4,97 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Traits;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 trait SwaggerTrait
 {
-    
-
-
-
-
     protected function getSuccessResponseStructure(): array
     {
         return [
@@ -103,11 +14,6 @@ trait SwaggerTrait
             'data' => [],
         ];
     }
-
-    
-
-
-
 
     protected function getErrorResponseStructure(): array
     {
@@ -118,11 +24,6 @@ trait SwaggerTrait
         ];
     }
 
-    
-
-
-
-
     protected function getValidationErrorResponseStructure(): array
     {
         return [
@@ -131,11 +32,6 @@ trait SwaggerTrait
             'errors' => [],
         ];
     }
-
-    
-
-
-
 
     protected function getPaginationResponseStructure(): array
     {

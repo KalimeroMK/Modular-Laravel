@@ -6,14 +6,8 @@ namespace Tests\Support;
 
 use Illuminate\Testing\TestResponse;
 
-
-
-
 trait TestHelpers
 {
-    
-
-
     protected function assertApiSuccess(TestResponse $response, int $statusCode = 200): void
     {
         $response->assertStatus($statusCode)
@@ -25,9 +19,6 @@ trait TestHelpers
             ->assertJson(['status' => 'success']);
     }
 
-    
-
-
     protected function assertApiError(TestResponse $response, int $statusCode = 400): void
     {
         $response->assertStatus($statusCode)
@@ -38,9 +29,6 @@ trait TestHelpers
             ])
             ->assertJson(['status' => 'error']);
     }
-
-    
-
 
     protected function assertApiPaginated(TestResponse $response): void
     {
@@ -67,16 +55,10 @@ trait TestHelpers
             ->assertJson(['status' => 'success']);
     }
 
-    
-
-
     protected function assertApiCreated(TestResponse $response): void
     {
         $this->assertApiSuccess($response, 201);
     }
-
-    
-
 
     protected function assertApiNoContent(TestResponse $response): void
     {

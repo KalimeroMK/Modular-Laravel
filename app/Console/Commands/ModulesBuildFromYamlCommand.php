@@ -49,7 +49,6 @@ class ModulesBuildFromYamlCommand extends Command
                     return ['name' => mb_trim($name), 'type' => mb_trim($type)];
                 }, $definition['fields']);
 
-                 
                 $options = [
                     'relations' => implode(',', $definition['relations']),
                     'exceptions' => $definition['exceptions'] ?? false,
@@ -74,7 +73,6 @@ class ModulesBuildFromYamlCommand extends Command
                 $failedModules[] = $name;
                 $this->error('❌ Error generating module: '.$e->getMessage());
 
-                
                 $this->warn("Rolling back module '{$name}'...");
                 $this->getTracker()->rollbackModule(Str::studly($name));
             }
@@ -82,7 +80,6 @@ class ModulesBuildFromYamlCommand extends Command
 
         $this->generatePivotMigrations($allModules);
 
-        
         $stats = $this->getTracker()->getStatistics();
         $this->newLine();
         $this->info('📊 Generation Statistics:');
@@ -110,7 +107,7 @@ class ModulesBuildFromYamlCommand extends Command
             $this->newLine();
             $this->warn("⚠️  {$errorCount} module(s) failed: ".implode(', ', $failedModules));
             $this->info('Rollback completed for failed modules.');
-            
+
             if ($successCount === 0) {
                 $this->getTracker()->restoreModifiedFiles();
             }
@@ -182,7 +179,6 @@ class ModulesBuildFromYamlCommand extends Command
             return;
         }
 
-         
         $content = $fileContent;
         $content = str_replace(
             ['{{table}}', '{{first_column}}', '{{second_column}}'],
@@ -193,11 +189,6 @@ class ModulesBuildFromYamlCommand extends Command
         file_put_contents($target, $content);
         $this->info("📦 Pivot migration created: {$fileName}");
     }
-
-    
-
-
-
 
     protected function buildRelationships(string|array $relations): string
     {
@@ -220,27 +211,20 @@ class ModulesBuildFromYamlCommand extends Command
             $relType = mb_trim($parts[1]);
             $relModel = $parts[2] ?? ucfirst($relName);
 
-            
             if (in_array($relType, ['morphTo', 'morphMany', 'morphOne', 'morphToMany'])) {
                 $morphName = $parts[3] ?? $relName;
                 $lines[] = $this->buildPolymorphicRelationship($relName, $relType, $relModel, $parts);
             } else {
-                
+
                 $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
                 $lines[] = "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
             }
         }
 
-        
         $imports = array_unique($imports);
 
         return implode("\n", $imports)."\n\n".implode("\n", $lines);
     }
-
-    
-
-
-
 
     protected function buildPolymorphicRelationship(string $relName, string $relType, string $relModel, array $parts): string
     {
@@ -264,7 +248,7 @@ class ModulesBuildFromYamlCommand extends Command
                 return "    public function {$relName}()\n    {\n        return \$this->morphToMany({$relModel}::class, '{$morphName}');\n    }";
 
             default:
-                
+
                 return "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
         }
     }

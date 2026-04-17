@@ -8,12 +8,10 @@ use App\Modules\Permission\Application\Actions\DeletePermissionAction;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class DeletePermissionActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -22,7 +20,7 @@ class DeletePermissionActionTest extends TestCase
 
     public function test_execute_successful_permission_deletion(): void
     {
-        
+
         $permissionId = 1;
         $permission = Mockery::mock(\App\Modules\Permission\Infrastructure\Models\Permission::class);
 
@@ -30,7 +28,6 @@ class DeletePermissionActionTest extends TestCase
         $permissionRepository->shouldReceive('findOrFail')->with($permissionId)->andReturn($permission);
         $permissionRepository->shouldReceive('delete')->with($permissionId)->andReturn(true);
 
-        
         $queryBuilder = Mockery::mock();
         $queryBuilder->shouldReceive('where')->with('permission_id', $permissionId)->andReturnSelf();
         $queryBuilder->shouldReceive('delete')->andReturn(1);
@@ -44,16 +41,14 @@ class DeletePermissionActionTest extends TestCase
 
         $action = new DeletePermissionAction($permissionRepository);
 
-        
         $result = $action->execute($permissionId);
 
-        
         $this->assertTrue($result);
     }
 
     public function test_execute_permission_deletion_failure(): void
     {
-        
+
         $permissionId = 1;
         $permission = Mockery::mock(\App\Modules\Permission\Infrastructure\Models\Permission::class);
 
@@ -61,7 +56,6 @@ class DeletePermissionActionTest extends TestCase
         $permissionRepository->shouldReceive('findOrFail')->with($permissionId)->andReturn($permission);
         $permissionRepository->shouldReceive('delete')->with($permissionId)->andReturn(false);
 
-        
         $queryBuilder = Mockery::mock();
         $queryBuilder->shouldReceive('where')->with('permission_id', $permissionId)->andReturnSelf();
         $queryBuilder->shouldReceive('delete')->andReturn(1);
@@ -75,10 +69,8 @@ class DeletePermissionActionTest extends TestCase
 
         $action = new DeletePermissionAction($permissionRepository);
 
-        
         $result = $action->execute($permissionId);
 
-        
         $this->assertFalse($result);
     }
 }

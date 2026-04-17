@@ -16,9 +16,6 @@ enum ErrorCode: string
     case INTERNAL_ERROR = 'INTERNAL_ERROR';
     case ERROR = 'ERROR';
 
-    
-
-
     public function message(): string
     {
         return match ($this) {

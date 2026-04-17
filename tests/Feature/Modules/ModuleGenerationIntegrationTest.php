@@ -8,7 +8,6 @@ use App\Modules\Core\Support\Generators\ModuleConfigUpdater;
 use App\Modules\Core\Support\Generators\ModuleGenerationTracker;
 use App\Modules\Core\Support\Generators\ModuleGenerator;
 use Illuminate\Filesystem\Filesystem;
-use Override;
 use Tests\TestCase;
 
 class ModuleGenerationIntegrationTest extends TestCase
@@ -19,7 +18,6 @@ class ModuleGenerationIntegrationTest extends TestCase
 
     private string $testModuleName = 'IntegrationTestModule';
 
-    
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,22 +25,19 @@ class ModuleGenerationIntegrationTest extends TestCase
         $this->tracker = new ModuleGenerationTracker($this->files, new ModuleConfigUpdater);
     }
 
-    
     protected function tearDown(): void
     {
-        
+
         $modulePath = app_path("Modules/{$this->testModuleName}");
         if ($this->files->exists($modulePath)) {
             $this->files->deleteDirectory($modulePath);
         }
 
-        
         $testPath = base_path("tests/Feature/Modules/{$this->testModuleName}");
         if ($this->files->exists($testPath)) {
             $this->files->deleteDirectory($testPath);
         }
 
-        
         $bootstrapPath = base_path('bootstrap/app.php');
         if ($this->files->exists($bootstrapPath)) {
             $content = $this->files->get($bootstrapPath);
@@ -69,18 +64,15 @@ class ModuleGenerationIntegrationTest extends TestCase
 
         $generator->generate($this->testModuleName, $fields, $options);
 
-        
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Models/{$this->testModuleName}.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Repositories/{$this->testModuleName}RepositoryInterface.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Repositories/{$this->testModuleName}Repository.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Application/DTO/{$this->testModuleName}DTO.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Http/Controllers/{$this->testModuleName}Controller.php"));
 
-        
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Application/Actions/Create{$this->testModuleName}Action.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Application/Actions/GetById{$this->testModuleName}Action.php"));
 
-        
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Http/Requests/Create{$this->testModuleName}Request.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Http/Requests/Update{$this->testModuleName}Request.php"));
     }
@@ -106,12 +98,11 @@ class ModuleGenerationIntegrationTest extends TestCase
 
         $generator->generate($this->testModuleName, $fields, $options);
 
-        
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Observers/{$this->testModuleName}Observer.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Policies/{$this->testModuleName}Policy.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Enums/{$this->testModuleName}Status.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Application/Events/{$this->testModuleName}Created.php"));
-        
+
         $notificationPath = app_path("Modules/{$this->testModuleName}/Application/Notifications/{$this->testModuleName}CreatedNotification.php");
         if (file_exists(base_path('stubs/module/Notifications/ModelCreatedNotification.stub'))) {
             $this->assertFileExists($notificationPath);
@@ -158,10 +149,8 @@ class ModuleGenerationIntegrationTest extends TestCase
         $modelPath = app_path("Modules/{$this->testModuleName}/Infrastructure/Models/{$this->testModuleName}.php");
         $this->assertFileExists($modelPath);
 
-        
         $this->tracker->rollbackModule($this->testModuleName);
 
-        
         $this->assertFileDoesNotExist($modelPath);
     }
 }

@@ -5,23 +5,12 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Override;
 use Throwable;
-
-
-
-
-
-
-
-
-
 
 class ModularServiceProvider extends ServiceProvider
 {
@@ -31,8 +20,8 @@ class ModularServiceProvider extends ServiceProvider
     {
         $this->files = $files;
 
-        $basePath = rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
-        $nsBase = rtrim((string) config('modules.default.namespace', 'App\\Modules'), '\\');
+        $basePath = mb_rtrim((string) config('modules.default.base_path', base_path('app/Modules')), '/');
+        $nsBase = mb_rtrim((string) config('modules.default.namespace', 'App\\Modules'), '\\');
 
         if (! is_dir($basePath)) {
             Log::warning("Modules base path not found: {$basePath}");
@@ -40,7 +29,6 @@ class ModularServiceProvider extends ServiceProvider
             return;
         }
 
-        
         $cacheKey = 'modular.modules.list';
         $ttl = app()->environment('production') ? null : now()->addMinutes(5);
 
@@ -55,11 +43,8 @@ class ModularServiceProvider extends ServiceProvider
             return array_values($dirs);
         });
 
-        
         $this->registerFactoriesResolver();
 
-        
-        
         foreach ($modules as $module) {
             try {
                 $this->registerHelpers($module, $basePath);
@@ -70,7 +55,6 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
-    
     public function register(): void
     {
         $this->registerCrudRouteMacro();
@@ -127,10 +111,6 @@ class ModularServiceProvider extends ServiceProvider
         }
     }
 
-    
-
-
-
     protected function registerMigrations(string $module, string $basePath): void
     {
         $structure = config('modules.default.structure', []);
@@ -141,11 +121,6 @@ class ModularServiceProvider extends ServiceProvider
             $this->loadMigrationsFrom($migrPath);
         }
     }
-
-    
-
-
-
 
     protected function registerFactoriesResolver(): void
     {

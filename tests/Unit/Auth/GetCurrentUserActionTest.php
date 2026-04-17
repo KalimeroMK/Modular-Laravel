@@ -11,12 +11,10 @@ use App\Modules\User\Infrastructure\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class GetCurrentUserActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -25,7 +23,7 @@ class GetCurrentUserActionTest extends TestCase
 
     public function test_execute_returns_current_user(): void
     {
-        
+
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
         $user->shouldReceive('getAttribute')->andReturnUsing(fn ($key) => match ($key) {
@@ -49,10 +47,8 @@ class GetCurrentUserActionTest extends TestCase
 
         $action = new GetCurrentUserAction($tokenService);
 
-        
         $result = $action->execute($request);
 
-        
         $this->assertInstanceOf(UserResponseDTO::class, $result);
         $this->assertEquals('Test User', $result->name);
         $this->assertEquals('test@example.com', $result->email);
@@ -60,7 +56,7 @@ class GetCurrentUserActionTest extends TestCase
 
     public function test_execute_throws_exception_when_no_user(): void
     {
-        
+
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('user')
             ->andReturn(null);
@@ -69,7 +65,6 @@ class GetCurrentUserActionTest extends TestCase
 
         $action = new GetCurrentUserAction($tokenService);
 
-        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('User not authenticated');
         $action->execute($request);

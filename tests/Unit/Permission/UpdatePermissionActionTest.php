@@ -10,12 +10,10 @@ use App\Modules\Permission\Application\DTO\UpdatePermissionDTO;
 use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class UpdatePermissionActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -24,7 +22,7 @@ class UpdatePermissionActionTest extends TestCase
 
     public function test_execute_successful_permission_update(): void
     {
-        
+
         $permissionId = 1;
         $name = 'updated-manage-users';
         $guardName = 'api';
@@ -50,10 +48,8 @@ class UpdatePermissionActionTest extends TestCase
 
         $action = new UpdatePermissionAction($permissionRepository);
 
-        
         $result = $action->execute($permissionId, $dto);
 
-        
         $this->assertInstanceOf(Permission::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($guardName, $result->guard_name);
@@ -61,7 +57,7 @@ class UpdatePermissionActionTest extends TestCase
 
     public function test_execute_permission_update_failure(): void
     {
-        
+
         $permissionId = 1;
         $name = 'updated-manage-users';
         $guardName = 'api';
@@ -78,7 +74,6 @@ class UpdatePermissionActionTest extends TestCase
 
         $action = new UpdatePermissionAction($permissionRepository);
 
-        
         $this->expectException(UpdateException::class);
         $this->expectExceptionMessage('Failed to update permission');
         $action->execute($permissionId, $dto);

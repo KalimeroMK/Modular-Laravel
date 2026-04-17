@@ -11,12 +11,10 @@ use App\Modules\User\Infrastructure\Models\User;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class UpdateUserActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -25,7 +23,7 @@ class UpdateUserActionTest extends TestCase
 
     public function test_execute_successful_user_update(): void
     {
-        
+
         $userId = 1;
         $name = 'Updated User';
         $email = 'updated@example.com';
@@ -57,10 +55,8 @@ class UpdateUserActionTest extends TestCase
 
         $action = new UpdateUserAction($userRepository);
 
-        
         $result = $action->execute($userId, $dto);
 
-        
         $this->assertInstanceOf(User::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($email, $result->email);
@@ -68,7 +64,7 @@ class UpdateUserActionTest extends TestCase
 
     public function test_execute_user_update_failure(): void
     {
-        
+
         $userId = 1;
         $name = 'Updated User';
         $email = 'updated@example.com';
@@ -90,7 +86,6 @@ class UpdateUserActionTest extends TestCase
 
         $action = new UpdateUserAction($userRepository);
 
-        
         $this->expectException(UpdateException::class);
         $this->expectExceptionMessage('Failed to update user');
         $action->execute($userId, $dto);

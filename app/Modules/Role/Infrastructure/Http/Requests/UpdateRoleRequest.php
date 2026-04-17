@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Role\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Override;
 
 class UpdateRoleRequest extends FormRequest
 {
@@ -13,9 +12,6 @@ class UpdateRoleRequest extends FormRequest
     {
         return true;
     }
-
-    
-
 
     public function rules(): array
     {
@@ -27,10 +23,6 @@ class UpdateRoleRequest extends FormRequest
         ];
     }
 
-    
-
-
-    
     public function messages(): array
     {
         return [

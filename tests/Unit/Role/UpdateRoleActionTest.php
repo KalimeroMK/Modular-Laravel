@@ -10,12 +10,10 @@ use App\Modules\Role\Application\DTO\UpdateRoleDTO;
 use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class UpdateRoleActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -24,7 +22,7 @@ class UpdateRoleActionTest extends TestCase
 
     public function test_execute_successful_role_update(): void
     {
-        
+
         $roleId = 1;
         $name = 'updated-admin';
         $guardName = 'api';
@@ -50,10 +48,8 @@ class UpdateRoleActionTest extends TestCase
 
         $action = new UpdateRoleAction($roleRepository);
 
-        
         $result = $action->execute($roleId, $dto);
 
-        
         $this->assertInstanceOf(Role::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($guardName, $result->guard_name);
@@ -61,7 +57,7 @@ class UpdateRoleActionTest extends TestCase
 
     public function test_execute_role_update_failure(): void
     {
-        
+
         $roleId = 1;
         $name = 'updated-admin';
         $guardName = 'api';
@@ -78,7 +74,6 @@ class UpdateRoleActionTest extends TestCase
 
         $action = new UpdateRoleAction($roleRepository);
 
-        
         $this->expectException(UpdateException::class);
         $this->expectExceptionMessage('Failed to update role');
         $action->execute($roleId, $dto);

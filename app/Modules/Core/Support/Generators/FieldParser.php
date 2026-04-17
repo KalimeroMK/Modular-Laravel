@@ -6,9 +6,6 @@ namespace App\Modules\Core\Support\Generators;
 
 class FieldParser
 {
-    
-
-
     public function parse(string $fieldsOption): array
     {
         $fields = [];
@@ -21,14 +18,14 @@ class FieldParser
                     'name' => $name,
                     'type' => 'foreign',
                     'references' => $parts[3] ?? 'id',
-                    'on' => $parts[2] ?? (str_ends_with($name, '_id') ? rtrim($name, '_id').'s' : $name.'s'),
+                    'on' => $parts[2] ?? (str_ends_with($name, '_id') ? mb_rtrim($name, '_id').'s' : $name.'s'),
                 ];
 
                 continue;
             }
 
             if (isset($parts[1]) && $parts[1] === 'morphable') {
-                
+
                 $morphableName = $parts[2] ?? $name;
 
                 $fields[] = [

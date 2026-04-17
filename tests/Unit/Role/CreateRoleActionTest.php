@@ -10,12 +10,10 @@ use App\Modules\Role\Infrastructure\Models\Role;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use Exception;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class CreateRoleActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -24,7 +22,7 @@ class CreateRoleActionTest extends TestCase
 
     public function test_execute_successful_role_creation(): void
     {
-        
+
         $name = 'admin';
         $guardName = 'api';
 
@@ -43,10 +41,8 @@ class CreateRoleActionTest extends TestCase
 
         $action = new CreateRoleAction($roleRepository);
 
-        
         $result = $action->execute($dto);
 
-        
         $this->assertInstanceOf(Role::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($guardName, $result->guard_name);
@@ -54,7 +50,7 @@ class CreateRoleActionTest extends TestCase
 
     public function test_execute_role_creation_failure(): void
     {
-        
+
         $name = 'admin';
         $guardName = 'api';
 
@@ -66,7 +62,6 @@ class CreateRoleActionTest extends TestCase
 
         $action = new CreateRoleAction($roleRepository);
 
-        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to create role');
         $action->execute($dto);

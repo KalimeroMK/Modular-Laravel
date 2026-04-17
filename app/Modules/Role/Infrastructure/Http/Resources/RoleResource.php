@@ -4,23 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Role\Infrastructure\Http\Resources;
 
-use App\Modules\Role\Infrastructure\Models\Role;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Override;
-
-
-
 
 class RoleResource extends JsonResource
 {
-    
-
-
-
-
-
-    
     public function toArray($request): array
     {
         return [

@@ -29,9 +29,6 @@ readonly class UserResponseDTO
         );
     }
 
-    
-
-
     public function toArray(): array
     {
         return [

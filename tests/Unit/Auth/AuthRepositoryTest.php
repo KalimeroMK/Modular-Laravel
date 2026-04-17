@@ -7,7 +7,6 @@ namespace Tests\Unit\Auth;
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepository;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Override;
 use Tests\TestCase;
 
 class AuthRepositoryTest extends TestCase
@@ -16,7 +15,6 @@ class AuthRepositoryTest extends TestCase
 
     protected AuthRepository $repository;
 
-    
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,15 +23,13 @@ class AuthRepositoryTest extends TestCase
 
     public function test_find_by_email_returns_user(): void
     {
-        
+
         $user = User::factory()->create([
             'email' => 'test@example.com',
         ]);
 
-        
         $result = $this->repository->findByEmail('test@example.com');
 
-        
         $this->assertInstanceOf(User::class, $result);
         $this->assertEquals($user->id, $result->id);
         $this->assertEquals('test@example.com', $result->email);
@@ -41,26 +37,23 @@ class AuthRepositoryTest extends TestCase
 
     public function test_find_by_email_returns_null_when_not_found(): void
     {
-        
+
         $result = $this->repository->findByEmail('nonexistent@example.com');
 
-        
         $this->assertNull($result);
     }
 
     public function test_create_user_success(): void
     {
-        
+
         $userData = [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => bcrypt('password123'),
         ];
 
-        
         $result = $this->repository->create($userData);
 
-        
         $this->assertInstanceOf(User::class, $result);
         $this->assertEquals('Test User', $result->name);
         $this->assertEquals('test@example.com', $result->email);
@@ -72,16 +65,14 @@ class AuthRepositoryTest extends TestCase
 
     public function test_update_user_success(): void
     {
-        
+
         $user = User::factory()->create();
         $updateData = [
             'name' => 'Updated Name',
         ];
 
-        
         $result = $this->repository->update($user->id, $updateData);
 
-        
         $this->assertInstanceOf(User::class, $result);
         $this->assertEquals('Updated Name', $result->name);
         $this->assertDatabaseHas('users', [

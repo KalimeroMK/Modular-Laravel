@@ -14,7 +14,6 @@ use App\Modules\Core\Exceptions\ValidationException;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
-use Override;
 use Tests\TestCase;
 
 class ExceptionHandlingTest extends TestCase
@@ -23,7 +22,6 @@ class ExceptionHandlingTest extends TestCase
 
     public $user;
 
-    
     protected function setUp(): void
     {
         parent::setUp();
@@ -45,11 +43,9 @@ class ExceptionHandlingTest extends TestCase
 
     public function test_model_not_found_exception_returns_404(): void
     {
-        
-        
+
         $response = $this->getJson('/api/v1/users/99999');
 
-        
         $response->assertStatus(404);
         $data = json_decode($response->getContent(), true);
         $this->assertEquals('error', $data['status']);

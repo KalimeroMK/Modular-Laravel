@@ -11,9 +11,6 @@ class CleanSpatiePivotTablesTest extends TestCase
 {
     use RefreshDatabase;
 
-    
-
-
     public function test_clean_spatie_pivot_tables(): void
     {
         DB::table('model_has_permissions')->truncate();

@@ -475,7 +475,6 @@ class YamlModuleParserTest extends TestCase
         $parser = new YamlModuleParser($this->tempFile);
         $result = $parser->parse();
 
-        
         $this->assertContains('commentable:morphTo', $result['Comment']['relations']);
     }
 

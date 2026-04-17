@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Auth\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Override;
 
 class SendPasswordResetLinkRequest extends FormRequest
 {
@@ -14,9 +13,6 @@ class SendPasswordResetLinkRequest extends FormRequest
         return true;
     }
 
-    
-
-
     public function rules(): array
     {
         return [
@@ -24,10 +20,6 @@ class SendPasswordResetLinkRequest extends FormRequest
         ];
     }
 
-    
-
-
-    
     public function messages(): array
     {
         return [

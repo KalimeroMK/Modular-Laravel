@@ -34,9 +34,6 @@ readonly class PermissionResponseDTO
         );
     }
 
-    
-
-
     public function toArray(): array
     {
         return [

@@ -11,9 +11,6 @@ readonly class LoginRequestDTO
         public string $password,
     ) {}
 
-    
-
-
     public static function fromArray(array $data): self
     {
         return new self(
@@ -21,9 +18,6 @@ readonly class LoginRequestDTO
             password: $data['password']
         );
     }
-
-    
-
 
     public function toArray(): array
     {

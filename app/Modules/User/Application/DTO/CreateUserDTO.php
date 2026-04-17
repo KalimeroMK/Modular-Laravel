@@ -13,9 +13,6 @@ readonly class CreateUserDTO
         public ?string $emailVerifiedAt = null,
     ) {}
 
-    
-
-
     public static function fromArray(array $data): self
     {
         return new self(
@@ -25,9 +22,6 @@ readonly class CreateUserDTO
             emailVerifiedAt: $data['email_verified_at'] ?? null,
         );
     }
-
-    
-
 
     public function toArray(): array
     {

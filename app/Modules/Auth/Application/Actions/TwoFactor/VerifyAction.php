@@ -18,7 +18,7 @@ class VerifyAction
 
     public function execute(User $user, VerificationDTO $dto): bool
     {
-        
+
         if (empty($user->two_factor_secret)) {
             throw new TwoFactorSecretNotSetException();
         }

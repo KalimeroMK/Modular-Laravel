@@ -25,8 +25,6 @@ class ResetPasswordAction
             return 'passwords.reset';
         }
 
-        
-        
         $validator = \Illuminate\Support\Facades\Validator::make(
             ['password' => ''],
             ['password' => ['required']],

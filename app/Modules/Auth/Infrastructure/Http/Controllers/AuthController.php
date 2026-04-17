@@ -34,53 +34,6 @@ class AuthController extends Controller
         protected ResetPasswordAction $resetPasswordAction,
     ) {}
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public function login(LoginRequest $request): JsonResponse
     {
         $dto = LoginRequestDTO::fromArray($request->validated());
@@ -91,48 +44,6 @@ class AuthController extends Controller
             'data' => $data,
         ]);
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -145,65 +56,12 @@ class AuthController extends Controller
         ], 201);
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public function logout(Request $request): JsonResponse
     {
         $this->logoutAction->execute($request);
 
         return response()->json(['status' => 'success']);
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function me(Request $request): JsonResponse
     {
@@ -215,87 +73,12 @@ class AuthController extends Controller
         ]);
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public function sendResetLink(SendPasswordResetLinkRequest $request): JsonResponse
     {
         $status = $this->sendResetLinkAction->execute($request);
 
         return response()->json(['status' => 'success', 'message' => __($status)]);
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {

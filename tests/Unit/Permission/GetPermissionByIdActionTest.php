@@ -8,12 +8,10 @@ use App\Modules\Permission\Application\Actions\GetPermissionByIdAction;
 use App\Modules\Permission\Infrastructure\Models\Permission;
 use App\Modules\Permission\Infrastructure\Repositories\PermissionRepositoryInterface;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class GetPermissionByIdActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -22,7 +20,7 @@ class GetPermissionByIdActionTest extends TestCase
 
     public function test_execute_returns_permission_when_found(): void
     {
-        
+
         $permission = new Permission();
         $permission->id = 1;
         $permission->name = 'manage-users';
@@ -36,10 +34,8 @@ class GetPermissionByIdActionTest extends TestCase
 
         $action = new GetPermissionByIdAction($repository);
 
-        
         $result = $action->execute(1);
 
-        
         $this->assertInstanceOf(Permission::class, $result);
         $this->assertEquals(1, $result->id);
         $this->assertEquals('manage-users', $result->name);
@@ -48,7 +44,7 @@ class GetPermissionByIdActionTest extends TestCase
 
     public function test_execute_returns_permission_dto(): void
     {
-        
+
         $permission = new Permission();
         $permission->id = 2;
         $permission->name = 'view-users';
@@ -62,10 +58,8 @@ class GetPermissionByIdActionTest extends TestCase
 
         $action = new GetPermissionByIdAction($repository);
 
-        
         $result = $action->execute(2);
 
-        
         $this->assertInstanceOf(Permission::class, $result);
         $this->assertEquals(2, $result->id);
         $this->assertEquals('view-users', $result->name);

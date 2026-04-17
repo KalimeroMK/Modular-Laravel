@@ -12,9 +12,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class SyncRelations
 {
-    
-
-
     public static function execute(Model $model, array $relations): void
     {
         $hasChanges = false;
@@ -26,21 +23,18 @@ class SyncRelations
 
             $relationInstance = $model->{$relation}();
 
-            
             if ($relationInstance instanceof BelongsToMany && is_array($value)) {
                 $relationInstance->sync($value);
 
                 continue;
             }
 
-            
             if ($relationInstance instanceof MorphToMany && is_array($value)) {
                 $relationInstance->sync($value);
 
                 continue;
             }
 
-            
             if ($relationInstance instanceof BelongsTo && (is_scalar($value) || is_null($value))) {
                 $foreignKey = $relationInstance->getForeignKeyName();
 
@@ -50,27 +44,26 @@ class SyncRelations
                 }
             }
 
-            
             if ($relationInstance instanceof MorphTo) {
                 $morphType = $relationInstance->getMorphType();
                 $foreignKey = $relationInstance->getForeignKeyName();
 
                 if (is_null($value)) {
-                    
+
                     if ($model->{$morphType} !== null || $model->{$foreignKey} !== null) {
                         $model->{$morphType} = null;
                         $model->{$foreignKey} = null;
                         $hasChanges = true;
                     }
                 } elseif (is_array($value) && isset($value['type'], $value['id'])) {
-                    
+
                     if ($model->{$morphType} !== $value['type'] || $model->{$foreignKey} !== $value['id']) {
                         $model->{$morphType} = $value['type'];
                         $model->{$foreignKey} = $value['id'];
                         $hasChanges = true;
                     }
                 } elseif ($value instanceof Model) {
-                    
+
                     $newType = $value->getMorphClass();
                     $newId = $value->getKey();
 

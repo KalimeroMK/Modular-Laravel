@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Support\Generators;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
 class StubFileGenerator
 {
     public function __construct(protected Filesystem $files) {}
-
-    
-
-
-
-
 
     public function generate(string $moduleName, array $fields, array $options): void
     {
@@ -42,7 +35,7 @@ class StubFileGenerator
         ];
 
         foreach ($stubMap as $target => $stubPath) {
-            
+
             $targetPath = $target;
             foreach ($replacements as $placeholder => $value) {
                 $targetPath = str_replace($placeholder, $value, $targetPath);
@@ -54,8 +47,6 @@ class StubFileGenerator
                 continue;
             }
 
-            
-            
             if ($this->files->exists($targetPath) && ! str_contains($targetPath, 'migrations')) {
                 continue;
             }
@@ -82,7 +73,6 @@ class StubFileGenerator
                 $currentReplacements['{{phpdoc_block}}'] = $this->buildPhpDoc($fields);
                 $currentReplacements['{{phpdoc_properties}}'] = $this->buildPhpDocProperties($fields);
 
-                
                 $relationships = $options['relationships'] ?? '';
                 $relationshipMethods = $this->extractRelationshipMethods($relationships);
                 $relationshipImports = $this->extractRelationshipImports($relationships);
@@ -97,15 +87,11 @@ class StubFileGenerator
             $this->files->ensureDirectoryExists(dirname($targetPath));
             $this->files->put($targetPath, $content);
 
-            
             if (isset($options['tracker']) && $options['tracker'] instanceof ModuleGenerationTracker) {
                 $options['tracker']->trackGeneratedFile($moduleName, $targetPath);
             }
         }
     }
-
-    
-
 
     protected function buildFactoryFields(array $fields): string
     {
@@ -134,9 +120,6 @@ class StubFileGenerator
         return implode("\n", $lines);
     }
 
-    
-
-
     protected function buildMigrationFields(array $fields): string
     {
         $lines = [];
@@ -151,13 +134,13 @@ class StubFileGenerator
                 $on = $field['on'] ?? 'users';
                 $lines[] = "            \$table->foreignId('{$name}')->constrained('{$on}')->references('{$references}');";
             } elseif (isset($field['morphable_name'])) {
-                
+
                 $morphableName = $field['morphable_name'];
                 if (! in_array($morphableName, $addedMorphs)) {
                     $lines[] = "            \$table->morphs('{$morphableName}');";
                     $addedMorphs[] = $morphableName;
                 }
-                
+
             } else {
                 $column = match ($type) {
                     'char' => "char('{$name}', 100)",
@@ -191,22 +174,15 @@ class StubFileGenerator
         return implode("\n", $lines);
     }
 
-    
-
-
-
-
     protected function buildMigrationIndexes(array $fields): string
     {
         $indexes = [];
         $hasForeignKeys = false;
         $indexableFields = [];
 
-        
         $indexes[] = "            \$table->index('created_at');";
         $indexes[] = "            \$table->index('updated_at');";
 
-        
         foreach ($fields as $field) {
             if ($field['type'] === 'foreign') {
                 $hasForeignKeys = true;
@@ -214,34 +190,29 @@ class StubFileGenerator
             }
         }
 
-        
         $commonIndexablePatterns = ['status', 'is_active', 'is_enabled', 'active', 'enabled', 'published', 'visible'];
 
         foreach ($fields as $field) {
             $name = $field['name'];
             $type = $field['type'];
 
-            
             if (in_array($type, ['boolean', 'bool']) && in_array($name, $commonIndexablePatterns)) {
                 $indexes[] = "            \$table->index('{$name}');";
             }
 
-            
             if ($type === 'enum' || in_array($name, ['status', 'type', 'state'])) {
                 $indexes[] = "            \$table->index('{$name}');";
             }
 
-            
             if (in_array($type, ['date', 'datetime', 'timestamp']) &&
                 ! in_array($name, ['created_at', 'updated_at'])) {
                 $indexes[] = "            \$table->index('{$name}');";
             }
         }
 
-        
         if ($hasForeignKeys && $indexableFields !== []) {
             foreach ($indexableFields as $fkField) {
-                
+
                 foreach ($fields as $field) {
                     if (in_array($field['name'], ['status', 'is_active', 'active'])) {
                         $indexes[] = "            \$table->index(['{$fkField}', '{$field['name']}']);";
@@ -254,9 +225,6 @@ class StubFileGenerator
         return implode("\n", $indexes);
     }
 
-    
-
-
     protected function buildResourceFields(array $fields): string
     {
         $lines = [];
@@ -268,9 +236,6 @@ class StubFileGenerator
 
         return implode("\n", $lines);
     }
-
-    
-
 
     protected function buildCasts(array $fields): string
     {
@@ -293,17 +258,11 @@ class StubFileGenerator
         return implode("\n", $lines);
     }
 
-    
-
-
     protected function buildFillableFields(array $fields): string
     {
-        
+
         return implode(', ', array_map(fn ($f) => "'{$f['name']}'", $fields));
     }
-
-    
-
 
     protected function buildPhpDoc(array $fields): string
     {
@@ -330,11 +289,6 @@ class StubFileGenerator
         return implode("\n", $lines);
     }
 
-    
-
-
-
-
     protected function buildPhpDocProperties(array $fields): string
     {
         $lines = [];
@@ -350,16 +304,12 @@ class StubFileGenerator
                 default => 'mixed',
             };
 
-            
             $nullable = in_array($field['type'], ['date', 'datetime', 'timestamp', 'time', 'year']) ? '|null' : '';
             $lines[] = " * @property {$type}{$nullable} \${$field['name']}";
         }
 
         return implode("\n", $lines);
     }
-
-    
-
 
     protected function extractRelationshipMethods(string $relationships): string
     {
@@ -376,12 +326,10 @@ class StubFileGenerator
         foreach ($lines as $line) {
             $line = mb_trim($line);
 
-            
             if (str_starts_with($line, 'use ')) {
                 continue;
             }
 
-            
             if (str_contains($line, 'public function')) {
                 if ($inMethod && $currentMethod) {
                     $methods[] = $currentMethod;
@@ -393,7 +341,6 @@ class StubFileGenerator
                 $currentMethod .= "\n".$line;
                 $braceCount += mb_substr_count($line, '{') - mb_substr_count($line, '}');
 
-                
                 if ($braceCount <= 0) {
                     $methods[] = $currentMethod;
                     $currentMethod = '';
@@ -403,16 +350,12 @@ class StubFileGenerator
             }
         }
 
-        
         if ($inMethod && $currentMethod) {
             $methods[] = $currentMethod;
         }
 
         return implode("\n\n", $methods);
     }
-
-    
-
 
     protected function extractRelationshipImports(string $relationships): string
     {

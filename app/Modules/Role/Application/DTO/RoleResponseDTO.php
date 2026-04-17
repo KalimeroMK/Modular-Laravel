@@ -34,9 +34,6 @@ readonly class RoleResponseDTO
         );
     }
 
-    
-
-
     public function toArray(): array
     {
         return [

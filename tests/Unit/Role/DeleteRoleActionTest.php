@@ -8,12 +8,10 @@ use App\Modules\Role\Application\Actions\DeleteRoleAction;
 use App\Modules\Role\Infrastructure\Repositories\RoleRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class DeleteRoleActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -22,7 +20,7 @@ class DeleteRoleActionTest extends TestCase
 
     public function test_execute_successful_role_deletion(): void
     {
-        
+
         $roleId = 1;
         $role = Mockery::mock(\App\Modules\Role\Infrastructure\Models\Role::class);
 
@@ -30,7 +28,6 @@ class DeleteRoleActionTest extends TestCase
         $roleRepository->shouldReceive('findOrFail')->with($roleId)->andReturn($role);
         $roleRepository->shouldReceive('delete')->with($roleId)->andReturn(true);
 
-        
         $queryBuilder = Mockery::mock();
         $queryBuilder->shouldReceive('where')->with('role_id', $roleId)->andReturnSelf();
         $queryBuilder->shouldReceive('delete')->andReturn(1);
@@ -44,16 +41,14 @@ class DeleteRoleActionTest extends TestCase
 
         $action = new DeleteRoleAction($roleRepository);
 
-        
         $result = $action->execute($roleId);
 
-        
         $this->assertTrue($result);
     }
 
     public function test_execute_role_deletion_failure(): void
     {
-        
+
         $roleId = 1;
         $role = Mockery::mock(\App\Modules\Role\Infrastructure\Models\Role::class);
 
@@ -61,7 +56,6 @@ class DeleteRoleActionTest extends TestCase
         $roleRepository->shouldReceive('findOrFail')->with($roleId)->andReturn($role);
         $roleRepository->shouldReceive('delete')->with($roleId)->andReturn(false);
 
-        
         $queryBuilder = Mockery::mock();
         $queryBuilder->shouldReceive('where')->with('role_id', $roleId)->andReturnSelf();
         $queryBuilder->shouldReceive('delete')->andReturn(1);
@@ -75,10 +69,8 @@ class DeleteRoleActionTest extends TestCase
 
         $action = new DeleteRoleAction($roleRepository);
 
-        
         $result = $action->execute($roleId);
 
-        
         $this->assertFalse($result);
     }
 }

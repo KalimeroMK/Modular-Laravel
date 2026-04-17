@@ -11,28 +11,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Override;
 
 class User extends Authenticatable
 {
-     
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     protected $table = 'users';
-
-    
-
-
-
-
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'two_factor_confirmed_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
 
     protected $hidden = [
         'password',
@@ -52,23 +36,22 @@ class User extends Authenticatable
         'two_factor_confirmed_at',
     ];
 
-    
-
-
-    
     public function getRouteKeyName(): string
     {
         return 'id';
     }
 
-    
-
-
-    
-
-
     protected static function newFactory(): Factory|UserFactory
     {
         return UserFactory::new();
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'two_factor_confirmed_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }

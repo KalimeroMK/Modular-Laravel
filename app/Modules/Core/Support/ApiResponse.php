@@ -9,21 +9,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-
-
-
-
-
 class ApiResponse
 {
-    
-
-
-
-
-
-
-
     public static function success(
         array|object|null $data = null,
         string $message = 'Success',
@@ -35,15 +22,6 @@ class ApiResponse
             'data' => $data,
         ], $statusCode);
     }
-
-    
-
-
-
-
-
-
-
 
     public static function error(
         string $message,
@@ -60,14 +38,6 @@ class ApiResponse
             'errors' => $errors,
         ], $statusCode);
     }
-
-    
-
-
-
-
-
-
 
     public static function paginated(
         LengthAwarePaginator $paginator,
@@ -97,22 +67,10 @@ class ApiResponse
         ]);
     }
 
-    
-
-
-
-
-
-
     public static function created(array|object|null $data = null, string $message = 'Resource created successfully'): JsonResponse
     {
         return self::success($data, $message, 201);
     }
-
-    
-
-
-
 
     public static function noContent(): JsonResponse
     {

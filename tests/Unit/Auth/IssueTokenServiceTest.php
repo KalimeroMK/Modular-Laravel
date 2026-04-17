@@ -9,12 +9,10 @@ use App\Modules\Auth\Application\Services\IssueTokenService;
 use App\Modules\User\Infrastructure\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class IssueTokenServiceTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -23,7 +21,7 @@ class IssueTokenServiceTest extends TestCase
 
     public function test_issue_token_success(): void
     {
-        
+
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
         $user->id = 1;
@@ -41,17 +39,15 @@ class IssueTokenServiceTest extends TestCase
 
         $service = new IssueTokenService();
 
-        
         $result = $service->issueToken($user);
 
-        
         $this->assertInstanceOf(SessionTokenDTO::class, $result);
         $this->assertEquals('test-token', $result->token);
     }
 
     public function test_revoke_token_success(): void
     {
-        
+
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
         $user->id = 1;
@@ -65,16 +61,14 @@ class IssueTokenServiceTest extends TestCase
 
         $service = new IssueTokenService();
 
-        
         $result = $service->revokeToken($user);
 
-        
         $this->assertTrue($result);
     }
 
     public function test_revoke_all_tokens_success(): void
     {
-        
+
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
         $user->id = 1;
@@ -86,10 +80,8 @@ class IssueTokenServiceTest extends TestCase
 
         $service = new IssueTokenService();
 
-        
         $result = $service->revokeAllTokens($user);
 
-        
         $this->assertTrue($result);
     }
 }

@@ -4,17 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Support\Generators;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 
 class EnumGenerator
 {
     public function __construct(protected Filesystem $files) {}
-
-    
-
-
-
 
     public function generate(string $moduleName): void
     {

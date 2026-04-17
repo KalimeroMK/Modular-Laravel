@@ -4,31 +4,7 @@ declare(strict_types=1);
 
 return [
 
-    
-
-
-
-
-
-
-
-
-
-
     'default' => env('FILESYSTEM_DISK', 'local'),
-
-    
-
-
-
-
-
-
-
-
-
-
-
 
     'disks' => [
 
@@ -60,17 +36,6 @@ return [
         ],
 
     ],
-
-    
-
-
-
-
-
-
-
-
-
 
     'links' => [
         public_path('storage') => storage_path('app/public'),

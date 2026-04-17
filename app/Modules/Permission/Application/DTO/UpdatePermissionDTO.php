@@ -11,9 +11,6 @@ readonly class UpdatePermissionDTO
         public ?string $guardName = null,
     ) {}
 
-    
-
-
     public static function fromArray(array $data): self
     {
         return new self(
@@ -21,9 +18,6 @@ readonly class UpdatePermissionDTO
             guardName: $data['guard_name'] ?? null,
         );
     }
-
-    
-
 
     public function toArray(): array
     {

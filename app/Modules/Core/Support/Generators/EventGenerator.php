@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Support\Generators;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
 class EventGenerator
 {
     public function __construct(protected Filesystem $files) {}
-
-    
-
 
     public function generate(string $moduleName): void
     {

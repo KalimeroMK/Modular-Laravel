@@ -10,9 +10,6 @@ class ServiceProviderBinder
 {
     public function __construct(protected Filesystem $files) {}
 
-    
-
-
     public function bind(string $moduleName): void
     {
         $providerPath = app_path("Modules/{$moduleName}/Infrastructure/Providers/{$moduleName}ModuleServiceProvider.php");
@@ -30,13 +27,10 @@ class ServiceProviderBinder
         $content = $this->files->get($bootstrapPath);
         $providerClass = "App\\Modules\\{$moduleName}\\Infrastructure\\Providers\\{$moduleName}ModuleServiceProvider::class";
 
-        
         if (str_contains($content, $providerClass)) {
             return;
         }
 
-        
-        
         $pattern = '/->withProviders\(\[(?<providers>.*?)\]\)\s*->create\(\)/s';
         if (! preg_match($pattern, $content, $matches)) {
             return;
@@ -44,12 +38,10 @@ class ServiceProviderBinder
 
         $providersBlock = $matches['providers'] ?? '';
 
-        
         if (str_contains($providersBlock, $providerClass)) {
             return;
         }
 
-        
         $indent = '        ';
         if (preg_match_all('/\n(\s*)App\\\\Modules\\\\[^,\n]+::class/', $providersBlock, $indentMatches)) {
             $lastIndent = end($indentMatches[1]);
@@ -58,11 +50,11 @@ class ServiceProviderBinder
             }
         }
 
-        $trimmedProviders = trim($providersBlock);
+        $trimmedProviders = mb_trim($providersBlock);
         if ($trimmedProviders === '') {
             $newProviders = "\n{$indent}{$providerClass},\n    ";
         } else {
-            $newProviders = rtrim($providersBlock)."\n{$indent}{$providerClass},\n    ";
+            $newProviders = mb_rtrim($providersBlock)."\n{$indent}{$providerClass},\n    ";
         }
 
         $newContent = str_replace($providersBlock, $newProviders, $content);

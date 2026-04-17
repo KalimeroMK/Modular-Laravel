@@ -12,9 +12,6 @@ readonly class SessionTokenDTO
         public ?int $expiresIn = null,
     ) {}
 
-    
-
-
     public function toArray(): array
     {
         return [

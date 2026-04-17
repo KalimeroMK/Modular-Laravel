@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Override;
 
 class CreatePermissionRequest extends FormRequest
 {
@@ -13,9 +12,6 @@ class CreatePermissionRequest extends FormRequest
     {
         return true;
     }
-
-    
-
 
     public function rules(): array
     {
@@ -25,10 +21,6 @@ class CreatePermissionRequest extends FormRequest
         ];
     }
 
-    
-
-
-    
     public function messages(): array
     {
         return [

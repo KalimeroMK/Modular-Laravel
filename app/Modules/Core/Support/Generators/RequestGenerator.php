@@ -4,17 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Support\Generators;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 
 class RequestGenerator
 {
     public function __construct(protected Filesystem $files) {}
-
-    
-
-
-
 
     public function generate(string $moduleName, array $fields): void
     {
@@ -51,13 +45,11 @@ class RequestGenerator
                     default => 'string'
                 };
 
-                
                 $required = $type === 'Update' ? 'sometimes' : 'required';
 
                 return "            '{$name}' => ['{$required}', '{$rule}'],";
             }, $fields)));
 
-            
             $messages = implode("\n", array_filter(array_map(function ($field) {
                 if ($field['name'] === 'id') {
                     return null;

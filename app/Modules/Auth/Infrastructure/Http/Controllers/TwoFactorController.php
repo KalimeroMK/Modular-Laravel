@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth\Infrastructure\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Modules\Auth\Application\Actions\TwoFactor\DisableAction;
 use App\Modules\Auth\Application\Actions\TwoFactor\GenerateRecoveryCodesAction;
 use App\Modules\Auth\Application\Actions\TwoFactor\GetStatusAction;
@@ -12,7 +13,6 @@ use App\Modules\Auth\Application\Actions\TwoFactor\VerifyAction;
 use App\Modules\Auth\Application\DTO\TwoFactor\VerificationDTO;
 use App\Modules\Auth\Infrastructure\Http\Requests\TwoFactorSetupRequest;
 use App\Modules\Auth\Infrastructure\Http\Requests\TwoFactorVerifyRequest;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

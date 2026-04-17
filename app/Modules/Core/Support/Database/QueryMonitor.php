@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Log;
 
 class QueryMonitor
 {
-    
-
-
     protected array $queries = [];
 
     protected float $totalTime = 0;
@@ -57,13 +54,7 @@ class QueryMonitor
         });
     }
 
-    public function stopMonitoring(): void
-    {
-        
-    }
-
-    
-
+    public function stopMonitoring(): void {}
 
     public function getQueries(): array
     {
@@ -84,9 +75,6 @@ class QueryMonitor
     {
         return $this->queryCount > 0 ? $this->totalTime / $this->queryCount : 0;
     }
-
-    
-
 
     public function getSlowQueries(float $threshold = 100): array
     {
@@ -112,9 +100,6 @@ class QueryMonitor
         $this->totalTime = 0;
         $this->queryCount = 0;
     }
-
-    
-
 
     public function getReport(): array
     {

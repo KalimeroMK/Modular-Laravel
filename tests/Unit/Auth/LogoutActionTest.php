@@ -9,12 +9,10 @@ use App\Modules\Auth\Application\Services\IssueTokenServiceInterface;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Http\Request;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class LogoutActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -23,7 +21,7 @@ class LogoutActionTest extends TestCase
 
     public function test_execute_successful_logout(): void
     {
-        
+
         $user = Mockery::mock(User::class);
         $user->shouldReceive('setAttribute')->andReturnSelf();
         $user->id = 1;
@@ -39,16 +37,14 @@ class LogoutActionTest extends TestCase
 
         $action = new LogoutAction($tokenService);
 
-        
         $action->execute($request);
 
-        
         $this->assertTrue(true);
     }
 
     public function test_execute_logout_failure(): void
     {
-        
+
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('user')
             ->andReturn(null);
@@ -57,10 +53,8 @@ class LogoutActionTest extends TestCase
 
         $action = new LogoutAction($tokenService);
 
-        
         $action->execute($request);
 
-        
         $this->assertTrue(true);
     }
 }

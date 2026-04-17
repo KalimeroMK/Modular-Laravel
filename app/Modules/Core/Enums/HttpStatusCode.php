@@ -16,32 +16,20 @@ enum HttpStatusCode: int
     case UNPROCESSABLE_ENTITY = 422;
     case INTERNAL_SERVER_ERROR = 500;
 
-    
-
-
     public function isSuccess(): bool
     {
         return $this->value >= 200 && $this->value < 300;
     }
-
-    
-
 
     public function isClientError(): bool
     {
         return $this->value >= 400 && $this->value < 500;
     }
 
-    
-
-
     public function isServerError(): bool
     {
         return $this->value >= 500 && $this->value < 600;
     }
-
-    
-
 
     public function text(): string
     {

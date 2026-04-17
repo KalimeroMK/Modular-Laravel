@@ -11,9 +11,6 @@ class YamlModuleParser
 {
     public function __construct(protected string $file) {}
 
-    
-
-
     public function parse(): array
     {
         $data = Yaml::parseFile($this->file);
@@ -30,7 +27,7 @@ class YamlModuleParser
                 if (is_string($fieldType)) {
                     $fields[] = "{$fieldName}:{$fieldType}";
                 } elseif (is_array($fieldType)) {
-                    
+
                     foreach ($fieldType as $subFieldName => $subFieldType) {
                         $fields[] = "{$subFieldName}:{$subFieldType}";
                     }
@@ -39,7 +36,7 @@ class YamlModuleParser
 
             $relations = [];
             foreach ($config['relations'] ?? [] as $relationKey => $relationConfig) {
-                
+
                 if (is_string($relationConfig) && str_contains($relationConfig, ':')) {
                     $parts = explode(':', $relationConfig);
                     if (count($parts) >= 2) {
@@ -55,7 +52,7 @@ class YamlModuleParser
                         $relations[] = "{$relationKey}:{$relationConfig}";
                     }
                 } elseif (is_string($relationConfig)) {
-                    
+
                     if ($relationConfig === 'morphTo') {
                         $relations[] = "{$relationKey}:morphTo";
                     } elseif ($relationKey === 'morphTo') {
@@ -65,22 +62,22 @@ class YamlModuleParser
                     }
                 } elseif (is_array($relationConfig)) {
                     if (isset($relationConfig['name'])) {
-                        
+
                         $relations[] = "{$relationConfig['name']}:{$relationKey}";
                     } elseif (is_array($relationConfig[0] ?? null)) {
-                        
+
                         foreach ($relationConfig as $rel) {
                             $model = $rel['model'] ?? '';
                             $morphName = $rel['morph_name'] ?? $rel['name'] ?? '';
                             $relations[] = $morphName ? "{$model}:{$relationKey}:{$model}:{$morphName}" : "{$model}:{$relationKey}";
                         }
                     } elseif (is_string($relationConfig[0] ?? null)) {
-                        
+
                         foreach ($relationConfig as $model) {
                             $relations[] = "{$model}:{$relationKey}";
                         }
                     } else {
-                        
+
                         foreach ($relationConfig as $subRelationName => $subRelationType) {
                             $relations[] = "{$subRelationName}:{$subRelationType}";
                         }

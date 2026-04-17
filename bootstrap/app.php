@@ -17,18 +17,13 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/api/health',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
-        
-        
-    })
+    ->withMiddleware(function (Middleware $middleware): void {})
     ->withExceptions(function (Exceptions $exceptions): void {
-        
+
         $exceptions->render(fn (BaseException $e) => $e->render());
 
-        
         $exceptions->map(fn (ModelNotFoundException $e) => new NotFoundHttpException('Resource not found', $e));
 
-        
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
@@ -39,10 +34,9 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 404);
             }
 
-            return null; 
+            return null;
         });
 
-        
         $exceptions->render(function (LaravelValidationException $e, Request $request) {
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
@@ -53,7 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 422);
             }
 
-            return null; 
+            return null;
         });
     })
     ->withProviders([

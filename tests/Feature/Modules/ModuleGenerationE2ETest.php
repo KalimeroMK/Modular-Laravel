@@ -6,7 +6,6 @@ namespace Tests\Feature\Modules;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
-use Override;
 use Tests\TestCase;
 
 class ModuleGenerationE2ETest extends TestCase
@@ -64,7 +63,6 @@ class ModuleGenerationE2ETest extends TestCase
 
         $this->assertEquals(0, $exitCode);
 
-        
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Models/{$this->testModuleName}.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Repositories/{$this->testModuleName}RepositoryInterface.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Application/Actions/Create{$this->testModuleName}Action.php"));
@@ -85,7 +83,6 @@ class ModuleGenerationE2ETest extends TestCase
 
         $this->assertEquals(0, $exitCode);
 
-        
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Observers/{$this->testModuleName}Observer.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Policies/{$this->testModuleName}Policy.php"));
         $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Enums/{$this->testModuleName}Status.php"));
@@ -93,7 +90,7 @@ class ModuleGenerationE2ETest extends TestCase
 
     public function test_modules_build_from_yaml_command(): void
     {
-        
+
         $yamlContent = <<<'YAML'
 modules:
   E2ETestModule:
@@ -119,10 +116,9 @@ YAML;
 
             $this->assertEquals(0, $exitCode);
 
-            
             $this->assertFileExists(app_path("Modules/{$this->testModuleName}/Infrastructure/Models/{$this->testModuleName}.php"));
         } finally {
-            
+
             if (file_exists($yamlPath)) {
                 unlink($yamlPath);
             }

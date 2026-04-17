@@ -11,10 +11,6 @@ class FeatureTestGenerator
 {
     public function __construct(protected Filesystem $files) {}
 
-    
-
-
-
     public function generate(string $moduleName, array $fields, array $options = []): void
     {
         $path = base_path("tests/Feature/Modules/{$moduleName}/{$moduleName}CrudTest.php");
@@ -46,16 +42,13 @@ class FeatureTestGenerator
         $this->files->put($path, $content);
     }
 
-    
-
-
     protected function buildTestData(array $fields, bool $forUpdate = false): string
     {
         $lines = [];
 
         foreach ($fields as $field) {
             if ($field['type'] === 'foreign') {
-                continue; 
+                continue;
             }
 
             $fieldName = $field['name'];
@@ -74,7 +67,6 @@ class FeatureTestGenerator
                 default => "'{$prefix} {$fieldName}'",
             };
 
-            
             if (Str::contains($fieldName, 'email')) {
                 $value = $forUpdate ? "'updated@example.com'" : "'test@example.com'";
             } elseif (Str::contains($fieldName, 'name')) {
@@ -85,15 +77,11 @@ class FeatureTestGenerator
                 $value = "'api'";
             }
 
-            
             $lines[] = "            '{$fieldName}' => {$value},";
         }
 
         return implode("\n", $lines);
     }
-
-    
-
 
     protected function buildRelatedFactories(array $fields): string
     {
@@ -114,16 +102,12 @@ class FeatureTestGenerator
         return "[\n".implode("\n", $lines)."\n        ]";
     }
 
-    
-
-
     protected function getModelNameFromForeign(array $field): string
     {
         if (isset($field['on'])) {
             return Str::studly(Str::singular($field['on']));
         }
 
-        
         $fieldName = $field['name'];
         if (Str::endsWith($fieldName, '_id')) {
             return Str::studly(Str::before($fieldName, '_id'));
@@ -134,19 +118,17 @@ class FeatureTestGenerator
 
     protected function getModelPath(string $modelName): string
     {
-        
+
         $standardModels = ['User', 'Role', 'Permission'];
         if (in_array($modelName, $standardModels)) {
             return "\\App\\Modules\\{$modelName}\\Infrastructure\\Models\\{$modelName}";
         }
 
-        
         $modulePath = app_path("Modules/{$modelName}/Infrastructure/Models/{$modelName}.php");
         if (file_exists($modulePath)) {
             return "\\App\\Modules\\{$modelName}\\Infrastructure\\Models\\{$modelName}";
         }
 
-        
         return "\\App\\Models\\{$modelName}";
     }
 }

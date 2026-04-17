@@ -18,9 +18,6 @@ class RegisterUserAction
         protected IssueTokenServiceInterface $tokenService,
     ) {}
 
-    
-
-
     public function execute(RegisterUserDTO $dto): array
     {
         $userData = [
@@ -29,7 +26,6 @@ class RegisterUserAction
             'password' => Hash::make($dto->password),
         ];
 
-         
         $user = $this->authRepository->create($userData);
 
         if ($user === null) {

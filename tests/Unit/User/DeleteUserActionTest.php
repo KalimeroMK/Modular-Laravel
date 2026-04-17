@@ -7,12 +7,10 @@ namespace Tests\Unit\User;
 use App\Modules\User\Application\Actions\DeleteUserAction;
 use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class DeleteUserActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -21,7 +19,7 @@ class DeleteUserActionTest extends TestCase
 
     public function test_execute_successful_user_deletion(): void
     {
-        
+
         $userId = 1;
         $user = Mockery::mock(\App\Modules\User\Infrastructure\Models\User::class);
 
@@ -33,16 +31,14 @@ class DeleteUserActionTest extends TestCase
 
         $action = new DeleteUserAction($userRepository);
 
-        
         $result = $action->execute($userId);
 
-        
         $this->assertTrue($result);
     }
 
     public function test_execute_user_deletion_failure(): void
     {
-        
+
         $userId = 1;
         $user = Mockery::mock(\App\Modules\User\Infrastructure\Models\User::class);
 
@@ -54,10 +50,8 @@ class DeleteUserActionTest extends TestCase
 
         $action = new DeleteUserAction($userRepository);
 
-        
         $result = $action->execute($userId);
 
-        
         $this->assertFalse($result);
     }
 }

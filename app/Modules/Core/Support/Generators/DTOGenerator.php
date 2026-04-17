@@ -4,17 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Support\Generators;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 
 class DTOGenerator
 {
     public function __construct(protected Filesystem $files) {}
-
-    
-
-
-
 
     public function generate(string $moduleName, array $fields): void
     {
@@ -48,19 +42,10 @@ class DTOGenerator
         $this->files->put($path, $content);
     }
 
-    
-
-
-
-
-
-
-
     public function generateWithTracking(string $moduleName, array $fields, array $options): void
     {
         $this->generate($moduleName, $fields);
 
-        
         if (isset($options['tracker']) && $options['tracker'] instanceof ModuleGenerationTracker) {
             $path = app_path("Modules/{$moduleName}/Application/DTO/{$moduleName}DTO.php");
             $options['tracker']->trackGeneratedFile($moduleName, $path);

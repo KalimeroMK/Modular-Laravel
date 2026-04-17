@@ -10,20 +10,9 @@ use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Override;
-
-
-
-
-
-
-
-
-
 
 class Role extends Model
 {
-     
     use HasFactory;
 
     protected $attributes = [
@@ -42,37 +31,20 @@ class Role extends Model
         return RoleFactory::new();
     }
 
-    
-
-
-    
     public function getRouteKeyName(): string
     {
         return 'id';
     }
-
-    
-
-
-
 
     public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class, 'role_has_permissions', 'role_id', 'permission_id');
     }
 
-    
-
-
-
-
     public function users(): BelongsToMany
     {
         return $this->morphedByMany(User::class, 'model', 'model_has_roles', 'role_id', 'model_id');
     }
-
-    
-
 
     public function givePermissionTo(Permission|string $permission): void
     {
@@ -83,9 +55,6 @@ class Role extends Model
         $this->permissions()->syncWithoutDetaching([$permission->id]);
     }
 
-    
-
-
     public function revokePermissionTo(Permission|string $permission): void
     {
         if (is_string($permission)) {
@@ -94,9 +63,6 @@ class Role extends Model
 
         $this->permissions()->detach($permission->id);
     }
-
-    
-
 
     public function hasPermissionTo(Permission|string $permission): bool
     {

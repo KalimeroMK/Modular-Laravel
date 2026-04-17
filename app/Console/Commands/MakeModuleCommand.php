@@ -25,9 +25,6 @@ class MakeModuleCommand extends Command
 
     protected $description = 'Create a new API module with predefined structure and files';
 
-    
-
-
     public function handle(): int
     {
         $nameArg = $this->argument('name');
@@ -35,17 +32,12 @@ class MakeModuleCommand extends Command
             || $this->option('observers') || $this->option('policies') || $this->option('events')
             || $this->option('enum') || $this->option('notifications');
 
-        
         if ($nameArg || $hasOptions) {
             return $this->runNonInteractive($nameArg);
         }
 
-        
         return $this->runInteractive();
     }
-
-    
-
 
     protected function runInteractive(): int
     {
@@ -88,12 +80,11 @@ class MakeModuleCommand extends Command
             ->submit();
 
         $name = Str::studly($responses['name']);
-         
+
         $modelFields = $this->parseTextareaFields($responses['model'] ?? '');
         $relations = $this->parseTextareaFields($responses['relations'] ?? '');
         $features = $responses['features'] ?? [];
 
-         
         $options = [
             'model' => $this->fieldsToString($modelFields),
             'relations' => implode(',', $relations),
@@ -109,7 +100,6 @@ class MakeModuleCommand extends Command
         $options['table'] = Str::plural(Str::snake($name));
         $options['relationships'] = $this->buildRelationships($options['relations']);
 
-         
         $fields = $modelFields;
 
         try {
@@ -127,14 +117,10 @@ class MakeModuleCommand extends Command
         }
     }
 
-    
-
-
     protected function runNonInteractive(?string $nameArg): int
     {
         $name = Str::studly($nameArg ?? 'Module');
 
-         
         $options = [
             'model' => $this->option('model') ?? '',
             'relations' => $this->option('relations') ?? '',
@@ -166,11 +152,6 @@ class MakeModuleCommand extends Command
         }
     }
 
-    
-
-
-
-
     protected function parseTextareaFields(string $input): array
     {
         if ($input === '' || $input === '0') {
@@ -191,20 +172,10 @@ class MakeModuleCommand extends Command
         return $fields;
     }
 
-    
-
-
-
-
     protected function fieldsToString(array $fields): string
     {
         return implode(',', array_map(fn ($field) => "{$field['name']}:{$field['type']}", $fields));
     }
-
-    
-
-
-
 
     protected function parseFields(string $model): array
     {
@@ -212,7 +183,6 @@ class MakeModuleCommand extends Command
             return [];
         }
 
-         
         $result = array_map(function ($field) {
             [$name, $type] = explode(':', $field);
 
@@ -239,10 +209,8 @@ class MakeModuleCommand extends Command
             $relType = mb_trim($parts[1]);
             $relModel = $parts[2] ?? ucfirst($relName);
 
-            
             $imports[] = "use App\\Modules\\{$relModel}\\Infrastructure\\Models\\{$relModel};";
 
-            
             if (in_array($relType, ['morphTo', 'morphMany', 'morphOne', 'morphToMany'])) {
                 $lines[] = $this->buildPolymorphicRelationship($relName, $relType, $relModel, $parts);
             } else {
@@ -250,16 +218,10 @@ class MakeModuleCommand extends Command
             }
         }
 
-        
         $imports = array_unique($imports);
 
         return implode("\n", $imports)."\n\n".implode("\n", $lines);
     }
-
-    
-
-
-
 
     protected function buildPolymorphicRelationship(string $relName, string $relType, string $relModel, array $parts): string
     {
@@ -283,7 +245,7 @@ class MakeModuleCommand extends Command
                 return "    public function {$relName}()\n    {\n        return \$this->morphToMany({$relModel}::class, '{$morphName}');\n    }";
 
             default:
-                
+
                 return "    public function {$relName}()\n    {\n        return \$this->{$relType}({$relModel}::class);\n    }";
         }
     }

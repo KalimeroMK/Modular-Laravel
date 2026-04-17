@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Support\Generators;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-
 class ModuleGenerator
 {
     public function __construct(
@@ -26,12 +24,6 @@ class ModuleGenerator
         protected EnumGenerator $enumGenerator,
         protected ModuleConfigUpdater $configUpdater,
     ) {}
-
-    
-
-
-
-
 
     public function generate(string $moduleName, array $fields, array $options): void
     {
@@ -84,19 +76,12 @@ class ModuleGenerator
         $this->testGenerator->generate($moduleName, $fields, $options);
         $this->trackFile($tracker, $moduleName, "../../../tests/Feature/Modules/{$moduleName}/{$moduleName}CrudTest.php");
 
-        
-        
         $this->serviceProviderBinder->bind($moduleName);
 
-        
         $this->configUpdater->addModule($moduleName);
 
-        
         $this->formatGeneratedCode($moduleName);
     }
-
-    
-
 
     protected function trackFile(?ModuleGenerationTracker $tracker, string $moduleName, string $relativePath): void
     {
@@ -113,9 +98,6 @@ class ModuleGenerator
         }
     }
 
-    
-
-
     protected function trackExceptionFiles(?ModuleGenerationTracker $tracker, string $moduleName): void
     {
         $exceptions = ['CreateException', 'UpdateException', 'DeleteException', 'IndexException', 'StoreException', 'DestroyException', 'NotFoundException'];
@@ -123,9 +105,6 @@ class ModuleGenerator
             $this->trackFile($tracker, $moduleName, "Application/Exceptions/{$exception}.php");
         }
     }
-
-    
-
 
     protected function trackActionFiles(?ModuleGenerationTracker $tracker, string $moduleName): void
     {
@@ -135,9 +114,6 @@ class ModuleGenerator
         }
     }
 
-    
-
-
     protected function trackEventFiles(?ModuleGenerationTracker $tracker, string $moduleName): void
     {
         $events = ['Created', 'Updated', 'Deleted'];
@@ -145,9 +121,6 @@ class ModuleGenerator
             $this->trackFile($tracker, $moduleName, "Application/Events/{$moduleName}{$event}.php");
         }
     }
-
-    
-
 
     protected function trackListenerFiles(?ModuleGenerationTracker $tracker, string $moduleName): void
     {
@@ -157,9 +130,6 @@ class ModuleGenerator
         }
     }
 
-    
-
-
     protected function trackNotificationFiles(?ModuleGenerationTracker $tracker, string $moduleName): void
     {
         $notifications = ['Created', 'Updated', 'Deleted'];
@@ -168,26 +138,20 @@ class ModuleGenerator
         }
     }
 
-    
-
-
     protected function formatGeneratedCode(string $moduleName): void
     {
         $modulePath = app_path("Modules/{$moduleName}");
         $testPath = base_path("tests/Feature/Modules/{$moduleName}");
 
-        
         $pintPath = base_path('vendor/bin/pint');
         if (! file_exists($pintPath)) {
             return;
         }
 
-        
         if (is_dir($modulePath)) {
             exec('cd '.base_path()." && {$pintPath} {$modulePath} --quiet 2>&1", $output, $returnCode);
         }
 
-        
         if (is_dir($testPath)) {
             exec('cd '.base_path()." && {$pintPath} {$testPath} --quiet 2>&1", $output, $returnCode);
         }

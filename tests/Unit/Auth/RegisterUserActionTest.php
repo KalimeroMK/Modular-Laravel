@@ -12,12 +12,10 @@ use App\Modules\User\Infrastructure\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class RegisterUserActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -26,7 +24,7 @@ class RegisterUserActionTest extends TestCase
 
     public function test_execute_successful_registration(): void
     {
-        
+
         $name = 'Test User';
         $email = 'test@example.com';
         $password = 'password123';
@@ -56,10 +54,8 @@ class RegisterUserActionTest extends TestCase
 
         $action = new RegisterUserAction($authRepository, $tokenService);
 
-        
         $result = $action->execute($dto);
 
-        
         $this->assertIsArray($result);
         $this->assertArrayHasKey('user', $result);
         $this->assertArrayHasKey('token', $result);
@@ -68,7 +64,7 @@ class RegisterUserActionTest extends TestCase
 
     public function test_execute_registration_failure(): void
     {
-        
+
         $name = 'Test User';
         $email = 'test@example.com';
         $password = 'password123';
@@ -87,7 +83,6 @@ class RegisterUserActionTest extends TestCase
 
         $action = new RegisterUserAction($authRepository, $tokenService);
 
-        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to create user');
         $action->execute($dto);

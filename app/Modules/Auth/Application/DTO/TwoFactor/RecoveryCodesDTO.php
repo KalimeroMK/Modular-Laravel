@@ -6,15 +6,9 @@ namespace App\Modules\Auth\Application\DTO\TwoFactor;
 
 class RecoveryCodesDTO
 {
-    
-
-
     public function __construct(
         public array $codes,
     ) {}
-
-    
-
 
     public static function fromArray(array $data): self
     {
@@ -22,9 +16,6 @@ class RecoveryCodesDTO
             codes: $data['codes'],
         );
     }
-
-    
-
 
     public function toArray(): array
     {

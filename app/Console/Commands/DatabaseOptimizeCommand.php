@@ -10,21 +10,11 @@ use Illuminate\Console\Command;
 
 class DatabaseOptimizeCommand extends Command
 {
-    
-
-
-
-
     protected $signature = 'db:optimize 
                             {--analyze : Analyze all tables}
                             {--slow-queries : Show slow queries}
                             {--connection-info : Show connection information}
                             {--monitor : Monitor query performance for 30 seconds}';
-
-    
-
-
-
 
     protected $description = 'Optimize database performance and analyze queries';
 
@@ -32,9 +22,6 @@ class DatabaseOptimizeCommand extends Command
     {
         parent::__construct();
     }
-
-    
-
 
     public function handle(): int
     {

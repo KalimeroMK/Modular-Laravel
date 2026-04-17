@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\User\Infrastructure\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Override;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -13,9 +12,6 @@ class UpdateUserRequest extends FormRequest
     {
         return true;
     }
-
-    
-
 
     public function rules(): array
     {
@@ -28,10 +24,6 @@ class UpdateUserRequest extends FormRequest
         ];
     }
 
-    
-
-
-    
     public function messages(): array
     {
         return [

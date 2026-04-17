@@ -4,17 +4,6 @@ declare(strict_types=1);
 
 return [
 
-    
-
-
-
-
-
-
-
-
-
-
     'accepted' => 'The :attribute must be accepted.',
     'accepted_if' => 'The :attribute must be accepted when :other is :value.',
     'active_url' => 'The :attribute is not a valid URL.',
@@ -145,33 +134,11 @@ return [
     'url' => 'The :attribute must be a valid URL.',
     'uuid' => 'The :attribute must be a valid UUID.',
 
-    
-
-
-
-
-
-
-
-
-
-
     'custom' => [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
     ],
-
-    
-
-
-
-
-
-
-
-
-
 
     'attributes' => [],
 

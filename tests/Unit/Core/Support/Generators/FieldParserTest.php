@@ -112,10 +112,8 @@ class FieldParserTest extends TestCase
 
         $this->assertCount(5, $result);
 
-        
         $this->assertEquals(['name' => 'name', 'type' => 'string'], $result[0]);
 
-        
         $this->assertEquals([
             'name' => 'user_id',
             'type' => 'foreign',
@@ -123,7 +121,6 @@ class FieldParserTest extends TestCase
             'on' => 'users',
         ], $result[1]);
 
-        
         $this->assertEquals([
             'name' => 'owner_type',
             'type' => 'string',
@@ -136,7 +133,6 @@ class FieldParserTest extends TestCase
             'morphable_name' => 'owner',
         ], $result[3]);
 
-        
         $this->assertEquals(['name' => 'active', 'type' => 'bool'], $result[4]);
     }
 
@@ -201,13 +197,11 @@ class FieldParserTest extends TestCase
 
         $this->assertCount(4, $result);
 
-        
         $this->assertEquals('owner_type', $result[0]['name']);
         $this->assertEquals('owner', $result[0]['morphable_name']);
         $this->assertEquals('owner_id', $result[1]['name']);
         $this->assertEquals('owner', $result[1]['morphable_name']);
 
-        
         $this->assertEquals('target_type', $result[2]['name']);
         $this->assertEquals('target', $result[2]['morphable_name']);
         $this->assertEquals('target_id', $result[3]['name']);

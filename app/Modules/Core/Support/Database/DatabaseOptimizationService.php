@@ -15,17 +15,10 @@ class DatabaseOptimizationService
 {
     public function __construct(protected QueryMonitor $queryMonitor) {}
 
-    
-
-
-
-
-
-
     public function optimizeQuery(Builder $query, array $indexes = []): Builder
     {
         if ($indexes !== []) {
-            
+
             $index = $indexes[0];
             if ($index !== '') {
                 $query->useIndex($index);
@@ -35,18 +28,10 @@ class DatabaseOptimizationService
         return $query;
     }
 
-    
-
-
-
-
     public function cacheQuery(string $key, callable $callback, int $ttl = 3600): mixed
     {
         return Cache::remember($key, $ttl, Closure::fromCallable($callback));
     }
-
-    
-
 
     public function invalidateCachePattern(string $pattern): void
     {
@@ -58,19 +43,13 @@ class DatabaseOptimizationService
                     $store->getRedis()->del($keys);
                 }
             } else {
-                
+
                 Cache::forget($pattern);
             }
         } catch (Exception) {
-            
+
         }
     }
-
-    
-
-
-
-
 
     public function optimizePagination(Builder $query, int $perPage = 15, ?string $cursor = null): array
     {
@@ -85,7 +64,6 @@ class DatabaseOptimizationService
             $results->pop();
         }
 
-         
         $lastModel = $results->last();
         $nextCursor = $hasMore && $lastModel !== null ? (int) ($lastModel->id ?? $lastModel->getKey() ?? 0) : null;
 
@@ -95,12 +73,6 @@ class DatabaseOptimizationService
             'has_more' => $hasMore,
         ];
     }
-
-    
-
-
-
-
 
     public function batchInsert(Model $model, array $data, int $chunkSize = 1000): bool
     {
@@ -113,11 +85,6 @@ class DatabaseOptimizationService
 
         return true;
     }
-
-    
-
-
-
 
     public function batchUpdate(Model $model, array $updates, string $key = 'id'): bool
     {
@@ -144,15 +111,10 @@ class DatabaseOptimizationService
             $sql .= "{$column} = CASE {$key} ".implode(' ', $caseStatements).' END, ';
         }
 
-        $sql = rtrim($sql, ', ')." WHERE {$key} IN ({$idsString})";
+        $sql = mb_rtrim($sql, ', ')." WHERE {$key} IN ({$idsString})";
 
         return DB::update($sql, $bindings) > 0;
     }
-
-    
-
-
-
 
     public function analyzeTable(string $table): array
     {
@@ -161,7 +123,7 @@ class DatabaseOptimizationService
             $driver = $connection->getDriverName();
 
             if ($driver === 'sqlite') {
-                
+
                 return [
                     'table' => $table,
                     'status' => 'OK',
@@ -188,11 +150,6 @@ class DatabaseOptimizationService
         }
     }
 
-    
-
-
-
-
     public function getTableSize(string $table): array
     {
         try {
@@ -216,16 +173,11 @@ class DatabaseOptimizationService
                 ];
             }
         } catch (Exception) {
-            
+
         }
 
         return ['Size_MB' => 0, 'Data_MB' => 0, 'Index_MB' => 0];
     }
-
-    
-
-
-
 
     public function getSlowQueries(int $limit = 10): array
     {
@@ -241,18 +193,10 @@ class DatabaseOptimizationService
         ', [$limit]);
     }
 
-    
-
-
     public function startMonitoring(): void
     {
         $this->queryMonitor->enable();
     }
-
-    
-
-
-
 
     public function stopMonitoring(): array
     {
@@ -260,11 +204,6 @@ class DatabaseOptimizationService
 
         return $this->queryMonitor->getReport();
     }
-
-    
-
-
-
 
     public function getConnectionInfo(): array
     {

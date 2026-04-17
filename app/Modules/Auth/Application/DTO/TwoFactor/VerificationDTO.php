@@ -11,9 +11,6 @@ class VerificationDTO
         public ?string $recoveryCode = null,
     ) {}
 
-    
-
-
     public static function fromArray(array $data): self
     {
         return new self(
@@ -21,9 +18,6 @@ class VerificationDTO
             recoveryCode: $data['recovery_code'] ?? null,
         );
     }
-
-    
-
 
     public function toArray(): array
     {

@@ -6,7 +6,6 @@ namespace Tests\Unit\Core\Support\Generators;
 
 use App\Modules\Core\Support\Generators\StubFileGenerator;
 use Illuminate\Filesystem\Filesystem;
-use Override;
 use Tests\TestCase;
 
 class StubFileGeneratorTest extends TestCase
@@ -15,17 +14,15 @@ class StubFileGeneratorTest extends TestCase
 
     private array $testModules = ['TestModule', 'Product'];
 
-    
     protected function setUp(): void
     {
         parent::setUp();
         $this->files = new Filesystem;
     }
 
-    
     protected function tearDown(): void
     {
-        
+
         foreach ($this->testModules as $moduleName) {
             $modulePath = app_path("Modules/{$moduleName}");
             if ($this->files->exists($modulePath)) {
@@ -48,7 +45,6 @@ class StubFileGeneratorTest extends TestCase
             'table' => 'test_modules',
         ];
 
-        
         $generator->generate('TestModule', $fields, $options);
 
         $interfacePath = app_path('Modules/TestModule/Infrastructure/Repositories/TestModuleRepositoryInterface.php');

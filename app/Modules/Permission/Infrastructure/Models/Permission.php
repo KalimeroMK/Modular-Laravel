@@ -10,20 +10,9 @@ use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Carbon;
-use Override;
-
-
-
-
-
-
-
-
 
 class Permission extends Model
 {
-     
     use HasFactory;
 
     protected $table = 'permissions';
@@ -42,29 +31,15 @@ class Permission extends Model
         return PermissionFactory::new();
     }
 
-    
-
-
-    
     public function getRouteKeyName(): string
     {
         return 'id';
     }
 
-    
-
-
-
-
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_has_permissions', 'permission_id', 'role_id');
     }
-
-    
-
-
-
 
     public function users(): BelongsToMany
     {

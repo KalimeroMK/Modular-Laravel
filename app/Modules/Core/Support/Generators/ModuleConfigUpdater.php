@@ -13,9 +13,6 @@ class ModuleConfigUpdater
         $this->configPath = config_path('modules.php');
     }
 
-    
-
-
     public function addModule(string $moduleName): void
     {
         if (! file_exists($this->configPath)) {
@@ -24,20 +21,15 @@ class ModuleConfigUpdater
 
         $content = file_get_contents($this->configPath);
 
-        
         if ($this->moduleExists($content, $moduleName)) {
             return;
         }
 
-        
         $newModuleEntry = $this->buildModuleEntry($moduleName);
         $content = $this->insertModuleEntry($content, $newModuleEntry);
 
         file_put_contents($this->configPath, $content);
     }
-
-    
-
 
     public function removeModule(string $moduleName): void
     {
@@ -47,44 +39,34 @@ class ModuleConfigUpdater
 
         $content = file_get_contents($this->configPath);
 
-        
         $pattern = "/\s+'{$moduleName}' => \[\s+.*?\s+\],\n/s";
         $content = preg_replace($pattern, '', $content);
 
         file_put_contents($this->configPath, $content);
     }
 
-    
-
-
     protected function moduleExists(string $content, string $moduleName): bool
     {
         return str_contains($content, "'{$moduleName}' =>");
     }
-
-    
-
 
     protected function buildModuleEntry(string $moduleName): string
     {
         return "        '{$moduleName}' => [\n            'enabled' => true,\n        ],";
     }
 
-    
-
-
     protected function insertModuleEntry(string $content, string $newEntry): string
     {
-        $start = strpos($content, "    'specific' => [");
+        $start = mb_strpos($content, "    'specific' => [");
         if ($start === false) {
             return $content;
         }
 
-        $end = strpos($content, "\n    ],", $start);
+        $end = mb_strpos($content, "\n    ],", $start);
         if ($end === false) {
             return $content;
         }
 
-        return substr($content, 0, $end)."\n".$newEntry.substr($content, $end);
+        return mb_substr($content, 0, $end)."\n".$newEntry.mb_substr($content, $end);
     }
 }

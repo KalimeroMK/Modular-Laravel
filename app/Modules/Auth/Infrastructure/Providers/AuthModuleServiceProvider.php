@@ -11,41 +11,32 @@ use App\Modules\Auth\Application\Services\TwoFactor\ServiceInterface;
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepository;
 use App\Modules\Auth\Infrastructure\Repositories\AuthRepositoryInterface;
 use App\Modules\User\Infrastructure\Models\User;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Override;
 use PragmaRX\Google2FA\Google2FA;
 
 class AuthModuleServiceProvider extends ServiceProvider
 {
-    
     public function register(): void
     {
-        
-        
+
         $this->app->bind(AuthRepositoryInterface::class, function ($app) {
             return new AuthRepository($app->make(User::class));
         });
         $this->app->bind(IssueTokenServiceInterface::class, IssueTokenService::class);
 
-        
         $this->app->bind(ServiceInterface::class, Service::class);
         $this->app->singleton(Google2FA::class, fn () => new Google2FA());
     }
 
     public function boot(): void
     {
-        
+
         if (! $this->isModuleEnabled()) {
             return;
         }
 
-        
         $this->loadRoutes();
     }
-
-    
-
 
     protected function isModuleEnabled(): bool
     {
@@ -60,7 +51,6 @@ class AuthModuleServiceProvider extends ServiceProvider
             return;
         }
 
-        
         require $routeFile;
     }
 }

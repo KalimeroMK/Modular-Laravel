@@ -8,9 +8,6 @@ use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-
-
-
 class UserFactory extends Factory
 {
     protected $model = User::class;

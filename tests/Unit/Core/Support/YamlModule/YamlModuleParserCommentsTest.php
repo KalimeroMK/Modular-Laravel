@@ -6,7 +6,6 @@ namespace Tests\Unit\Core\Support\YamlModule;
 
 use App\Modules\Core\Support\YamlModule\YamlModuleParser;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Yaml\Yaml;
 
 class YamlModuleParserCommentsTest extends TestCase
 {
@@ -28,7 +27,7 @@ class YamlModuleParserCommentsTest extends TestCase
 
     public function test_ignores_comments_in_yaml_file(): void
     {
-        
+
         $yamlContent = <<<'YAML'
 # This is a comment
 modules:
@@ -49,7 +48,6 @@ YAML;
         $parser = new YamlModuleParser($this->tempFile);
         $result = $parser->parse();
 
-        
         $this->assertArrayHasKey('Product', $result);
         $this->assertEquals(['name:string', 'price:float'], $result['Product']['fields']);
         $this->assertTrue($result['Product']['observers']);

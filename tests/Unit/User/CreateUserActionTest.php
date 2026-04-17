@@ -11,12 +11,10 @@ use App\Modules\User\Infrastructure\Repositories\UserRepositoryInterface;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class CreateUserActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -25,7 +23,7 @@ class CreateUserActionTest extends TestCase
 
     public function test_execute_successful_user_creation(): void
     {
-        
+
         $name = 'Test User';
         $email = 'test@example.com';
         $password = 'password123';
@@ -50,10 +48,8 @@ class CreateUserActionTest extends TestCase
 
         $action = new CreateUserAction($userRepository);
 
-        
         $result = $action->execute($dto);
 
-        
         $this->assertInstanceOf(User::class, $result);
         $this->assertEquals($name, $result->name);
         $this->assertEquals($email, $result->email);
@@ -61,7 +57,7 @@ class CreateUserActionTest extends TestCase
 
     public function test_execute_user_creation_failure(): void
     {
-        
+
         $name = 'Test User';
         $email = 'test@example.com';
         $password = 'password123';
@@ -78,7 +74,6 @@ class CreateUserActionTest extends TestCase
 
         $action = new CreateUserAction($userRepository);
 
-        
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to create user');
         $action->execute($dto);

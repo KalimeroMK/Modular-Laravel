@@ -7,7 +7,6 @@ namespace Tests\Feature\Core;
 use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
-use Override;
 use Tests\TestCase;
 
 class ApiResponseIntegrationTest extends TestCase
@@ -16,7 +15,6 @@ class ApiResponseIntegrationTest extends TestCase
 
     public $user;
 
-    
     protected function setUp(): void
     {
         parent::setUp();

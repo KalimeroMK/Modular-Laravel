@@ -8,32 +8,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
-
-
-
-
-
-
-
 abstract class EloquentRepository
 {
-    
-
-
-
-
     public function __construct(
-        
-
 
         protected Model $model
     ) {}
-
-    
-
-
-
-
 
     final public function all(array $with = []): Collection
     {
@@ -42,13 +22,8 @@ abstract class EloquentRepository
             $query->with($with);
         }
 
-         
         return $query->get();
     }
-
-    
-
-
 
     final public function find(int|string $id, array $with = []): ?Model
     {
@@ -60,10 +35,6 @@ abstract class EloquentRepository
         return $query->find($id);
     }
 
-    
-
-
-
     final public function findOrFail(int|string $id, array $with = []): Model
     {
         $query = $this->query();
@@ -73,9 +44,6 @@ abstract class EloquentRepository
 
         return $query->findOrFail($id);
     }
-
-    
-
 
     final public function findBy(string $column, mixed $value, array $with = []): ?Model
     {
@@ -87,9 +55,6 @@ abstract class EloquentRepository
         return $query->first();
     }
 
-    
-
-
     final public function create(array $data): ?Model
     {
         $created = $this->model->newInstance()->create($data);
@@ -98,9 +63,6 @@ abstract class EloquentRepository
         return $created ? $created->fresh() : null;
     }
 
-    
-
-
     final public function insert(array $data): bool
     {
         $result = $this->model->newInstance()->insert($data);
@@ -108,10 +70,6 @@ abstract class EloquentRepository
 
         return $result;
     }
-
-    
-
-
 
     final public function update(int|string $id, array $data): ?Model
     {
@@ -122,9 +80,6 @@ abstract class EloquentRepository
         return $model->fresh();
     }
 
-    
-
-
     final public function delete(int|string $id): bool
     {
         $deletedRows = $this->model->getConnection()->table($this->model->getTable())->where($this->model->getKeyName(), $id)->delete();
@@ -132,9 +87,6 @@ abstract class EloquentRepository
 
         return $deletedRows > 0;
     }
-
-    
-
 
     final public function restore(int|string $id): ?Model
     {
@@ -152,21 +104,12 @@ abstract class EloquentRepository
         return $model;
     }
 
-    
-
-
     final public function findWithTrashed(int|string $id): ?Model
     {
         $query = $this->model->newQuery();
 
         return method_exists($query, 'withTrashed') ? $query->withTrashed()->find($id) : $query->find($id);
     }
-
-    
-
-
-
-
 
     final public function paginate(int $perPage = 15, array $with = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
@@ -175,16 +118,8 @@ abstract class EloquentRepository
             $query->with($with);
         }
 
-         
         return $query->paginate($perPage);
     }
-
-    
-
-
-
-
-
 
     final public function allCached(array $with = [], int $ttl = 3600): Collection
     {
@@ -193,13 +128,6 @@ abstract class EloquentRepository
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, fn () => $this->all($with));
     }
 
-    
-
-
-
-
-
-
     final public function findCached(int|string $id, array $with = [], int $ttl = 3600): ?Model
     {
         $cacheKey = $this->getCacheKey('find', $with, $id);
@@ -207,27 +135,15 @@ abstract class EloquentRepository
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, fn () => $this->find($id, $with));
     }
 
-    
-
-
     final public function clearCache(): void
     {
         \Illuminate\Support\Facades\Cache::forget($this->getCacheKey('all'));
     }
 
-    
-
-
     protected function query(): Builder
     {
         return $this->model->newQuery();
     }
-
-    
-
-
-
-
 
     protected function getCacheKey(string $method, array $with = [], int|string|null $id = null): string
     {

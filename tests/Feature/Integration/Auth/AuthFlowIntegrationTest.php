@@ -15,7 +15,7 @@ class AuthFlowIntegrationTest extends TestCase
 
     public function test_complete_auth_flow(): void
     {
-        
+
         $userData = [
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -38,7 +38,6 @@ class AuthFlowIntegrationTest extends TestCase
 
         $token = $registerResponse->json('data.token');
 
-        
         $loginData = [
             'email' => 'test@example.com',
             'password' => 'password123',
@@ -57,7 +56,6 @@ class AuthFlowIntegrationTest extends TestCase
             ],
         ]);
 
-        
         $meResponse = $this->withHeaders([
             'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/v1/auth/me');
@@ -71,55 +69,47 @@ class AuthFlowIntegrationTest extends TestCase
             ],
         ]);
 
-        
         $logoutResponse = $this->withHeaders([
             'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/v1/auth/logout');
 
         $logoutResponse->assertStatus(200);
 
-        
         $this->withHeaders([
             'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/v1/auth/me');
 
-        
         $logoutResponse->assertStatus(200);
     }
 
     public function test_password_reset_flow(): void
     {
-        
+
         User::factory()->create([
             'email' => 'test@example.com',
         ]);
 
-        
         $resetRequestResponse = $this->postJson('/api/v1/auth/forgot-password', [
             'email' => 'test@example.com',
         ]);
 
         $resetRequestResponse->assertStatus(200);
 
-        
         $resetResponse = $this->postJson('/api/v1/auth/reset-password', [
             'email' => 'test@example.com',
             'password' => 'newpassword123',
             'password_confirmation' => 'newpassword123',
-            'token' => 'test-token', 
+            'token' => 'test-token',
         ]);
 
-        
-        
-        $resetResponse->assertStatus(422); 
+        $resetResponse->assertStatus(422);
     }
 
     public function test_user_role_permission_integration(): void
     {
-        
+
         $user = User::factory()->create();
 
-        
         $role = \App\Modules\Role\Infrastructure\Models\Role::create([
             'name' => 'admin',
             'guard_name' => 'api',
@@ -130,13 +120,11 @@ class AuthFlowIntegrationTest extends TestCase
             'guard_name' => 'api',
         ]);
 
-        
         $user->assignRole($role);
         $user->givePermissionTo($permission);
 
         Sanctum::actingAs($user);
 
-        
         $usersResponse = $this->getJson('/api/v1/users');
         $usersResponse->assertStatus(200);
 

@@ -8,9 +8,6 @@ use App\Modules\Role\Infrastructure\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-
-
-
 class RoleFactory extends Factory
 {
     protected $model = Role::class;

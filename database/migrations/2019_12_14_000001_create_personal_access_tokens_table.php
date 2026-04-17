@@ -8,11 +8,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    
-
-
-
-
     public function up()
     {
         Schema::create('personal_access_tokens', function (Blueprint $table) {
@@ -25,17 +20,11 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
 
-            
             $table->index('last_used_at');
             $table->index('expires_at');
             $table->index(['last_used_at', 'expires_at']);
         });
     }
-
-    
-
-
-
 
     public function down()
     {

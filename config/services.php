@@ -4,18 +4,6 @@ declare(strict_types=1);
 
 return [
 
-    
-
-
-
-
-
-
-
-
-
-
-
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],

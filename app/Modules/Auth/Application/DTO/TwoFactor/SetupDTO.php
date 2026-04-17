@@ -12,9 +12,6 @@ class SetupDTO
         public string $recoveryCodes,
     ) {}
 
-    
-
-
     public static function fromArray(array $data): self
     {
         return new self(
@@ -23,9 +20,6 @@ class SetupDTO
             recoveryCodes: $data['recovery_codes'],
         );
     }
-
-    
-
 
     public function toArray(): array
     {

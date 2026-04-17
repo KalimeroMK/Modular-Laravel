@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    
-
-
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
@@ -18,13 +15,9 @@ return new class extends Migration
             $table->text('two_factor_recovery_codes')->nullable();
             $table->timestamp('two_factor_confirmed_at')->nullable();
 
-            
             $table->index('two_factor_confirmed_at');
         });
     }
-
-    
-
 
     public function down(): void
     {

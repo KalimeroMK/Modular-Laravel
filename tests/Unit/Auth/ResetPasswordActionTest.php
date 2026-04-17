@@ -8,12 +8,10 @@ use App\Modules\Auth\Application\Actions\ResetPasswordAction;
 use App\Modules\Auth\Infrastructure\Http\Requests\ResetPasswordRequest;
 use Illuminate\Support\Facades\Password;
 use Mockery;
-use Override;
 use Tests\TestCase;
 
 class ResetPasswordActionTest extends TestCase
 {
-    
     protected function tearDown(): void
     {
         Mockery::close();
@@ -22,7 +20,7 @@ class ResetPasswordActionTest extends TestCase
 
     public function test_execute_successful_password_reset(): void
     {
-        
+
         $request = Mockery::mock(ResetPasswordRequest::class);
         $request->shouldReceive('only')
             ->with('email', 'password', 'password_confirmation', 'token')
@@ -38,16 +36,14 @@ class ResetPasswordActionTest extends TestCase
 
         $action = new ResetPasswordAction();
 
-        
         $result = $action->execute($request);
 
-        
         $this->assertEquals('passwords.reset', $result);
     }
 
     public function test_execute_user_not_found(): void
     {
-        
+
         $request = Mockery::mock(ResetPasswordRequest::class);
         $request->shouldReceive('only')
             ->with('email', 'password', 'password_confirmation', 'token')
@@ -63,7 +59,6 @@ class ResetPasswordActionTest extends TestCase
 
         $action = new ResetPasswordAction();
 
-        
         $this->expectException(\Illuminate\Validation\ValidationException::class);
         $action->execute($request);
     }

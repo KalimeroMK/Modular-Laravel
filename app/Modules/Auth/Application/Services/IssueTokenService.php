@@ -16,13 +16,13 @@ class IssueTokenService implements IssueTokenServiceInterface
 
         return new SessionTokenDTO(
             token: $token->plainTextToken,
-            type: 'Bearer' 
+            type: 'Bearer'
         );
     }
 
     public function revokeToken(User $user): bool
     {
-         
+
         $token = $user->currentAccessToken();
 
         if ($token !== null && $token instanceof PersonalAccessToken) {

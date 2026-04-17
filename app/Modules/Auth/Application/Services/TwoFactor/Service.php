@@ -51,8 +51,6 @@ class Service implements ServiceInterface
         $qrCodeUrl = $this->generateQrCodeUrl($user, $secretKey);
         $recoveryCodes = $this->generateRecoveryCodes();
 
-        
-        
         $user->update([
             'two_factor_secret' => Crypt::encrypt($secretKey),
             'two_factor_recovery_codes' => Crypt::encrypt($recoveryCodes->toArray()),
@@ -76,15 +74,13 @@ class Service implements ServiceInterface
 
         $verified = false;
 
-        
         if ($dto->recoveryCode) {
             $verified = $this->verifyRecoveryCode($user, $dto->recoveryCode);
         } else {
-            
+
             $verified = (bool) $this->google2fa->verifyKey($secretKey, $dto->code);
         }
 
-        
         if ($verified && ! $user->two_factor_confirmed_at) {
             $user->update([
                 'two_factor_confirmed_at' => now(),
@@ -121,9 +117,9 @@ class Service implements ServiceInterface
 
         $key = array_search($recoveryCode, $codes, true);
         if ($key !== false) {
-            
+
             unset($codes[$key]);
-            $codes = array_values($codes); 
+            $codes = array_values($codes);
 
             $user->update([
                 'two_factor_recovery_codes' => Crypt::encrypt(['codes' => $codes]),

@@ -6,18 +6,9 @@ namespace App\Modules\Core\Support\Generators;
 
 use Illuminate\Filesystem\Filesystem;
 
-
-
-
 class ModuleGenerationTracker
 {
-    
-
-
     protected array $generatedFiles = [];
-
-    
-
 
     protected array $modifiedFiles = [];
 
@@ -25,9 +16,6 @@ class ModuleGenerationTracker
         protected Filesystem $files,
         protected ModuleConfigUpdater $configUpdater
     ) {}
-
-    
-
 
     public function trackGeneratedFile(string $moduleName, string $filePath): void
     {
@@ -38,9 +26,6 @@ class ModuleGenerationTracker
         $this->generatedFiles[$moduleName][] = $filePath;
     }
 
-    
-
-
     public function trackModifiedFile(string $filePath, string $originalContent): void
     {
         if (! isset($this->modifiedFiles[$filePath])) {
@@ -48,38 +33,20 @@ class ModuleGenerationTracker
         }
     }
 
-    
-
-
-
-
     public function getGeneratedFiles(string $moduleName): array
     {
         return $this->generatedFiles[$moduleName] ?? [];
     }
-
-    
-
-
-
 
     public function getTrackedModules(): array
     {
         return array_keys($this->generatedFiles);
     }
 
-    
-
-
-
-
     public function getModifiedFiles(): array
     {
         return $this->modifiedFiles;
     }
-
-    
-
 
     public function rollbackModule(string $moduleName): void
     {
@@ -91,26 +58,20 @@ class ModuleGenerationTracker
             }
         }
 
-        
         $moduleBasePath = app_path("Modules/{$moduleName}");
         if ($this->files->exists($moduleBasePath)) {
             $this->files->deleteDirectory($moduleBasePath);
         }
 
-        
         $testPath = base_path("tests/Feature/Modules/{$moduleName}");
         if ($this->files->exists($testPath)) {
             $this->files->deleteDirectory($testPath);
         }
 
-        
         $this->configUpdater->removeModule($moduleName);
 
         unset($this->generatedFiles[$moduleName]);
     }
-
-    
-
 
     public function restoreModifiedFiles(): void
     {
@@ -121,9 +82,6 @@ class ModuleGenerationTracker
         }
         $this->modifiedFiles = [];
     }
-
-    
-
 
     public function rollbackAll(): void
     {
@@ -136,11 +94,6 @@ class ModuleGenerationTracker
         $this->generatedFiles = [];
         $this->modifiedFiles = [];
     }
-
-    
-
-
-
 
     public function getStatistics(): array
     {
@@ -160,17 +113,11 @@ class ModuleGenerationTracker
         ];
     }
 
-    
-
-
     public function clear(): void
     {
         $this->generatedFiles = [];
         $this->modifiedFiles = [];
     }
-
-    
-
 
     protected function deleteDirectoryIfEmpty(string $directory): void
     {
