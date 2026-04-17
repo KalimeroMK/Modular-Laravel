@@ -64,6 +64,19 @@ class Role extends Model
         $this->permissions()->detach($permission->id);
     }
 
+    public function syncPermissions(array $permissions): void
+    {
+        $ids = collect($permissions)->map(function (Permission|string $permission) {
+            if (is_string($permission)) {
+                $permission = Permission::where('name', $permission)->where('guard_name', $this->guard_name)->firstOrFail();
+            }
+
+            return $permission->id;
+        })->all();
+
+        $this->permissions()->sync($ids);
+    }
+
     public function hasPermissionTo(Permission|string $permission): bool
     {
         if (is_string($permission)) {

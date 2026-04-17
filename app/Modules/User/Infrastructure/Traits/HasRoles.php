@@ -114,6 +114,32 @@ trait HasRoles
         return false;
     }
 
+    public function syncRoles(array $roles): void
+    {
+        $ids = collect($roles)->map(function (Role|string $role) {
+            if (is_string($role)) {
+                $role = Role::where('name', $role)->where('guard_name', 'api')->firstOrFail();
+            }
+
+            return $role->id;
+        })->all();
+
+        $this->roles()->sync($ids);
+    }
+
+    public function syncPermissions(array $permissions): void
+    {
+        $ids = collect($permissions)->map(function (Permission|string $permission) {
+            if (is_string($permission)) {
+                $permission = Permission::where('name', $permission)->where('guard_name', 'api')->firstOrFail();
+            }
+
+            return $permission->id;
+        })->all();
+
+        $this->permissions()->sync($ids);
+    }
+
     public function hasAllRoles(array $roles): bool
     {
         foreach ($roles as $role) {
