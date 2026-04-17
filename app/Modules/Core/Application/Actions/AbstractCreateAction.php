@@ -12,7 +12,7 @@ abstract class AbstractCreateAction
 {
     public function __construct(protected RepositoryInterface $repository) {}
 
-    public function execute(object $dto): Model
+    final public function execute(object $dto): Model
     {
         $data = $this->beforeCreate($this->mapDtoToArray($dto));
 
@@ -43,6 +43,6 @@ abstract class AbstractCreateAction
     {
         $class = basename(str_replace('\\', '/', static::class));
 
-        return strtolower(str_replace(['Create', 'Action'], '', $class));
+        return mb_strtolower(str_replace(['Create', 'Action'], '', $class));
     }
 }

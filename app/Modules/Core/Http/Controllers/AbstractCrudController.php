@@ -35,7 +35,7 @@ abstract class AbstractCrudController extends Controller
 
     abstract protected function getEntityLabel(): string;
 
-    public function index(): JsonResponse
+    final public function index(): JsonResponse
     {
         $items = $this->getAllAction->execute();
         $resourceClass = $this->getResourceClass();
@@ -47,7 +47,7 @@ abstract class AbstractCrudController extends Controller
         );
     }
 
-    public function show(int|string $id): JsonResponse
+    final public function show(int|string $id): JsonResponse
     {
         $resourceClass = $this->getResourceClass();
 
@@ -55,6 +55,13 @@ abstract class AbstractCrudController extends Controller
             new $resourceClass($this->getByIdAction->execute($id)),
             $this->getEntityLabel().' retrieved successfully'
         );
+    }
+
+    final public function destroy(int|string $id): JsonResponse
+    {
+        $this->deleteAction->execute($id);
+
+        return ApiResponse::success(null, $this->getEntityLabel().' deleted successfully');
     }
 
     protected function handleStore(Request $request): JsonResponse
@@ -79,12 +86,5 @@ abstract class AbstractCrudController extends Controller
             new $resourceClass($this->updateAction->execute($id, $dto)),
             $this->getEntityLabel().' updated successfully'
         );
-    }
-
-    public function destroy(int|string $id): JsonResponse
-    {
-        $this->deleteAction->execute($id);
-
-        return ApiResponse::success(null, $this->getEntityLabel().' deleted successfully');
     }
 }

@@ -11,13 +11,13 @@ abstract class AbstractCrudModuleServiceProvider extends ServiceProvider
 {
     abstract protected function getModuleConfig(): array;
 
-    public function register(): void
+    final public function register(): void
     {
         $config = $this->getModuleConfig();
         $this->app->bind($config['interface'], $config['repository']);
     }
 
-    public function boot(): void
+    final public function boot(): void
     {
         if (! $this->isModuleEnabled()) {
             return;

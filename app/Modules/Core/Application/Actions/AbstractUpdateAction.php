@@ -12,7 +12,7 @@ abstract class AbstractUpdateAction
 {
     public function __construct(protected RepositoryInterface $repository) {}
 
-    public function execute(int|string $id, object $dto): Model
+    final public function execute(int|string $id, object $dto): Model
     {
         $this->repository->findOrFail($id);
 
@@ -47,6 +47,6 @@ abstract class AbstractUpdateAction
     {
         $class = basename(str_replace('\\', '/', static::class));
 
-        return strtolower(str_replace(['Update', 'Action'], '', $class));
+        return mb_strtolower(str_replace(['Update', 'Action'], '', $class));
     }
 }

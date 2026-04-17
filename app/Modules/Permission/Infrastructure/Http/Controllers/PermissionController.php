@@ -35,6 +35,16 @@ class PermissionController extends AbstractCrudController
         );
     }
 
+    public function store(CreatePermissionRequest $request): JsonResponse
+    {
+        return $this->handleStore($request);
+    }
+
+    public function update(int $id, UpdatePermissionRequest $request): JsonResponse
+    {
+        return $this->handleUpdate($id, $request);
+    }
+
     protected function getCreateDtoClass(): string
     {
         return CreatePermissionDTO::class;
@@ -53,15 +63,5 @@ class PermissionController extends AbstractCrudController
     protected function getEntityLabel(): string
     {
         return 'Permission';
-    }
-
-    public function store(CreatePermissionRequest $request): JsonResponse
-    {
-        return $this->handleStore($request);
-    }
-
-    public function update(int $id, UpdatePermissionRequest $request): JsonResponse
-    {
-        return $this->handleUpdate($id, $request);
     }
 }

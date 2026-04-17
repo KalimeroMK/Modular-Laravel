@@ -35,6 +35,16 @@ class RoleController extends AbstractCrudController
         );
     }
 
+    public function store(CreateRoleRequest $request): JsonResponse
+    {
+        return $this->handleStore($request);
+    }
+
+    public function update(int $id, UpdateRoleRequest $request): JsonResponse
+    {
+        return $this->handleUpdate($id, $request);
+    }
+
     protected function getCreateDtoClass(): string
     {
         return CreateRoleDTO::class;
@@ -53,15 +63,5 @@ class RoleController extends AbstractCrudController
     protected function getEntityLabel(): string
     {
         return 'Role';
-    }
-
-    public function store(CreateRoleRequest $request): JsonResponse
-    {
-        return $this->handleStore($request);
-    }
-
-    public function update(int $id, UpdateRoleRequest $request): JsonResponse
-    {
-        return $this->handleUpdate($id, $request);
     }
 }

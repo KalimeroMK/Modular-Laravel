@@ -11,7 +11,7 @@ abstract class AbstractDeleteAction
 {
     public function __construct(protected RepositoryInterface $repository) {}
 
-    public function execute(int|string $id): bool
+    final public function execute(int|string $id): bool
     {
         $entity = $this->repository->findOrFail($id);
 

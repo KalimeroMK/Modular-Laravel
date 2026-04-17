@@ -11,7 +11,7 @@ abstract class AbstractGetAllAction
 {
     public function __construct(protected RepositoryInterface $repository) {}
 
-    public function execute(int $perPage = 15): LengthAwarePaginator
+    final public function execute(int $perPage = 15): LengthAwarePaginator
     {
         return $this->repository->paginate($perPage);
     }

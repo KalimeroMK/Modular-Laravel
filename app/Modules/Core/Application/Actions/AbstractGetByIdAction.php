@@ -11,7 +11,7 @@ abstract class AbstractGetByIdAction
 {
     public function __construct(protected RepositoryInterface $repository) {}
 
-    public function execute(int|string $id, array $with = []): Model
+    final public function execute(int|string $id, array $with = []): Model
     {
         return $with !== []
             ? $this->repository->findOrFail($id, $with)

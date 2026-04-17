@@ -35,6 +35,16 @@ class UserController extends AbstractCrudController
         );
     }
 
+    public function store(CreateUserRequest $request): JsonResponse
+    {
+        return $this->handleStore($request);
+    }
+
+    public function update(int $id, UpdateUserRequest $request): JsonResponse
+    {
+        return $this->handleUpdate($id, $request);
+    }
+
     protected function getCreateDtoClass(): string
     {
         return CreateUserDTO::class;
@@ -53,15 +63,5 @@ class UserController extends AbstractCrudController
     protected function getEntityLabel(): string
     {
         return 'User';
-    }
-
-    public function store(CreateUserRequest $request): JsonResponse
-    {
-        return $this->handleStore($request);
-    }
-
-    public function update(int $id, UpdateUserRequest $request): JsonResponse
-    {
-        return $this->handleUpdate($id, $request);
     }
 }
